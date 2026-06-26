@@ -510,7 +510,7 @@ footer a:focus-visible {
 
 .chapter-map .section-shell {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr auto 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
 }
 
 .chapter-map a {
@@ -781,6 +781,121 @@ footer a:focus-visible {
   color: #456761;
   font-size: 0.78rem;
   line-height: 1.5;
+}
+
+/* Four-part guide overview cards */
+.guide-parts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 54px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-parts li {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  border: 1px solid rgba(32, 40, 58, 0.1);
+  border-top: 4px solid var(--violet);
+  border-radius: 18px;
+  background: var(--paper);
+  padding: 22px 22px 26px;
+}
+
+.guide-parts li.p1 {
+  border-top-color: var(--lemon);
+}
+
+.guide-parts li.p2 {
+  border-top-color: var(--cyan);
+}
+
+.guide-parts li.p3 {
+  border-top-color: var(--violet);
+}
+
+.guide-parts li.p4 {
+  border-top-color: var(--coral);
+}
+
+.guide-parts span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.guide-parts strong {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.16rem;
+  line-height: 1.18;
+}
+
+.guide-parts em {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+/* Part-divider sections that signpost the four-part journey */
+.part-divider {
+  padding: 124px 0 8px;
+  text-align: center;
+}
+
+.part-kicker {
+  display: inline-block;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  padding: 8px 17px;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.part-divider.math .part-kicker {
+  background: #b08316;
+}
+
+.part-divider.eeg .part-kicker {
+  background: var(--cyan);
+}
+
+.part-divider.use .part-kicker {
+  background: var(--violet);
+}
+
+.part-divider.do .part-kicker {
+  background: var(--coral);
+}
+
+.part-divider h2 {
+  font-size: clamp(2.7rem, 5.2vw, 5rem);
+}
+
+.part-divider > p {
+  max-width: 640px;
+  margin: 22px auto 0;
+  font-size: 1.06rem;
+}
+
+@media (max-width: 900px) {
+  .guide-parts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .guide-parts {
+    grid-template-columns: 1fr;
+  }
 }
 
 .story-section {
@@ -1654,11 +1769,6 @@ footer a:focus-visible {
   color: #715d53;
   font-size: 0.88rem;
   line-height: 1.5;
-}
-
-.power-section {
-  background: #fff5ef;
-  padding: 130px 0;
 }
 
 .explorer-section {
@@ -2739,7 +2849,7 @@ footer a {
   .chapter-map .section-shell {
     width: max-content;
     min-width: 100%;
-    grid-template-columns: repeat(4, 132px) auto repeat(2, 132px);
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
   }
 
   .chapter-map a {

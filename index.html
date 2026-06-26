@@ -117,52 +117,45 @@
         <div class="hero-wave" aria-hidden="true"></div>
       </section>
 
-      <nav class="chapter-map" aria-label="Learning chapters">
+      <nav class="chapter-map" aria-label="Guide parts">
         <div class="section-shell">
-          <a href="#story"><span>01</span>Why geometry?</a>
-          <a href="#eeg"><span>02</span>Represent EEG</a>
-          <a href="#distance"><span>03</span>Measure distance</a>
-          <a href="#mean"><span>04</span>Build a center</a>
-          <a class="chapter-bridge" href="#tangent"><span>bridge</span>To machine learning</a>
-          <a href="#classifier"><span>05</span>Make a prediction</a>
-          <a href="#notebook"><span>06</span>Test on data</a>
+          <a href="#part-math"><span>Part 1</span>The math of curves</a>
+          <a href="#part-eeg"><span>Part 2</span>How it connects to EEG</a>
+          <a href="#part-use"><span>Part 3</span>Using it: the decoder</a>
+          <a href="#notebook"><span>Part 4</span>Do it yourself</a>
         </div>
         <div class="chapter-progress" aria-hidden="true"><span></span></div>
       </nav>
 
       <section class="learning-route section-shell" aria-labelledby="route-title">
         <div class="route-heading">
-          <p class="eyebrow cyan">The route through this page</p>
-          <h2 id="route-title">Six questions. One complete BCI decoder.</h2>
+          <p class="eyebrow cyan">How to read this guide</p>
+          <h2 id="route-title">From the math of curves to your own BCI.</h2>
           <p>
-            Start with intuition, then name the mathematics. Every chapter adds
-            one operation that the final classifier will actually use.
+            Four parts, in order — each one sets up the next. First the geometry,
+            then the brain data, then the working decoder, then your turn.
           </p>
         </div>
-        <ol class="route-steps">
-          <li>
-            <span>1 · signal</span>
-            <strong>What did the electrodes record?</strong>
+        <ol class="guide-parts">
+          <li class="p1">
+            <span>Part 1</span>
+            <strong>The math of curves</strong>
+            <em>Why the shortest path can bend — the idea Riemann built and Einstein used.</em>
           </li>
-          <li>
-            <span>2 · covariance</span>
-            <strong>How did the channels vary together?</strong>
+          <li class="p2">
+            <span>Part 2</span>
+            <strong>How it connects to EEG</strong>
+            <em>Each trial becomes a covariance matrix: one point in a curved space.</em>
           </li>
-          <li>
-            <span>3 · distance</span>
-            <strong>Which trial patterns are genuinely close?</strong>
+          <li class="p3">
+            <span>Part 3</span>
+            <strong>Using it: the decoder</strong>
+            <em>Distance, a class center, a prediction — and the bridge to machine learning.</em>
           </li>
-          <li>
-            <span>4 · class center</span>
-            <strong>What is typical for one labeled brain state?</strong>
-          </li>
-          <li>
-            <span>5 · prediction</span>
-            <strong>Which learned state is nearest to a new trial?</strong>
-          </li>
-          <li>
-            <span>6 · validation</span>
-            <strong>Does the decoder work on an unseen recording run?</strong>
+          <li class="p4">
+            <span>Part 4</span>
+            <strong>Do it yourself</strong>
+            <em>Run the very same pipeline on real EEG in a guided notebook.</em>
           </li>
         </ol>
         <div class="route-brief" aria-label="Lesson outcomes and preparation">
@@ -209,42 +202,14 @@
         </div>
       </section>
 
-      <section id="power" class="power-section">
-        <div class="section-shell">
-          <div class="lesson-heading">
-            <div>
-              <p class="eyebrow coral">Start at the start · one electrode</p>
-              <h2>First, a single channel becomes one number.</h2>
-            </div>
-            <div>
-              <p>
-                We are not building the classifier yet — that is the finale. Here
-                we just collect its two ingredients. A single electrode, band-pass
-                filtered, is summarized by its <strong>power</strong>, and
-                imagining a movement lowers that power. So “rest” and “move” sit at
-                two different power levels on a plain number line.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: summarize a signal, then compare fairly</span>
-                <strong>The trap: the obvious ruler is the wrong one</strong>
-              </div>
-            </div>
-          </div>
-          <div class="lesson-purpose">
-            <span>What to take away</span>
-            <strong>
-              A brain signal can become one number — and the obvious way to
-              compare two of them is already wrong.
-            </strong>
-            <p>
-              Both ideas return at every later step: a way to <em>summarize</em> a
-              trial, and the right way to measure <em>distance</em>. Only the
-              objects grow — first a number, soon a matrix. The actual prediction
-              waits for the end.
-            </p>
-          </div>
-          <rg-power-line></rg-power-line>
-        </div>
+      <section id="part-math" class="part-divider math section-shell" aria-label="Part 1: The math of curves">
+        <span class="part-kicker">Part 1 of 4</span>
+        <h2>The math of curves</h2>
+        <p>
+          A single question — can geometry describe a space that bends? — became
+          the language of gravity, and with it a precise way to say what “close”
+          means on a curved space.
+        </p>
       </section>
 
       <section id="story" class="story-section section-shell">
@@ -499,6 +464,16 @@
         </div>
       </section>
 
+      <section id="part-eeg" class="part-divider eeg section-shell" aria-label="Part 2: How it connects to EEG">
+        <span class="part-kicker">Part 2 of 4</span>
+        <h2>How it connects to EEG</h2>
+        <p>
+          Now point that geometry at the brain. Each EEG trial becomes a
+          covariance matrix — a single point in a curved space of valid
+          patterns.
+        </p>
+      </section>
+
       <section id="eeg" class="eeg-reveal">
         <div class="section-shell">
           <div class="reveal-heading">
@@ -577,9 +552,9 @@
           <p>
             Summarizing each trial as a covariance matrix and measuring it with
             the right geometry is plain enough to explain on a single page — yet
-            decoders built in exactly this way won five international BCI
-            competitions. From here we build that decoder one operation at a
-            time, and only at the very end turn it loose on real EEG.
+            decoders built exactly this way won five international BCI
+            competitions. The next sections build that decoder one operation at a
+            time.
           </p>
         </div>
       </section>
@@ -609,6 +584,16 @@
           </div>
           <rg-covariance-explorer></rg-covariance-explorer>
         </div>
+      </section>
+
+      <section id="part-use" class="part-divider use section-shell" aria-label="Part 3: Using it, the decoder">
+        <span class="part-kicker">Part 3 of 4</span>
+        <h2>Using it: the decoder</h2>
+        <p>
+          With every trial now a point, a decoder needs three moves — measure
+          distance, build a class center, and predict the nearest one — plus a
+          bridge to ordinary machine learning.
+        </p>
       </section>
 
       <section id="distance" class="distance-section">
@@ -1032,14 +1017,13 @@
       <section id="notebook" class="notebook-section">
         <div class="section-shell">
           <div class="notebook-arrival">
-            <p class="eyebrow violet">Chapter 06 · the real thing</p>
+            <p class="eyebrow violet">Part 4 of 4 · do it yourself</p>
             <h2>You understand every step. Now run it on real brains.</h2>
             <p class="notebook-lead">
-              A signal became a number, the number became a covariance matrix,
-              the right distance gave it a class center, and the nearest center
-              made a decision. The guided notebook is that exact pipeline — end
-              to end, on a real motor-imagery recording, runnable in your browser
-              with nothing to install.
+              Each trial becomes a covariance matrix, the right distance gives it
+              a class center, and the nearest center makes the call. The guided
+              notebook is that exact pipeline, end to end, on a real motor-imagery
+              recording — runnable in your browser with nothing to install.
             </p>
           </div>
 
