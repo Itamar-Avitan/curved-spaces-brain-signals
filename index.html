@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -44,35 +44,74 @@
           </div>
         </nav>
 
-        <div id="top" class="hero-copy">
-          <p class="eyebrow">Curved geometry for EEG · a visual introduction</p>
-          <h1>What if the shortest path<br />is <em>not</em> a straight line?</h1>
-          <p class="hero-lede">
-            A mathematical idea about measuring curved spaces became the
-            language of gravity. Today, the same idea helps us decide which
-            multichannel brain-signal patterns are truly similar.
-          </p>
-          <a class="primary-button" href="#story">
-            Follow the curve
-            <span aria-hidden="true">↓</span>
-          </a>
-        </div>
+        <svg class="hero-field" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <path d="M-50 180 C 360 60, 1080 60, 1500 220" />
+          <path d="M-50 320 C 360 200, 1080 220, 1500 360" />
+          <path d="M-50 470 C 360 360, 1080 380, 1500 520" />
+          <path d="M-50 640 C 360 540, 1080 560, 1500 700" />
+        </svg>
 
-        <div class="hero-visual" aria-hidden="true">
-          <div class="orbit orbit-one"></div>
-          <div class="orbit orbit-two"></div>
-          <div class="manifold">
-            <span class="path-dot dot-a"></span>
-            <span class="path-dot dot-b"></span>
-            <span class="geodesic"></span>
+        <div class="hero-wrap">
+          <div id="top" class="hero-copy">
+            <p class="hero-eyebrow">Curved geometry for EEG · a visual introduction</p>
+            <h1>
+              What if the<br />shortest path<br />is <em>not</em> a
+              <span class="hero-ul"
+                >straight line<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M4 13 C 80 4, 220 4, 296 11" /></svg
+              ></span>?
+            </h1>
+            <p class="hero-lede">
+              A 19th-century idea about measuring curved space became the
+              language of gravity. Today the same idea decides which
+              multichannel brain-signal patterns are truly alike.
+            </p>
+            <div class="hero-cta">
+              <a class="primary-button" href="#story">
+                Follow the curve
+                <span aria-hidden="true">↓</span>
+              </a>
+              <a class="hero-ghost" href="#eeg">See why it matters for a BCI</a>
+            </div>
           </div>
-          <div class="floating-card card-space">
-            <span>physical space</span>
-            <strong>straightest paths</strong>
-          </div>
-          <div class="floating-card card-data">
-            <span>data space</span>
-            <strong>channel relationships</strong>
+
+          <div class="hero-demo">
+            <svg
+              class="hero-stage"
+              viewBox="0 0 460 420"
+              role="img"
+              aria-label="Two points A and B on a curved surface, joined by a dashed straight line and by a glowing curved geodesic — the shortest route that stays on the surface."
+            >
+              <g class="hero-mesh" aria-hidden="true">
+                <path d="M40 90 C 170 40, 320 50, 430 110" />
+                <path d="M30 170 C 170 120, 330 130, 440 190" class="accent" />
+                <path d="M30 260 C 170 215, 330 225, 440 285" />
+                <path d="M40 340 C 170 300, 320 310, 430 370" />
+                <path d="M70 70 C 40 180, 50 300, 95 390" />
+                <path d="M190 60 C 165 180, 170 300, 205 392" class="accent" />
+                <path d="M300 60 C 285 180, 285 300, 312 388" />
+                <path d="M405 80 C 395 190, 395 300, 412 380" />
+              </g>
+              <path class="hero-chord" d="M95 150 L 360 300" />
+              <text class="hero-tag line" x="150" y="206">straight line</text>
+              <path class="hero-geo" id="hero-geo" d="M95 150 C 150 250, 280 320, 360 300" />
+              <text class="hero-tag geo" x="232" y="334">geodesic</text>
+              <circle class="hero-pt a" cx="95" cy="150" r="10" />
+              <text class="hero-ptlabel a" x="64" y="140">A</text>
+              <circle class="hero-pt b" cx="360" cy="300" r="10" />
+              <text class="hero-ptlabel b" x="372" y="306">B</text>
+              <circle class="hero-trav" r="6">
+                <animateMotion dur="2.2s" begin="2.1s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#hero-geo" />
+                </animateMotion>
+              </circle>
+            </svg>
+            <div class="hero-chip one" aria-hidden="true">
+              <span>physical space</span><strong>straightest paths bend</strong>
+            </div>
+            <div class="hero-chip two" aria-hidden="true">
+              <span>data space</span><strong>channel relationships</strong>
+            </div>
           </div>
         </div>
         <div class="hero-wave" aria-hidden="true"></div>
@@ -167,6 +206,44 @@
             <strong>Class prototype</strong>
             <p>One representative pattern learned from examples with the same label.</p>
           </article>
+        </div>
+      </section>
+
+      <section id="power" class="power-section">
+        <div class="section-shell">
+          <div class="lesson-heading">
+            <div>
+              <p class="eyebrow coral">Start at the start · one electrode</p>
+              <h2>First, a single channel becomes one number.</h2>
+            </div>
+            <div>
+              <p>
+                We are not building the classifier yet — that is the finale. Here
+                we just collect its two ingredients. A single electrode, band-pass
+                filtered, is summarized by its <strong>power</strong>, and
+                imagining a movement lowers that power. So “rest” and “move” sit at
+                two different power levels on a plain number line.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: summarize a signal, then compare fairly</span>
+                <strong>The trap: the obvious ruler is the wrong one</strong>
+              </div>
+            </div>
+          </div>
+          <div class="lesson-purpose">
+            <span>What to take away</span>
+            <strong>
+              A brain signal can become one number — and the obvious way to
+              compare two of them is already wrong.
+            </strong>
+            <p>
+              Both ideas return at every later step: a way to <em>summarize</em> a
+              trial, and the right way to measure <em>distance</em>. Only the
+              objects grow — first a number, soon a matrix. The actual prediction
+              waits for the end.
+            </p>
+          </div>
+          <rg-power-line></rg-power-line>
         </div>
       </section>
 
@@ -377,41 +454,53 @@
           <div class="pipeline" aria-label="EEG to Riemannian classification pipeline">
             <article>
               <span class="pipeline-number">1</span>
-              <div class="mini-signals" aria-hidden="true">
-                <i></i><i></i><i></i><i></i>
-              </div>
+              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
+                <path class="trace cyan" d="M8 30 q 12 -13 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
+                <path class="trace coral" d="M8 54 q 12 11 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
+                <path class="trace violet" d="M8 78 q 12 -10 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
+              </svg>
               <h3>EEG epoch</h3>
               <p>Many channels changing over time.</p>
             </article>
             <span class="pipeline-arrow" aria-hidden="true">→</span>
             <article>
               <span class="pipeline-number">2</span>
-              <div class="mini-matrix" aria-hidden="true">
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span>
-              </div>
+              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
+                <path class="bracket" d="M26 20 L18 20 L18 80 L26 80" />
+                <path class="bracket" d="M94 20 L102 20 L102 80 L94 80" />
+                <rect class="diag" x="30" y="24" width="26" height="26" rx="5" />
+                <rect class="off" x="62" y="24" width="26" height="26" rx="5" />
+                <rect class="off" x="30" y="52" width="26" height="26" rx="5" />
+                <rect class="diag" x="62" y="52" width="26" height="26" rx="5" />
+              </svg>
               <h3>Relationship summary</h3>
-              <p>A fingerprint of channel relationships.</p>
+              <p>A covariance matrix: each channel’s variance, and every pair’s shared change.</p>
             </article>
             <span class="pipeline-arrow" aria-hidden="true">→</span>
             <article>
               <span class="pipeline-number">3</span>
-              <div class="mini-manifold" aria-hidden="true">
-                <i></i><i></i><i></i>
-              </div>
-              <h3>Curved matrix space</h3>
-              <p>Each valid matrix becomes one point.</p>
+              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
+                <path class="cone-body" d="M60 92 L22 30 L98 30 Z" />
+                <ellipse class="cone-rim" cx="60" cy="30" rx="38" ry="10" />
+                <circle class="pt cyan" cx="49" cy="46" r="3.4" />
+                <circle class="pt coral" cx="71" cy="42" r="3.4" />
+                <circle class="pt lemon" cx="60" cy="62" r="4" />
+              </svg>
+              <h3>A curved cone of matrices</h3>
+              <p>Positivity confines every valid matrix to a cone — each trial is one point in it.</p>
             </article>
             <span class="pipeline-arrow" aria-hidden="true">→</span>
             <article>
               <span class="pipeline-number">4</span>
-              <div class="mini-classifier" aria-hidden="true">
-                <i></i><i></i><b></b>
-              </div>
+              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
+                <line class="link solid" x1="60" y1="46" x2="28" y2="38" />
+                <line class="link dashed" x1="60" y1="46" x2="96" y2="62" />
+                <circle class="pt cyan big" cx="28" cy="38" r="9" />
+                <circle class="pt coral big" cx="96" cy="62" r="9" />
+                <circle class="pt lemon" cx="60" cy="46" r="6" />
+              </svg>
               <h3>BCI decision</h3>
-              <p>Choose the brain-state pattern with the smallest meaningful distance.</p>
+              <p>Choose the brain-state center at the smallest meaningful distance.</p>
             </article>
           </div>
           <rg-signal-covariance></rg-signal-covariance>
@@ -420,86 +509,16 @@
 
       <section class="bci-purpose section-shell">
         <div class="purpose-heading">
-          <p class="eyebrow coral">What this changes in a BCI</p>
-          <h2>Geometry turns “looks similar” into a precise operation.</h2>
+          <p class="eyebrow coral">Why go to this trouble</p>
+          <h2>A simple idea that quietly wins.</h2>
           <p>
-            The purpose is not mathematical decoration. It gives the decoder a
-            consistent way to summarize, compare, average, and adapt EEG trials.
+            Summarizing each trial as a covariance matrix and measuring it with
+            the right geometry is plain enough to explain on a single page — yet
+            decoders built in exactly this way won five international BCI
+            competitions. From here we build that decoder one operation at a
+            time, and only at the very end turn it loose on real EEG.
           </p>
         </div>
-        <div class="purpose-flow" aria-label="How Riemannian geometry supports a BCI">
-          <article>
-            <span class="purpose-question">Understand</span>
-            <h3>What pattern is present?</h3>
-            <p>
-              The covariance view exposes coordinated activity across
-              electrodes, which is often what motor imagery and evoked-response
-              decoders need.
-            </p>
-          </article>
-          <article>
-            <span class="purpose-question">Use</span>
-            <h3>Which learned state is closest?</h3>
-            <p>
-              Average the training trials for each state, then compare a new
-              trial with those average patterns using the curved-space distance.
-            </p>
-          </article>
-          <article>
-            <span class="purpose-question">Adapt</span>
-            <h3>Can knowledge move between sessions?</h3>
-            <p>
-              Aligning the matrix spaces can reduce session or participant
-              differences and support transfer learning, though performance
-              still depends on the data.
-            </p>
-          </article>
-          <article>
-            <span class="purpose-question">Monitor</span>
-            <h3>Does this trial look abnormal?</h3>
-            <p>
-              A trial very far from the normal EEG region can be flagged as a
-              possible artifact or poor-quality segment.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="benefits-section section-shell">
-        <div class="benefits-heading">
-          <p class="eyebrow cyan">Why this is useful</p>
-          <h2>Work with the structure of EEG,<br />not against it.</h2>
-        </div>
-        <div class="benefit-grid">
-          <article>
-            <span aria-hidden="true">◎</span>
-            <h3>Multichannel by design</h3>
-            <p>Preserves relationships between electrodes instead of treating features independently.</p>
-          </article>
-          <article>
-            <span aria-hidden="true">⌁</span>
-            <h3>Meaningful averages</h3>
-            <p>Builds an average pattern for each BCI state without leaving the space of valid covariance matrices.</p>
-          </article>
-          <article>
-            <span aria-hidden="true">↝</span>
-            <h3>Simple classification</h3>
-            <p>A powerful baseline can be built by measuring distance to each class mean.</p>
-          </article>
-          <article>
-            <span aria-hidden="true">⇄</span>
-            <h3>Transfer potential</h3>
-            <p>Re-centering and aligning matrix patterns can help manage differences across sessions and people.</p>
-          </article>
-        </div>
-        <aside class="reality-check">
-          <strong>A useful geometry—not magic.</strong>
-          <p>
-            Artifacts, weak preprocessing, and unstable relationship estimates
-            still matter. Geometry gives us a better representation and better
-            operations on it; it does not guarantee that every BCI will improve.
-          </p>
-        </aside>
       </section>
 
       <section id="explore" class="explorer-section">
@@ -693,7 +712,9 @@
             <p>
               The log map turns each nearby covariance matrix into one vector, so
               tools like LDA, logistic regression, or an SVM can take over from
-              here. This is the alternative to the minimum-distance route.
+              here. The same re-centering on a reference also makes two recordings
+              line up — which is how a decoder transfers to a new session or person
+              with little recalibration, the geometry’s quiet superpower.
             </p>
           </div>
           <figure class="manim-feature lesson-video tangent-video">
@@ -893,6 +914,19 @@
             </article>
           </div>
         </div>
+        <aside class="potato-note section-shell">
+          <div>
+            <p class="eyebrow cyan">…but geometry can also guard the signal</p>
+            <strong>The Riemannian “potato”: an automatic quality check.</strong>
+          </div>
+          <p>
+            The same covariance matrices double as a live signal-quality score. A
+            trial whose covariance sits too far — in Riemannian distance — from a
+            clean reference is flagged and skipped, so the decoder never acts on a
+            blink or a muscle burst. One representation, two jobs: make the call,
+            and know when not to.
+          </p>
+        </aside>
       </section>
 
       <section class="glossary-section section-shell" aria-labelledby="glossary-title">
@@ -914,6 +948,10 @@
             <dd><strong>Riemannian metric</strong> · a rule for measuring separation inside that matrix space.</dd>
           </div>
           <div>
+            <dt>Two ways to measure</dt>
+            <dd><strong>Affine-invariant vs. log-Euclidean</strong> · the exact curved distance, and a faster flat-map approximation of it.</dd>
+          </div>
+          <div>
             <dt>Shortest allowed route</dt>
             <dd><strong>Geodesic</strong> · the path whose length gives Riemannian distance.</dd>
           </div>
@@ -930,40 +968,37 @@
 
       <section id="notebook" class="notebook-section">
         <div class="section-shell">
-          <div class="notebook-heading">
-            <div>
-              <p class="eyebrow violet">From visual theory to working BCI</p>
-              <h2>Now use it on real EEG.</h2>
-            </div>
-            <div class="notebook-intro">
-              <p>
-                The companion notebook downloads an open motor-imagery
-                recording, builds covariance matrices, and compares three
-                complete classifiers without mixing training and test runs.
-              </p>
-              <div class="notebook-actions">
-                <a
-                  class="notebook-colab"
-                  href="https://colab.research.google.com/drive/1Wxnq27N_0s21FsK977YJyp1gjF_zshnC?usp=sharing"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span>
-                    <strong>Run the guided notebook</strong>
-                    <small>Opens in Google Colab — no setup needed</small>
-                  </span>
-                  <b aria-hidden="true">↗</b>
-                </a>
-                <a
-                  class="notebook-download"
-                  href="downloads/01_riemannian_eeg_motor_imagery.ipynb"
-                  download
-                >
-                  Download the executed notebook
-                  <span aria-hidden="true">↓</span>
-                </a>
-              </div>
-            </div>
+          <div class="notebook-arrival">
+            <p class="eyebrow violet">Chapter 06 · the real thing</p>
+            <h2>You understand every step. Now run it on real brains.</h2>
+            <p class="notebook-lead">
+              A signal became a number, the number became a covariance matrix,
+              the right distance gave it a class center, and the nearest center
+              made a decision. The guided notebook is that exact pipeline — end
+              to end, on a real motor-imagery recording, runnable in your browser
+              with nothing to install.
+            </p>
+          </div>
+
+          <div class="notebook-launch">
+            <a
+              class="notebook-colab"
+              href="https://colab.research.google.com/drive/1Wxnq27N_0s21FsK977YJyp1gjF_zshnC?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="colab-kicker">Start here ↗</span>
+              <strong>Open the guided notebook in Colab</strong>
+              <small>Runs in your browser · no setup · every cell mirrors a step from this page</small>
+            </a>
+            <a
+              class="notebook-download"
+              href="downloads/01_riemannian_eeg_motor_imagery.ipynb"
+              download
+            >
+              Prefer offline? Download the executed notebook
+              <span aria-hidden="true">↓</span>
+            </a>
           </div>
 
           <div class="notebook-grid">

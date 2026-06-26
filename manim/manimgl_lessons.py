@@ -253,13 +253,20 @@ class CovariancePathGL(Scene):
             text("×", size=22, color=CYAN),
         ).arrange(RIGHT, buff=0.12).move_to(RIGHT * 3.05 + DOWN * 2.45)
 
+        # The counter changes width as it climbs 0 -> 100, so pin the trailing
+        # "%" with an updater that keeps it just right of the live digits — that
+        # way it never overlaps the number however many digits it shows.
         progress = DecimalNumber(0, num_decimal_places=0, color=LEMON)
         progress.add_updater(lambda number: number.set_value(100 * t.get_value()))
-        progress_label = VGroup(
-            text("position", size=19, color=MUTED),
-            progress,
-            text("%", size=20, color=LEMON),
-        ).arrange(RIGHT, buff=0.1).to_edge(DOWN, buff=0.28)
+        position_text = text("position", size=19, color=MUTED)
+        percent_text = text("%", size=20, color=LEMON)
+        progress_label = VGroup(position_text, progress).arrange(RIGHT, buff=0.18)
+        percent_text.next_to(progress, RIGHT, buff=0.12)
+        percent_text.add_updater(
+            lambda mob: mob.next_to(progress, RIGHT, buff=0.12)
+        )
+        progress_label.add(percent_text)
+        progress_label.to_edge(DOWN, buff=0.28)
 
         self.play(
             FadeIn(endpoint_left),
@@ -466,7 +473,8 @@ class RiemannianMeanGL(Scene):
             size=26,
             color=CORAL,
             weight="BOLD",
-        ).move_to(DOWN * 2.65)
+        ).move_to(DOWN * 2.9)
+        entry_candidate.set_backstroke(NIGHT, 6)
         self.play(
             FadeIn(candidate),
             FadeIn(candidate_label),
@@ -482,6 +490,7 @@ class RiemannianMeanGL(Scene):
             color=LEMON,
             weight="BOLD",
         ).move_to(entry_candidate)
+        minimize.set_backstroke(NIGHT, 6)
         self.play(
             FadeTransform(entry_candidate, minimize),
             FadeOut(space_name),

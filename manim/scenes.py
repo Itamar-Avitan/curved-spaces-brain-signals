@@ -603,9 +603,11 @@ class MDMClassifier(Scene):
         left_mean_label = label("class mean", color=CYAN, size=19).next_to(
             left_mean, DOWN, buff=0.22
         )
+        left_mean_label.add_background_rectangle(color="#1B1E2E", opacity=0.7, buff=0.07)
         right_mean_label = label("class mean", color=CORAL, size=19).next_to(
             right_mean, DOWN, buff=0.22
         )
+        right_mean_label.add_background_rectangle(color="#1B1E2E", opacity=0.7, buff=0.07)
         step_two = label(
             "2  Find one curved-space center for each class",
             color=LEMON,

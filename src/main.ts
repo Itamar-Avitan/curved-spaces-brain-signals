@@ -1,4 +1,5 @@
 import "./styles.css";
+import "./widgets/power-line";
 import "./widgets/covariance-explorer";
 import "./widgets/signal-covariance";
 import "./widgets/distance-explorer";
