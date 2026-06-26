@@ -339,6 +339,25 @@ h2 {
   text-decoration-color: var(--lemon);
 }
 
+/* Unified, branded keyboard-focus ring for page-level CTAs and nav links
+   (widgets carry their own focus styles in shadow DOM). */
+.primary-button:focus-visible,
+.hero-ghost:focus-visible,
+.nav-links a:focus-visible,
+.notebook-download:focus-visible,
+.source-feature:focus-visible,
+.references-section a:focus-visible,
+footer a:focus-visible {
+  outline: 3px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.notebook-colab:focus-visible {
+  outline: 3px solid var(--lemon);
+  outline-offset: 4px;
+}
+
 .hero-demo {
   position: relative;
   z-index: 2;
