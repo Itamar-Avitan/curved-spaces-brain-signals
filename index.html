@@ -163,9 +163,8 @@
             <p class="route-brief-label">By the end, you will be able to</p>
             <ul>
               <li>Explain why one EEG trial becomes a covariance matrix.</li>
-              <li>Compare straight and geometry-aware routes between trial patterns.</li>
-              <li>Describe why a Riemannian mean is used as a class prototype.</li>
-              <li>Trace how MDM turns a new trial into a predicted label.</li>
+              <li>Say why a Riemannian mean beats an entry-wise average as a class center.</li>
+              <li>Trace how the decoder turns a new trial into a predicted label.</li>
             </ul>
           </div>
           <dl class="route-facts">
@@ -186,19 +185,14 @@
             </div>
           </dl>
         </div>
-        <div class="starter-terms">
-          <article>
-            <strong>EEG trial</strong>
-            <p>A short, task-aligned piece of multichannel EEG recording.</p>
-          </article>
-          <article>
-            <strong>BCI decoder</strong>
-            <p>A model that converts a brain-signal pattern into a useful label or command.</p>
-          </article>
-          <article>
-            <strong>Class prototype</strong>
-            <p>One representative pattern learned from examples with the same label.</p>
-          </article>
+        <div class="bci-example">
+          <strong>What a BCI actually does</strong>
+          <p>
+            A user imagines squeezing their left hand; the EEG over the motor
+            cortex shifts in a characteristic way. The decoder’s whole job is to
+            turn that shift into the command “left” — reliably, trial after trial.
+            Everything in this guide serves that one decision.
+          </p>
         </div>
       </section>
 
@@ -348,12 +342,12 @@
           </div>
         </div>
         <aside class="bci-lens section-shell">
-          <span>BCI lens</span>
+          <span>Why this matters here</span>
           <p>
-            A classifier also needs a distance rule: it must decide whether a
-            new EEG trial looks more like “left-hand imagery,” “right-hand
-            imagery,” a target response, or noise. Choosing the right geometry
-            changes which trials count as similar.
+            A classifier needs exactly what a geodesic needs: a rule for distance.
+            It has to decide whether a new brain-signal pattern is closer to one
+            learned state or another — and the geometry you pick changes which
+            patterns count as similar.
           </p>
         </aside>
         <aside class="analogy-boundary section-shell">
@@ -409,28 +403,6 @@
           </div>
         </div>
 
-        <div class="plain-language-map">
-          <article>
-            <span>Say this first</span>
-            <strong>A curved data space</strong>
-            <p>A collection of valid data objects with its own shape.</p>
-          </article>
-          <article>
-            <span>Then name it</span>
-            <strong>Manifold</strong>
-            <p>The mathematical name for that smooth space.</p>
-          </article>
-          <article>
-            <span>Say this first</span>
-            <strong>A rule for distance</strong>
-            <p>How the space decides what “close” means.</p>
-          </article>
-          <article>
-            <span>Then name it</span>
-            <strong>Metric</strong>
-            <p>The mathematical name for the distance rule.</p>
-          </article>
-        </div>
       </section>
 
       <section id="part-eeg" class="part-divider eeg section-shell" aria-label="Part 2: How it connects to EEG">
@@ -459,6 +431,37 @@
               Their curved collection is the <strong>SPD manifold</strong>.
             </p>
           </div>
+
+          <figure class="cone-figure">
+            <svg class="cone-stage" viewBox="0 0 440 360" role="img" aria-label="An SPD cone: every valid covariance matrix is a single point inside a curved, cone-shaped space.">
+              <defs>
+                <linearGradient id="conegrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#6c4eb9" stop-opacity=".22" />
+                  <stop offset="1" stop-color="#1ca9a0" stop-opacity=".06" />
+                </linearGradient>
+              </defs>
+              <path class="cf-body" d="M220 332 L52 72 A168 44 0 0 0 388 72 Z" />
+              <path class="cf-rim-back" d="M52 72 A168 44 0 0 1 388 72" />
+              <path class="cf-rim-front" d="M52 72 A168 44 0 0 0 388 72" />
+              <ellipse class="cf-mat cyan" cx="160" cy="150" rx="14" ry="8" transform="rotate(-20 160 150)" />
+              <ellipse class="cf-mat coral" cx="270" cy="132" rx="10" ry="13" transform="rotate(15 270 132)" />
+              <ellipse class="cf-mat lemon" cx="220" cy="196" rx="13" ry="10" transform="rotate(-8 220 196)" />
+              <circle class="cf-dot" cx="192" cy="112" r="3.5" />
+              <circle class="cf-dot" cx="295" cy="182" r="3.5" />
+              <circle class="cf-dot" cx="152" cy="202" r="3.5" />
+              <circle class="cf-apex" cx="220" cy="332" r="4" />
+              <text class="cf-label" x="220" y="58" text-anchor="middle">the SPD cone</text>
+            </svg>
+            <figcaption>
+              <strong>Every valid covariance matrix is one point in this cone.</strong>
+              <span>
+                Variances can’t be negative, and that single rule bends the space
+                of matrices into a cone. A straight line between two points can
+                exit the cone; the geometry-aware route stays inside it — which is
+                the whole reason the next sections need curved distance.
+              </span>
+            </figcaption>
+          </figure>
           <div class="pipeline" aria-label="EEG to Riemannian classification pipeline">
             <article>
               <span class="pipeline-number">1</span>
@@ -674,7 +677,7 @@
       <section class="method-guide section-shell" aria-labelledby="method-guide-title">
         <div class="method-guide-heading">
           <div>
-            <p class="eyebrow cyan">Choose the tool for the job</p>
+            <p class="eyebrow cyan">In practice · choose the tool for the job</p>
             <h2 id="method-guide-title">Geometry is a family of workflows, not one classifier.</h2>
           </div>
           <p>
@@ -773,43 +776,6 @@
             and know when not to.
           </p>
         </aside>
-      </section>
-
-      <section class="glossary-section section-shell" aria-labelledby="glossary-title">
-        <div class="glossary-heading">
-          <p class="eyebrow violet">Keep the language straight</p>
-          <h2 id="glossary-title">Plain idea first. Formal term second.</h2>
-        </div>
-        <dl class="glossary-grid">
-          <div>
-            <dt>Trial relationship summary</dt>
-            <dd><strong>Covariance matrix</strong> · a table describing channel variance and shared change.</dd>
-          </div>
-          <div>
-            <dt>Valid covariance-matrix space</dt>
-            <dd><strong>SPD manifold</strong> · the curved collection of symmetric positive-definite matrices.</dd>
-          </div>
-          <div>
-            <dt>Structure-aware distance rule</dt>
-            <dd><strong>Riemannian metric</strong> · a rule for measuring separation inside that matrix space.</dd>
-          </div>
-          <div>
-            <dt>Two ways to measure</dt>
-            <dd><strong>Affine-invariant vs. log-Euclidean</strong> · the exact curved distance, and a faster flat-map approximation of it.</dd>
-          </div>
-          <div>
-            <dt>Shortest allowed route</dt>
-            <dd><strong>Geodesic</strong> · the path whose length gives Riemannian distance.</dd>
-          </div>
-          <div>
-            <dt>Center of one labeled class</dt>
-            <dd><strong>Riemannian mean</strong> · the matrix minimizing total squared distance to its examples.</dd>
-          </div>
-          <div>
-            <dt>Local flat coordinates</dt>
-            <dd><strong>Tangent space</strong> · vectors that let standard linear models use nearby covariance patterns.</dd>
-          </div>
-        </dl>
       </section>
 
       <section id="notebook" class="notebook-section">
@@ -961,6 +927,43 @@
       </section>
 
       <rg-next-steps></rg-next-steps>
+
+      <section class="glossary-section section-shell" aria-labelledby="glossary-title">
+        <div class="glossary-heading">
+          <p class="eyebrow violet">Keep the language straight</p>
+          <h2 id="glossary-title">Plain idea first. Formal term second.</h2>
+        </div>
+        <dl class="glossary-grid">
+          <div>
+            <dt>Trial relationship summary</dt>
+            <dd><strong>Covariance matrix</strong> · a table describing channel variance and shared change.</dd>
+          </div>
+          <div>
+            <dt>Valid covariance-matrix space</dt>
+            <dd><strong>SPD manifold</strong> · the curved collection of symmetric positive-definite matrices.</dd>
+          </div>
+          <div>
+            <dt>Structure-aware distance rule</dt>
+            <dd><strong>Riemannian metric</strong> · a rule for measuring separation inside that matrix space.</dd>
+          </div>
+          <div>
+            <dt>Two ways to measure</dt>
+            <dd><strong>Affine-invariant vs. log-Euclidean</strong> · the exact curved distance, and a faster flat-map approximation of it.</dd>
+          </div>
+          <div>
+            <dt>Shortest allowed route</dt>
+            <dd><strong>Geodesic</strong> · the path whose length gives Riemannian distance.</dd>
+          </div>
+          <div>
+            <dt>Center of one labeled class</dt>
+            <dd><strong>Riemannian mean</strong> · the matrix minimizing total squared distance to its examples.</dd>
+          </div>
+          <div>
+            <dt>Local flat coordinates</dt>
+            <dd><strong>Tangent space</strong> · vectors that let standard linear models use nearby covariance patterns.</dd>
+          </div>
+        </dl>
+      </section>
 
       <section id="references" class="references-section">
         <div class="section-shell references-inner">
