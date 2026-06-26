@@ -911,39 +911,50 @@ h2 {
 }
 
 .history-icon {
+  display: block;
   width: 108px;
-  height: 90px;
-  margin: 32px auto 18px;
+  height: 80px;
+  margin: 30px auto 16px;
 }
 
-.flat-icon {
-  background:
-    linear-gradient(30deg, transparent 49%, rgba(32, 40, 58, 0.18) 50% 51%, transparent 52%),
-    linear-gradient(-30deg, transparent 49%, rgba(32, 40, 58, 0.18) 50% 51%, transparent 52%);
-  transform: perspective(180px) rotateX(58deg);
+.history-icon .hgrid path {
+  fill: none;
+  stroke: rgba(32, 40, 58, 0.32);
+  stroke-width: 1.4;
 }
 
-.surface-icon {
-  border: 2px solid var(--coral);
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(239, 107, 91, 0.18), transparent 66%);
-  transform: perspective(160px) rotateX(58deg);
+.history-icon .hsurf path {
+  fill: none;
+  stroke: var(--coral);
+  stroke-width: 1.6;
+  opacity: 0.85;
 }
 
-.manifold-icon {
-  border-radius: 50% 45% 55% 40%;
-  background:
-    repeating-radial-gradient(ellipse, transparent 0 12px, rgba(108, 78, 185, 0.3) 13px 14px),
-    rgba(108, 78, 185, 0.12);
-  transform: rotate(-8deg);
+.history-icon .hblob {
+  fill: rgba(108, 78, 185, 0.13);
+  stroke: var(--violet);
+  stroke-width: 1.6;
 }
 
-.gravity-icon {
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, var(--ink) 0 10%, transparent 11%),
-    repeating-radial-gradient(circle, transparent 0 12px, rgba(28, 169, 160, 0.35) 13px 14px);
-  transform: perspective(160px) rotateX(55deg);
+.history-icon .hgeo {
+  fill: none;
+  stroke: var(--lemon);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.history-icon .hpt {
+  fill: var(--violet);
+}
+
+.history-icon .hring {
+  fill: none;
+  stroke: rgba(28, 169, 160, 0.55);
+  stroke-width: 1.5;
+}
+
+.history-icon .hmass {
+  fill: var(--coral);
 }
 
 .history-track h3 {
