@@ -55,6 +55,8 @@ metadata plus a visible commit/build label.
 
 - Review URL: <https://itamar-avitan.github.io/curved-spaces-brain-signals/>
 - Source repository: <https://github.com/Itamar-Avitan/curved-spaces-brain-signals>
+- Deployment: validated pushes to `main` deploy automatically through GitHub
+  Actions; use the `workflow_dispatch` action for a manual redeploy.
 
 ## Manim
 

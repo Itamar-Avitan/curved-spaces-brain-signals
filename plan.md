@@ -46,6 +46,18 @@ before the Wix upload.
   excludes `node_modules/`, `dist*/`, raw `data/`, render cache `media/`, and
   source PDFs. Next gates: local validation, first push, Actions deployment, and
   public URL validation.
+- **Codex — §16 GitHub Pages review site deployed and validated
+  (2026-06-26 11:07 Asia/Jerusalem):** public URL is
+  `https://itamar-avitan.github.io/curved-spaces-brain-signals/`; source repo is
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals`; deployed commit
+  `515120ef32bebef739a95c63e83125930c26c4f5`; successful Actions run
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225493875`.
+  Public validation: 16 deployed local URLs return HTTP 200 with expected MIME
+  types; Chromium/Firefox/WebKit/mobile Chrome/mobile Safari smoke passed (mobile
+  Safari has known internal native-video-control `placard` console noise only);
+  reviewer interaction path passed; Lighthouse public scores performance 93,
+  accessibility 100, best-practices 100, SEO 63 due solely to intentional
+  `noindex,nofollow`; `npm test` and `npm run build:all` passed.
 - **Claude — pasted the maintainer Colab URL into the `#notebook` CTA
   (2026-06-26 10:34 Asia/Jerusalem):** at the maintainer's request I edited Codex's
   `notebook-actions` block — set the real Colab href, removed `is-placeholder` /
@@ -84,7 +96,7 @@ before the Wix upload.
 | 13  | Newcomer next steps / onboarding hand-off  | ✅ done                              |
 | 14  | Quality & accessibility hardening          | 🟨 VoiceOver pass pending            |
 | 15  | Final validation                           | 🟨 2 external checks pending         |
-| 16  | Free GitHub Pages review deployment        | 🟨 publishing in progress            |
+| 16  | Free GitHub Pages review deployment        | ✅ deployed (rollback/retirement later) |
 
 ## Project map
 
@@ -631,10 +643,15 @@ Official implementation references:
   Evidence: `gh repo create Itamar-Avitan/curved-spaces-brain-signals --public
   --source . --remote origin` returned
   `https://github.com/Itamar-Avitan/curved-spaces-brain-signals`.
-- [ ] Commit the source, generated public media/downloads required by the site,
+- [x] Commit the source, generated public media/downloads required by the site,
   Pages configuration, workflow, README, and validation evidence. Do not commit
   `node_modules/`, `dist/`, `dist-pages/`, private data, render caches, or temporary
   audit files.
+  Evidence: initial commit `3611620a021b44cb09e2ad137e6df052707c49da` pushed
+  the audited source/public assets; follow-up commit
+  `515120ef32bebef739a95c63e83125930c26c4f5` fixed public Lighthouse audit
+  issues. `git status --ignored` confirmed generated/private folders remain
+  ignored.
 - [x] Update `README.md` with local commands for both targets:
   Wix/library (`npm run build`) and review site (`npm run build:pages`), plus the
   final GitHub Pages URL and the public-review warning.
@@ -658,35 +675,69 @@ Official implementation references:
   `actions/checkout@v6`, `actions/setup-node@v4`,
   `actions/configure-pages@v6`, `actions/upload-pages-artifact@v5`,
   `actions/deploy-pages@v5`.
-- [ ] In repository **Settings → Pages**, set the publishing source to
+- [x] In repository **Settings → Pages**, set the publishing source to
   **GitHub Actions**. Add a deployment protection rule so only `main` can deploy.
-- [ ] Push `main`, monitor the workflow to completion, and record the successful
+  Evidence: Pages API reports `build_type: "workflow"`, `html_url:
+  https://itamar-avitan.github.io/curved-spaces-brain-signals/`, `https_enforced:
+  true`; `github-pages` environment has custom branch policies enabled with exactly
+  one deployment branch policy: `main`.
+- [x] Push `main`, monitor the workflow to completion, and record the successful
   Actions run URL, deployed commit SHA, deployment timestamp, and public page URL.
+  Evidence: run
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225493875`
+  completed successfully for commit
+  `515120ef32bebef739a95c63e83125930c26c4f5`; deployment finished
+  2026-06-26 11:05 Asia/Jerusalem; public URL:
+  `https://itamar-avitan.github.io/curved-spaces-brain-signals/`.
 
 ### 16e. Validate the public review site
 
-- [ ] Fetch the public URL and every local media/download URL; require HTTP 200 and
+- [x] Fetch the public URL and every local media/download URL; require HTTP 200 and
   correct MIME types. Confirm HTTPS is active.
-- [ ] Run the §14/§15 Playwright checks against the public URL in Chromium, Firefox,
+  Evidence: root page returns HTTPS HTTP/2 200; 16 deployed local URLs checked:
+  JS, CSS, both notebook downloads, all five MP4s, posters/images, and result image
+  returned HTTP 200 with expected `application/javascript`, `text/css`,
+  `application/x-ipynb+json`, `video/mp4`, `image/jpeg`, and `image/png` MIME types.
+- [x] Run the §14/§15 Playwright checks against the public URL in Chromium, Firefox,
   WebKit, mobile Chrome, and mobile Safari—not only against localhost.
-- [ ] Verify the complete reviewer path: skip link, sticky chapter progress,
+  Evidence: Playwright 1.61.1 public smoke passed in Chromium, Firefox, WebKit,
+  mobile Chrome, and mobile Safari: 8 custom elements defined/present/rendered,
+  5 videos, 10 next-step links, review banner commit visible, no page errors or
+  failed requests. Mobile Safari logs 20 WebKit-internal native video-control
+  `placard` messages only.
+- [x] Verify the complete reviewer path: skip link, sticky chapter progress,
   signal→covariance play/scrub, distance/mean/tangent controls and checks, MDM,
-  notebook download, disabled Colab placeholder (until its real URL exists),
+  notebook download, hosted Colab link,
   next-steps links, transcripts, and all five videos.
-- [ ] Run Lighthouse against the public URL and compare performance/accessibility
+  Evidence: Chromium interaction pass verified keyboard skip link to
+  `#main-content`, signal scrub + play, distance/mean/tangent controls and
+  `<details>` checks, MDM sliders, concept-check feedback, notebook download URL,
+  active Colab URL, 10 next-step links, and review banner commit.
+- [x] Run Lighthouse against the public URL and compare performance/accessibility
   with the local §14 record. Treat new 404s, mixed-content warnings, console errors,
   or a material score regression as deployment failures.
-- [ ] Verify the Wix deliverable independently after Pages work:
+  Evidence: public Lighthouse after the contrast/favicon fix scored performance 93,
+  accessibility 100, best-practices 100, SEO 63. The only weighted SEO failure is
+  `is-crawlable`, caused by the intentionally required review-build
+  `noindex,nofollow`; no accessibility or best-practices failures remain.
+- [x] Verify the Wix deliverable independently after Pages work:
   `npm run build` still produces the expected library bundle, and all eight custom
   elements register from `dist/`.
-- [ ] Send reviewers the URL together with the reviewed commit SHA and a short
+  Evidence: `npm run build:all` passed after Pages fixes: Wix bundle in `dist/`,
+  Pages build in `dist-pages/`, and `validate-build-targets.mjs` confirmed both
+  deployment targets.
+- [x] Send reviewers the URL together with the reviewed commit SHA and a short
   feedback checklist. Make clear that this is a public temporary review build and
   that the final Wix page may supply surrounding navigation/copy differently.
+  Evidence: reviewer handoff text is included in the Codex final response for this
+  deployment.
 
 ### 16f. Updates, rollback, and retirement
 
-- [ ] Document that accepted changes deploy automatically after validation and a
+- [x] Document that accepted changes deploy automatically after validation and a
   push to `main`; use `workflow_dispatch` for a manual redeploy.
+  Evidence: README public-review section documents automatic `main` deploys and
+  manual `workflow_dispatch` redeploys.
 - [ ] Test rollback by redeploying a known-good commit or reverting a review change.
 - [ ] Before Wix launch, decide whether to retain the Pages site as a public demo or
   unpublish it in **Settings → Pages**. If retained, remove the review/noindex banner
