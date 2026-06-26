@@ -1,0 +1,1186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="An interactive introduction to Riemannian geometry for EEG and brain-computer interfaces."
+    />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Curved Spaces, Brain Signals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to learning content</a>
+    <aside class="review-build" aria-label="Public review build" hidden>
+      <strong>Public review build</strong>
+      <span>
+        Commit <code data-review-sha>local build</code> · built
+        <time data-review-date>locally</time>
+      </span>
+    </aside>
+    <main id="main-content">
+      <section class="hero">
+        <nav class="topbar" aria-label="Page navigation">
+          <a class="brand" href="#top" aria-label="Curved Spaces home">
+            <span class="brand-mark" aria-hidden="true"></span>
+            Curved Spaces
+          </a>
+          <div class="nav-links">
+            <a href="#story">The story</a>
+            <a href="#eeg">Why EEG?</a>
+            <a href="#explore">Explore</a>
+            <a href="#notebook">Notebook</a>
+          </div>
+        </nav>
+
+        <div id="top" class="hero-copy">
+          <p class="eyebrow">Curved geometry for EEG · a visual introduction</p>
+          <h1>What if the shortest path<br />is <em>not</em> a straight line?</h1>
+          <p class="hero-lede">
+            A mathematical idea about measuring curved spaces became the
+            language of gravity. Today, the same idea helps us decide which
+            multichannel brain-signal patterns are truly similar.
+          </p>
+          <a class="primary-button" href="#story">
+            Follow the curve
+            <span aria-hidden="true">↓</span>
+          </a>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit orbit-one"></div>
+          <div class="orbit orbit-two"></div>
+          <div class="manifold">
+            <span class="path-dot dot-a"></span>
+            <span class="path-dot dot-b"></span>
+            <span class="geodesic"></span>
+          </div>
+          <div class="floating-card card-space">
+            <span>physical space</span>
+            <strong>straightest paths</strong>
+          </div>
+          <div class="floating-card card-data">
+            <span>data space</span>
+            <strong>channel relationships</strong>
+          </div>
+        </div>
+        <div class="hero-wave" aria-hidden="true"></div>
+      </section>
+
+      <nav class="chapter-map" aria-label="Learning chapters">
+        <div class="section-shell">
+          <a href="#story"><span>01</span>Why geometry?</a>
+          <a href="#eeg"><span>02</span>Represent EEG</a>
+          <a href="#distance"><span>03</span>Measure distance</a>
+          <a href="#mean"><span>04</span>Build a center</a>
+          <a class="chapter-bridge" href="#tangent"><span>bridge</span>To machine learning</a>
+          <a href="#classifier"><span>05</span>Make a prediction</a>
+          <a href="#notebook"><span>06</span>Test on data</a>
+        </div>
+        <div class="chapter-progress" aria-hidden="true"><span></span></div>
+      </nav>
+
+      <section class="learning-route section-shell" aria-labelledby="route-title">
+        <div class="route-heading">
+          <p class="eyebrow cyan">The route through this page</p>
+          <h2 id="route-title">Six questions. One complete BCI decoder.</h2>
+          <p>
+            Start with intuition, then name the mathematics. Every chapter adds
+            one operation that the final classifier will actually use.
+          </p>
+        </div>
+        <div class="route-brief" aria-label="Lesson outcomes and preparation">
+          <div class="route-outcomes">
+            <p class="route-brief-label">By the end, you will be able to</p>
+            <ul>
+              <li>Explain why one EEG trial becomes a covariance matrix.</li>
+              <li>Compare straight and geometry-aware routes between trial patterns.</li>
+              <li>Describe why a Riemannian mean is used as a class prototype.</li>
+              <li>Trace how MDM turns a new trial into a predicted label.</li>
+            </ul>
+          </div>
+          <dl class="route-facts">
+            <div>
+              <dt>Who this is for</dt>
+              <dd>BCI and EEG newcomers who want the geometry to feel concrete.</dd>
+            </div>
+            <div>
+              <dt>Time</dt>
+              <dd>About 35 minutes, plus 30–45 minutes for the notebook.</dd>
+            </div>
+            <div>
+              <dt>Prerequisites</dt>
+              <dd>
+                Comfort with vectors and matrices. No prior Riemannian geometry
+                or EEG analysis required.
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <ol class="route-steps">
+          <li>
+            <span>signal</span>
+            <strong>What did the electrodes record?</strong>
+          </li>
+          <li>
+            <span>covariance</span>
+            <strong>How did the channels vary together?</strong>
+          </li>
+          <li>
+            <span>distance</span>
+            <strong>Which trial patterns are genuinely close?</strong>
+          </li>
+          <li>
+            <span>class center</span>
+            <strong>What is typical for one labeled brain state?</strong>
+          </li>
+          <li>
+            <span>prediction</span>
+            <strong>Which learned state is nearest to a new trial?</strong>
+          </li>
+          <li>
+            <span>validation</span>
+            <strong>Does the decoder work on an unseen recording run?</strong>
+          </li>
+        </ol>
+        <div class="starter-terms">
+          <article>
+            <strong>EEG trial</strong>
+            <p>A short, task-aligned piece of multichannel EEG recording.</p>
+          </article>
+          <article>
+            <strong>BCI decoder</strong>
+            <p>A model that converts a brain-signal pattern into a useful label or command.</p>
+          </article>
+          <article>
+            <strong>Class prototype</strong>
+            <p>One representative pattern learned from examples with the same label.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="story" class="story-section section-shell">
+        <div class="section-kicker">
+          <span>01</span>
+          <p>A small idea with a very long shadow</p>
+        </div>
+        <div class="story-grid">
+          <div class="story-heading">
+            <p class="eyebrow coral">Before Einstein, there was a question</p>
+            <h2>Can geometry describe a space that bends?</h2>
+          </div>
+          <div class="story-copy">
+            <p class="lead">
+              For centuries, geometry meant Euclid: flat planes, straight
+              lines, familiar triangles. Then Gauss and Riemann asked something
+              more radical—what if the space itself has shape?
+            </p>
+            <p>
+              Riemann showed how to measure distance and direction inside a
+              smooth curved space—even when that “space” is abstract and has
+              many dimensions. This became known as
+              <strong>Riemannian geometry</strong>. Half a century later, it
+              gave Einstein the language he needed to describe gravity.
+            </p>
+          </div>
+        </div>
+
+        <figure class="manim-feature">
+          <div class="manim-frame">
+            <video
+              controls
+              playsinline
+              preload="none"
+              poster="/media/curved-spaces-hook-poster.jpg"
+              aria-label="Animated introduction connecting curved space to EEG covariance geometry"
+            >
+              <source src="/media/curved-spaces-hook.mp4" type="video/mp4" />
+              Your browser does not support embedded video.
+            </video>
+          </div>
+          <figcaption>
+            <strong>From physical space to data space</strong>
+            <span>
+              A short visual bridge from straightest paths in curved space to
+              summaries of relationships between EEG channels.
+            </span>
+          </figcaption>
+          <details class="video-transcript">
+            <summary>Read the animation instead</summary>
+            <p>
+              The animation first compares a straight path on a flat grid with
+              a geodesic on a curved grid. It then introduces a metric as the
+              rule that measures local steps. Finally, multichannel EEG becomes
+              a covariance matrix, each matrix becomes a point, and a new trial
+              is compared with learned class centers.
+            </p>
+          </details>
+        </figure>
+
+        <div class="history-track" aria-label="A brief history of curved geometry">
+          <article>
+            <span class="history-year">300 BCE</span>
+            <div class="history-icon flat-icon" aria-hidden="true"></div>
+            <h3>Euclid</h3>
+            <p>Geometry of flat space.</p>
+          </article>
+          <article>
+            <span class="history-year">1827</span>
+            <div class="history-icon surface-icon" aria-hidden="true"></div>
+            <h3>Gauss</h3>
+            <p>Curvature measured from within.</p>
+          </article>
+          <article>
+            <span class="history-year">1854</span>
+            <div class="history-icon manifold-icon" aria-hidden="true"></div>
+            <h3>Riemann</h3>
+            <p>Geometry for abstract spaces.</p>
+          </article>
+          <article>
+            <span class="history-year">1915</span>
+            <div class="history-icon gravity-icon" aria-hidden="true"></div>
+            <h3>Einstein</h3>
+            <p>Gravity becomes geometry.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="relativity-section">
+        <div class="relativity-backdrop" aria-hidden="true"></div>
+        <div class="section-shell relativity-content">
+          <div class="relativity-copy">
+            <p class="eyebrow lemon">A touch of general relativity</p>
+            <h2>Matter tells spacetime how to curve.</h2>
+            <p>
+              In general relativity, gravity is not treated as an invisible
+              pulling force. Matter changes the geometry of spacetime, and
+              objects follow the straightest possible paths through that curved
+              geometry. Mathematicians call such a path a
+              <strong>geodesic</strong>.
+            </p>
+            <div class="metric-card">
+              <span class="metric-symbol">g</span>
+              <div>
+                <strong>The metric: a distance rule</strong>
+                <p>It tells us how to measure a tiny step at each location.</p>
+              </div>
+            </div>
+          </div>
+          <div class="spacetime-demo" aria-label="Conceptual curved spacetime illustration">
+            <div class="spacetime-grid">
+              <span class="mass"></span>
+              <span class="light-path"></span>
+              <span class="traveler"></span>
+            </div>
+            <p class="visual-caption">
+              The path looks curved to us, but it is locally as straight as the
+              geometry allows.
+            </p>
+          </div>
+        </div>
+        <aside class="bci-lens section-shell">
+          <span>BCI lens</span>
+          <p>
+            A classifier also needs a distance rule: it must decide whether a
+            new EEG trial looks more like “left-hand imagery,” “right-hand
+            imagery,” a target response, or noise. Choosing the right geometry
+            changes which trials count as similar.
+          </p>
+        </aside>
+        <aside class="analogy-boundary section-shell">
+          <strong>Where the analogy stops</strong>
+          <p>
+            EEG covariance matrices are not physical spacetime, and the page is
+            not applying Einstein’s field equations to the brain. The shared
+            idea is narrower: first identify the objects in your space, then
+            choose a distance rule that respects their structure.
+          </p>
+        </aside>
+      </section>
+
+      <section class="bridge-section section-shell">
+        <p class="bridge-question">But what does curved spacetime have to do with EEG?</p>
+        <div class="bridge-arrow" aria-hidden="true">↓</div>
+        <h2>Riemann’s real gift was bigger than space.</h2>
+        <p class="bridge-lede">
+          Geometry can describe any collection of objects when we can define
+          meaningful notions of “near,” “far,” and “between.”
+          <strong>Even a collection of data tables.</strong>
+        </p>
+        <div class="space-transform" aria-hidden="true">
+          <div class="transform-node">
+            <span class="planet-symbol">●</span>
+            <p>points in spacetime</p>
+          </div>
+          <span class="transform-arrow">→</span>
+          <div class="transform-node">
+            <span class="matrix-symbol">1 ρ<br />ρ 1</span>
+            <p>relationship tables</p>
+          </div>
+          <span class="transform-arrow">→</span>
+          <div class="transform-node highlighted">
+            <span class="eeg-symbol">∿∿∿</span>
+            <p>EEG channel relationships</p>
+          </div>
+        </div>
+
+        <div class="plain-language-map">
+          <article>
+            <span>Say this first</span>
+            <strong>A curved data space</strong>
+            <p>A collection of valid data objects with its own shape.</p>
+          </article>
+          <article>
+            <span>Then name it</span>
+            <strong>Manifold</strong>
+            <p>The mathematical name for that smooth space.</p>
+          </article>
+          <article>
+            <span>Say this first</span>
+            <strong>A rule for distance</strong>
+            <p>How the space decides what “close” means.</p>
+          </article>
+          <article>
+            <span>Then name it</span>
+            <strong>Metric</strong>
+            <p>The mathematical name for the distance rule.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="eeg" class="eeg-reveal">
+        <div class="section-shell">
+          <div class="reveal-heading">
+            <p class="eyebrow violet">The reveal</p>
+            <h2>Each EEG trial can become one point in a curved data space.</h2>
+            <p>
+              Instead of comparing thousands of voltage samples one by one, we
+              summarize how every pair of electrodes changes together. This
+              summary is called a <strong>covariance matrix</strong>.
+              It is mirrored across its diagonal and represents a valid amount
+              of variation in every direction. Matrices with these properties
+              are called <strong>symmetric positive-definite (SPD)</strong>.
+              Their curved collection is the <strong>SPD manifold</strong>.
+            </p>
+          </div>
+          <div class="pipeline" aria-label="EEG to Riemannian classification pipeline">
+            <article>
+              <span class="pipeline-number">1</span>
+              <div class="mini-signals" aria-hidden="true">
+                <i></i><i></i><i></i><i></i>
+              </div>
+              <h3>EEG epoch</h3>
+              <p>Many channels changing over time.</p>
+            </article>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <article>
+              <span class="pipeline-number">2</span>
+              <div class="mini-matrix" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <h3>Relationship summary</h3>
+              <p>A fingerprint of channel relationships.</p>
+            </article>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <article>
+              <span class="pipeline-number">3</span>
+              <div class="mini-manifold" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+              <h3>Curved matrix space</h3>
+              <p>Each valid matrix becomes one point.</p>
+            </article>
+            <span class="pipeline-arrow" aria-hidden="true">→</span>
+            <article>
+              <span class="pipeline-number">4</span>
+              <div class="mini-classifier" aria-hidden="true">
+                <i></i><i></i><b></b>
+              </div>
+              <h3>BCI decision</h3>
+              <p>Choose the brain-state pattern with the smallest meaningful distance.</p>
+            </article>
+          </div>
+          <rg-signal-covariance></rg-signal-covariance>
+        </div>
+      </section>
+
+      <section class="bci-purpose section-shell">
+        <div class="purpose-heading">
+          <p class="eyebrow coral">What this changes in a BCI</p>
+          <h2>Geometry turns “looks similar” into a precise operation.</h2>
+          <p>
+            The purpose is not mathematical decoration. It gives the decoder a
+            consistent way to summarize, compare, average, and adapt EEG trials.
+          </p>
+        </div>
+        <div class="purpose-flow" aria-label="How Riemannian geometry supports a BCI">
+          <article>
+            <span class="purpose-question">Understand</span>
+            <h3>What pattern is present?</h3>
+            <p>
+              The covariance view exposes coordinated activity across
+              electrodes, which is often what motor imagery and evoked-response
+              decoders need.
+            </p>
+          </article>
+          <article>
+            <span class="purpose-question">Use</span>
+            <h3>Which learned state is closest?</h3>
+            <p>
+              Average the training trials for each state, then compare a new
+              trial with those average patterns using the curved-space distance.
+            </p>
+          </article>
+          <article>
+            <span class="purpose-question">Adapt</span>
+            <h3>Can knowledge move between sessions?</h3>
+            <p>
+              Aligning the matrix spaces can reduce session or participant
+              differences and support transfer learning, though performance
+              still depends on the data.
+            </p>
+          </article>
+          <article>
+            <span class="purpose-question">Monitor</span>
+            <h3>Does this trial look abnormal?</h3>
+            <p>
+              A trial very far from the normal EEG region can be flagged as a
+              possible artifact or poor-quality segment.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="benefits-section section-shell">
+        <div class="benefits-heading">
+          <p class="eyebrow cyan">Why this is useful</p>
+          <h2>Work with the structure of EEG,<br />not against it.</h2>
+        </div>
+        <div class="benefit-grid">
+          <article>
+            <span aria-hidden="true">◎</span>
+            <h3>Multichannel by design</h3>
+            <p>Preserves relationships between electrodes instead of treating features independently.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">⌁</span>
+            <h3>Meaningful averages</h3>
+            <p>Builds an average pattern for each BCI state without leaving the space of valid covariance matrices.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">↝</span>
+            <h3>Simple classification</h3>
+            <p>A powerful baseline can be built by measuring distance to each class mean.</p>
+          </article>
+          <article>
+            <span aria-hidden="true">⇄</span>
+            <h3>Transfer potential</h3>
+            <p>Re-centering and aligning matrix patterns can help manage differences across sessions and people.</p>
+          </article>
+        </div>
+        <aside class="reality-check">
+          <strong>A useful geometry—not magic.</strong>
+          <p>
+            Artifacts, weak preprocessing, and unstable relationship estimates
+            still matter. Geometry gives us a better representation and better
+            operations on it; it does not guarantee that every BCI will improve.
+          </p>
+        </aside>
+      </section>
+
+      <section id="explore" class="explorer-section">
+        <div class="section-shell">
+          <div class="explorer-intro">
+            <div>
+              <p class="eyebrow coral">Try the first idea yourself</p>
+              <h2>Turn two EEG channels into geometry.</h2>
+            </div>
+            <p>
+              Change the relationship between two synthetic channels. Watch
+              their covariance matrix and ellipse respond in real time.
+            </p>
+          </div>
+          <div class="lesson-purpose explore-purpose">
+            <span>Question answered</span>
+            <strong>
+              How does the relationship between two EEG channels become a single
+              geometric object?
+            </strong>
+            <p>
+              Every later step — distance, class center, prediction — operates on
+              this covariance matrix, so the whole decoder starts here.
+            </p>
+          </div>
+          <rg-covariance-explorer></rg-covariance-explorer>
+        </div>
+      </section>
+
+      <section id="distance" class="distance-section">
+        <div class="section-shell">
+          <div class="distance-intro">
+            <div>
+              <p class="eyebrow cyan">Question 3 · what counts as between?</p>
+              <h2>What should “halfway” between two EEG patterns look like?</h2>
+            </div>
+            <p>
+              A decoder does more than store trials: it compares them, averages
+              them, and sometimes aligns one recording session with another.
+              All of those operations depend on what the space considers a
+              sensible route between two covariance matrices.
+            </p>
+          </div>
+          <div class="lesson-purpose">
+            <span>Question answered</span>
+            <strong>
+              Why can entry-wise matrix operations distort the scale of an
+              intermediate EEG pattern?
+            </strong>
+            <p>
+              This prepares the distance rule used by class means, MDM
+              classification, tangent-space features, and session alignment.
+            </p>
+          </div>
+          <figure class="manim-feature lesson-video">
+            <div class="manim-frame">
+              <video
+                controls
+                playsinline
+                preload="none"
+                poster="/media/covariance-path-poster.jpg"
+                aria-label="Animation explaining two routes between EEG covariance patterns"
+              >
+                <source src="/media/covariance-path.mp4" type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <figcaption>
+              <strong>Why the route changes the meaning of halfway</strong>
+              <span>
+                Two equally sized trial patterns can produce an enlarged
+                entry-wise midpoint. The geometry-aware route changes shape
+                without inventing extra scale in this example.
+              </span>
+            </figcaption>
+            <details class="video-transcript">
+              <summary>Read the animation instead</summary>
+              <p>
+                Pattern A and Pattern B are equally sized covariance ellipses
+                with opposite dominant axes. Entry-wise interpolation enlarges
+                the midpoint. The Riemannian route changes the two axes
+                multiplicatively and preserves area in this example. The final
+                frame links this choice to class centers and BCI predictions.
+              </p>
+            </details>
+          </figure>
+          <rg-distance-explorer></rg-distance-explorer>
+        </div>
+      </section>
+
+      <section id="mean" class="mean-section">
+        <div class="section-shell">
+          <div class="lesson-heading">
+            <div>
+              <p class="eyebrow coral">Question 4 · learn one class prototype</p>
+              <h2>How can many EEG trials become one representative pattern?</h2>
+            </div>
+            <div>
+              <p>
+                Repeated trials from the same BCI class are similar but never
+                identical. We need one center that summarizes them using the
+                same distance rule that will later judge a new trial.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: the center by curved-space distance</span>
+                <strong>Mathematical name: Riemannian mean</strong>
+              </div>
+            </div>
+          </div>
+          <div class="lesson-purpose mean-purpose">
+            <span>Question answered</span>
+            <strong>
+              What exactly is averaged, and how does that average become a BCI
+              decision rule?
+            </strong>
+            <p>
+              Each ellipse is already a covariance summary of one trial. The
+              chosen center becomes the stored prototype for that class.
+            </p>
+          </div>
+          <figure class="manim-feature lesson-video mean-video">
+            <div class="manim-frame">
+              <video
+                controls
+                playsinline
+                preload="none"
+                poster="/media/riemannian-mean-poster.jpg"
+                aria-label="Animation explaining how EEG training trials become a Riemannian class mean"
+              >
+                <source src="/media/riemannian-mean.mp4" type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <figcaption>
+              <strong>From repeated trials to one class prototype</strong>
+              <span>
+                The Riemannian mean is selected by minimizing the total squared
+                curved-space distance to the class’s training matrices.
+              </span>
+            </figcaption>
+            <details class="video-transcript">
+              <summary>Read the animation instead</summary>
+              <p>
+                Three covariance matrices from the same labeled brain state are
+                shown as points. Two candidate centers are compared by summing
+                squared Riemannian distances to all training points. The
+                lower-distance center is retained as the class prototype and
+                later compared with a new trial.
+              </p>
+            </details>
+          </figure>
+          <rg-mean-explorer></rg-mean-explorer>
+          <aside class="model-scope-note">
+            <strong>Why the examples use ellipses</strong>
+            <p>
+              Two-channel diagonal covariance matrices can be drawn as simple
+              ellipses, so every calculation remains visible. Real EEG uses
+              larger, full covariance matrices; the same geometric definitions
+              extend to those higher-dimensional objects.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="tangent" class="tangent-section">
+        <div class="section-shell">
+          <div class="lesson-heading tangent-heading">
+            <div>
+              <p class="eyebrow lemon">Bridge · from geometry to machine learning</p>
+              <h2>A curved surface looks flat when you stay nearby.</h2>
+            </div>
+            <div>
+              <p>
+                Think of a paper map touching the Earth at one location. Near the
+                touching point, the map is useful. The equivalent construction
+                around a covariance reference lets ordinary linear classifiers
+                read curved-space patterns.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: flatten the neighborhood around a reference</span>
+                <strong>Mathematical name: tangent space, reached by the log map</strong>
+              </div>
+            </div>
+          </div>
+          <div class="lesson-purpose tangent-purpose">
+            <span>Question answered</span>
+            <strong>
+              How do curved covariance matrices become inputs for the familiar
+              linear classifiers a BCI can train?
+            </strong>
+            <p>
+              The log map turns each nearby covariance matrix into one vector, so
+              tools like LDA, logistic regression, or an SVM can take over from
+              here. This is the alternative to the minimum-distance route.
+            </p>
+          </div>
+          <figure class="manim-feature lesson-video tangent-video">
+            <div class="manim-frame">
+              <video
+                controls
+                playsinline
+                preload="none"
+                poster="/media/tangent-space-poster.jpg"
+                aria-label="Animation mapping a neighborhood of EEG covariance matrices onto a flat tangent space"
+              >
+                <source src="/media/tangent-space.mp4" type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <figcaption>
+              <strong>Why the flat map only works close to the reference</strong>
+              <span>
+                As the neighborhood around the reference shrinks, the curved
+                geodesics straighten and the shape distortion falls toward zero —
+                so nearby matrices behave like ordinary vectors.
+              </span>
+            </figcaption>
+            <details class="video-transcript">
+              <summary>Read the animation instead</summary>
+              <p>
+                Six covariance matrices sit a fixed distance from one reference
+                matrix. On the left, the curved covariance space joins them with
+                geodesic arcs that bow outward; on the right, the log map sends
+                them to vectors joined by straight lines. A live readout reports
+                the shape distortion between the two pictures. Shrinking the
+                neighborhood drives the distortion toward zero, so the flat
+                tangent vectors can feed linear discriminant analysis, logistic
+                regression, or a support-vector machine. Widening it again makes
+                the flat approximation break down.
+              </p>
+            </details>
+          </figure>
+          <rg-tangent-explorer></rg-tangent-explorer>
+        </div>
+      </section>
+
+      <section id="classifier" class="classifier-section">
+        <div class="section-shell">
+          <div class="lesson-heading">
+            <div>
+              <p class="eyebrow violet">Put the pieces together</p>
+              <h2>From an EEG trial to a BCI decision.</h2>
+            </div>
+            <div>
+              <p>
+                We now have a structured summary for every trial, a meaningful
+                class average, and a distance rule. That is enough to build a
+                complete classifier.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: choose the nearest learned class center</span>
+                <strong>Mathematical name: Minimum Distance to Mean (MDM)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="lesson-purpose classifier-purpose">
+            <span>Question answered</span>
+            <strong>
+              How do the trial summary, the class center, and the distance rule
+              combine into one prediction?
+            </strong>
+            <p>
+              This is the decision the BCI actually ships: measure a new trial’s
+              distance to every class prototype and return the nearest label.
+            </p>
+          </div>
+
+          <figure class="manim-feature classifier-video">
+            <div class="manim-frame">
+              <video
+                controls
+                playsinline
+                preload="none"
+                poster="/media/mdm-classifier-poster.jpg"
+                aria-label="Animation of a Riemannian minimum distance to mean EEG classifier"
+              >
+                <source src="/media/mdm-classifier.mp4" type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <figcaption>
+              <strong>One complete decoding pass</strong>
+              <span>
+                Training trials form class means; a new trial is assigned to
+                its closest mean.
+              </span>
+            </figcaption>
+            <details class="video-transcript">
+              <summary>Read the animation instead</summary>
+              <p>
+                Labeled left-hand imagery trials form one cluster and right-hand
+                imagery trials form another. A Riemannian mean is learned for each
+                cluster. The decoder measures a new covariance matrix’s
+                distance to both means and predicts the label of the nearer
+                mean.
+              </p>
+            </details>
+          </figure>
+
+          <rg-mdm-playground></rg-mdm-playground>
+        </div>
+      </section>
+
+      <section class="method-guide section-shell" aria-labelledby="method-guide-title">
+        <div class="method-guide-heading">
+          <div>
+            <p class="eyebrow cyan">Choose the tool for the job</p>
+            <h2 id="method-guide-title">Geometry is a family of workflows, not one classifier.</h2>
+          </div>
+          <p>
+            These methods share covariance representations but use them
+            differently. A credible BCI study compares them with a strong
+            task-specific baseline.
+          </p>
+        </div>
+        <div class="lesson-purpose method-purpose">
+          <span>Question answered</span>
+          <strong>
+            Once EEG trials are covariance matrices, which decoder should you
+            actually reach for?
+          </strong>
+          <p>
+            MDM, tangent-space models, and CSP + LDA trade interpretability,
+            flexibility, and calibration cost differently — match the method to
+            the data you have.
+          </p>
+        </div>
+        <div class="method-table" role="table" aria-label="Comparison of EEG decoding methods">
+          <div class="method-row method-header" role="row">
+            <span role="columnheader">Method</span>
+            <span role="columnheader">What it learns</span>
+            <span role="columnheader">Useful when</span>
+            <span role="columnheader">Watch for</span>
+          </div>
+          <div class="method-row" role="row">
+            <strong role="cell">Riemannian MDM</strong>
+            <span role="cell">One covariance center per class</span>
+            <span role="cell">Calibration is limited and interpretability matters</span>
+            <span role="cell">A simple center may miss complex class boundaries</span>
+          </div>
+          <div class="method-row" role="row">
+            <strong role="cell">Tangent-space model</strong>
+            <span role="cell">A linear boundary in geometry-aware features</span>
+            <span role="cell">Classes need a more flexible separator</span>
+            <span role="cell">Reference points and preprocessing must stay inside each training fold</span>
+          </div>
+          <div class="method-row" role="row">
+            <strong role="cell">CSP + LDA</strong>
+            <span role="cell">Spatial filters with class-separating variance</span>
+            <span role="cell">Motor imagery has two classes and enough calibration data</span>
+            <span role="cell">CSP can overfit with few trials and must be fitted inside validation</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="limits-section">
+        <div class="section-shell limits-grid">
+          <div>
+            <p class="eyebrow lemon">What geometry does not solve</p>
+            <h2>A better ruler cannot repair a bad measurement.</h2>
+          </div>
+          <div class="limits-list">
+            <article>
+              <span>01</span>
+              <div>
+                <h3>Artifacts</h3>
+                <p>Eye movements, muscle activity, and poor electrode contact can dominate covariance.</p>
+              </div>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <h3>Changing distributions</h3>
+                <p>EEG shifts across time, sessions, devices, and participants; alignment may help but must be tested.</p>
+              </div>
+            </article>
+            <article>
+              <span>03</span>
+              <div>
+                <h3>Weak validation</h3>
+                <p>Randomly mixing nearby trials can leak recording-specific information and inflate performance.</p>
+              </div>
+            </article>
+            <article>
+              <span>04</span>
+              <div>
+                <h3>Missing neurophysiology</h3>
+                <p>A mathematically valid feature is not automatically relevant to the task or user.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="glossary-section section-shell" aria-labelledby="glossary-title">
+        <div class="glossary-heading">
+          <p class="eyebrow violet">Keep the language straight</p>
+          <h2 id="glossary-title">Plain idea first. Formal term second.</h2>
+        </div>
+        <dl class="glossary-grid">
+          <div>
+            <dt>Trial relationship summary</dt>
+            <dd><strong>Covariance matrix</strong> · a table describing channel variance and shared change.</dd>
+          </div>
+          <div>
+            <dt>Valid covariance-matrix space</dt>
+            <dd><strong>SPD manifold</strong> · the curved collection of symmetric positive-definite matrices.</dd>
+          </div>
+          <div>
+            <dt>Structure-aware distance rule</dt>
+            <dd><strong>Riemannian metric</strong> · a rule for measuring separation inside that matrix space.</dd>
+          </div>
+          <div>
+            <dt>Shortest allowed route</dt>
+            <dd><strong>Geodesic</strong> · the path whose length gives Riemannian distance.</dd>
+          </div>
+          <div>
+            <dt>Center of one labeled class</dt>
+            <dd><strong>Riemannian mean</strong> · the matrix minimizing total squared distance to its examples.</dd>
+          </div>
+          <div>
+            <dt>Local flat coordinates</dt>
+            <dd><strong>Tangent space</strong> · vectors that let standard linear models use nearby covariance patterns.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="notebook" class="notebook-section">
+        <div class="section-shell">
+          <div class="notebook-heading">
+            <div>
+              <p class="eyebrow violet">From visual theory to working BCI</p>
+              <h2>Now use it on real EEG.</h2>
+            </div>
+            <div class="notebook-intro">
+              <p>
+                The companion notebook downloads an open motor-imagery
+                recording, builds covariance matrices, and compares three
+                complete classifiers without mixing training and test runs.
+              </p>
+              <div class="notebook-actions">
+                <a
+                  class="notebook-colab"
+                  href="https://colab.research.google.com/drive/19X6wHJsdI8UDYu7J5rCgEjL98GoC8r8V?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span>
+                    <strong>Run the guided notebook</strong>
+                    <small>Opens in Google Colab — no setup needed</small>
+                  </span>
+                  <b aria-hidden="true">↗</b>
+                </a>
+                <a
+                  class="notebook-download"
+                  href="downloads/01_riemannian_eeg_motor_imagery.ipynb"
+                  download
+                >
+                  Download the executed notebook
+                  <span aria-hidden="true">↓</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="notebook-grid">
+            <figure class="notebook-result">
+              <div class="notebook-window-bar" aria-hidden="true">
+                <span></span><span></span><span></span>
+                <small>low-calibration-performance.ipynb</small>
+              </div>
+              <img
+                src="/media/low-calibration-performance.png"
+                alt="Line chart comparing balanced accuracy as the number of training trials per class increases"
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                <strong>The practical question</strong>
+                How well can a BCI learn when the user provides only a few
+                calibration trials?
+              </figcaption>
+            </figure>
+
+            <article class="notebook-finding">
+              <p class="eyebrow coral">What this example shows</p>
+              <h3>Geometry can make limited data more useful.</h3>
+              <p>
+                With two training trials per class, the covariance-based
+                methods were more accurate than CSP in this experiment. With
+                fuller calibration, all three methods performed similarly.
+              </p>
+              <div class="score-row">
+                <div>
+                  <span>CSP + LDA</span>
+                  <strong>84.2%</strong>
+                </div>
+                <div>
+                  <span>Riemannian MDM</span>
+                  <strong>94.5%</strong>
+                </div>
+                <div>
+                  <span>Tangent space</span>
+                  <strong>94.9%</strong>
+                </div>
+              </div>
+              <p class="result-caveat">
+                These are mean balanced accuracies for one participant with
+                two training trials per class. They demonstrate the workflow,
+                not a universal performance guarantee.
+              </p>
+            </article>
+          </div>
+
+          <div class="notebook-path" aria-label="Notebook learning path">
+            <article>
+              <span>01</span>
+              <h3>See the EEG</h3>
+              <p>
+                Inspect electrode locations, class-average signals, and the
+                motor-band frequency content before modeling anything.
+              </p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Build the space</h3>
+              <p>
+                Turn every trial into a regularized covariance matrix, verify
+                that it is valid, then visualize class means and distances.
+              </p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Test the BCI</h3>
+              <p>
+                Hold out complete recording runs, compare credible baselines,
+                and repeat the test with deliberately limited calibration.
+              </p>
+            </article>
+          </div>
+
+          <div class="notebook-scope">
+            <strong>Why this improves BCI understanding</strong>
+            <p>
+              The notebook connects each geometric object to an actual BCI
+              operation: a covariance matrix represents a trial, a class mean
+              summarizes training examples, a distance produces a decision,
+              and grouped validation tests whether that decision survives a
+              new recording run.
+            </p>
+          </div>
+
+          <div class="concept-to-code" aria-label="Connections between website lessons and notebook sections">
+            <article>
+              <span>Website: halfway and distance</span>
+              <strong>Notebook: two-channel path comparison</strong>
+              <p>Reproduce the swelling effect numerically and verify both midpoint determinants.</p>
+            </article>
+            <article>
+              <span>Website: class prototype</span>
+              <strong>Notebook: Riemannian mean objective</strong>
+              <p>Compare total squared Riemannian distance for two candidate centers.</p>
+            </article>
+            <article>
+              <span>Website: tangent space</span>
+              <strong>Notebook: full feature pipeline</strong>
+              <p>Map real covariance matrices to vectors and train logistic regression inside each fold.</p>
+            </article>
+            <article>
+              <span>Website: MDM prediction</span>
+              <strong>Notebook: held-out-run validation</strong>
+              <p>Measure whether the complete decision rule generalizes to an unseen recording run.</p>
+            </article>
+          </div>
+
+          <rg-concept-check></rg-concept-check>
+        </div>
+      </section>
+
+      <rg-next-steps></rg-next-steps>
+
+      <section id="references" class="references-section">
+        <div class="section-shell references-inner">
+          <div>
+            <p class="eyebrow lemon">Sources behind the story</p>
+            <h2>Read beyond the visuals.</h2>
+            <a
+              class="source-feature"
+              href="https://www.youtube.com/watch?v=xodtfM1r9FA&amp;list=PLu7cY2CPiRjVY-VaUZ69bXHZr5QslKbzo"
+            >
+              <img
+                src="/media/scienceclic-general-relativity.jpg"
+                alt="The Maths of General Relativity video thumbnail"
+                loading="lazy"
+                decoding="async"
+              />
+              <span>
+                <strong>Watch the visual series</strong>
+                ScienceClic English · 8 parts
+              </span>
+            </a>
+          </div>
+          <ol>
+            <li>
+              <a href="https://hal.science/hal-01570120">
+                Congedo, Barachant &amp; Bhatia (2017)
+              </a>
+              <span>Primer and review of Riemannian geometry for EEG-based BCI.</span>
+            </li>
+            <li>
+              <a href="https://inria.hal.science/hal-01394253">
+                Yger, Berar &amp; Lotte (2017)
+              </a>
+              <span>Review of Riemannian approaches in brain-computer interfaces.</span>
+            </li>
+            <li>
+              <a href="https://hal.science/hal-00681328">
+                Barachant et al. (2012)
+              </a>
+              <span>The foundational multiclass Riemannian MDM BCI pipeline.</span>
+            </li>
+            <li>
+              <a href="https://hal.science/hal-00820475">
+                Barachant et al. (2013)
+              </a>
+              <span>Covariance-matrix classification using tangent-space/kernel methods.</span>
+            </li>
+            <li>
+              <a href="https://www.einstein-online.info/en/GeomGravity/">
+                Einstein Online · Einstein’s geometric gravity
+              </a>
+              <span>A live elementary introduction from the Max Planck Institute.</span>
+            </li>
+            <li>
+              <a href="https://www.einstein-online.info/en/spotlight/shape_of_space/">
+                Einstein Online · The shape of space
+              </a>
+              <span>How geometry can describe spaces beyond a flat plane.</span>
+            </li>
+            <li>
+              <a href="https://physionet.org/content/eegmmidb/1.0.0/">
+                PhysioNet · EEG Motor Movement/Imagery Dataset
+              </a>
+              <span>The open EEG recordings used in the companion notebook.</span>
+            </li>
+            <li>
+              <a href="https://mne.tools/stable/generated/mne.datasets.eegbci.load_data.html">
+                MNE-Python · EEGBCI dataset loader
+              </a>
+              <span>The documented route used to download and read the recordings.</span>
+            </li>
+            <li>
+              <a href="https://pyriemann.readthedocs.io/en/latest/generated/pyriemann.classification.MDM.html">
+                pyRiemann · Minimum Distance to Mean
+              </a>
+              <span>The classifier implementation used in the notebook.</span>
+            </li>
+            <li>
+              <a href="https://github.com/3b1b/manim">
+                3Blue1Brown · ManimGL
+              </a>
+              <span>The animation engine used for the live geometry and class-center lessons.</span>
+            </li>
+            <li class="video-source">
+              <a href="https://www.youtube.com/watch?v=xodtfM1r9FA&amp;list=PLu7cY2CPiRjVY-VaUZ69bXHZr5QslKbzo">
+                ScienceClic English · The Maths of General Relativity
+              </a>
+              <span>
+                “Spacetime and Worldlines,” part 1 of an eight-part visual
+                series. This series informed the tone of the relativity hook.
+              </span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <footer>
+        <div>
+          <strong>Curved Spaces, Brain Signals</strong>
+          <p>Based on the Riemannian EEG/BCI literature collected for this project.</p>
+        </div>
+        <a href="#references">View the reading library ↑</a>
+      </footer>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

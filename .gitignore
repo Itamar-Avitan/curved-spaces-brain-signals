@@ -1,0 +1,13 @@
+/node_modules/
+/dist/
+/dist-pages/
+/.claude/
+/media/
+public/manim-render/
+/data/
+notebooks/.ipynb_checkpoints/
+notebooks/figures/
+**/__pycache__/
+sources/**/*.pdf
+*.log
+.DS_Store

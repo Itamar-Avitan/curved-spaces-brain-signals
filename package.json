@@ -1,0 +1,26 @@
+{
+  "name": "riemannian-eeg-learning",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit -p tsconfig.app.json && vite build",
+    "build:pages": "tsc --noEmit -p tsconfig.app.json && vite build --config vite.pages.config.ts && node scripts/validate-pages-build.mjs",
+    "build:all": "npm run build && npm run build:pages && node scripts/validate-build-targets.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "preview:pages": "vite preview --config vite.pages.config.ts --host 127.0.0.1",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "katex": "^0.16.22",
+    "lit": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.4"
+  }
+}
