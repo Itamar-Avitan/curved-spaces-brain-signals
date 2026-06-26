@@ -139,6 +139,32 @@
             one operation that the final classifier will actually use.
           </p>
         </div>
+        <ol class="route-steps">
+          <li>
+            <span>1 · signal</span>
+            <strong>What did the electrodes record?</strong>
+          </li>
+          <li>
+            <span>2 · covariance</span>
+            <strong>How did the channels vary together?</strong>
+          </li>
+          <li>
+            <span>3 · distance</span>
+            <strong>Which trial patterns are genuinely close?</strong>
+          </li>
+          <li>
+            <span>4 · class center</span>
+            <strong>What is typical for one labeled brain state?</strong>
+          </li>
+          <li>
+            <span>5 · prediction</span>
+            <strong>Which learned state is nearest to a new trial?</strong>
+          </li>
+          <li>
+            <span>6 · validation</span>
+            <strong>Does the decoder work on an unseen recording run?</strong>
+          </li>
+        </ol>
         <div class="route-brief" aria-label="Lesson outcomes and preparation">
           <div class="route-outcomes">
             <p class="route-brief-label">By the end, you will be able to</p>
@@ -167,32 +193,6 @@
             </div>
           </dl>
         </div>
-        <ol class="route-steps">
-          <li>
-            <span>signal</span>
-            <strong>What did the electrodes record?</strong>
-          </li>
-          <li>
-            <span>covariance</span>
-            <strong>How did the channels vary together?</strong>
-          </li>
-          <li>
-            <span>distance</span>
-            <strong>Which trial patterns are genuinely close?</strong>
-          </li>
-          <li>
-            <span>class center</span>
-            <strong>What is typical for one labeled brain state?</strong>
-          </li>
-          <li>
-            <span>prediction</span>
-            <strong>Which learned state is nearest to a new trial?</strong>
-          </li>
-          <li>
-            <span>validation</span>
-            <strong>Does the decoder work on an unseen recording run?</strong>
-          </li>
-        </ol>
         <div class="starter-terms">
           <article>
             <strong>EEG trial</strong>
@@ -354,12 +354,40 @@
               </div>
             </div>
           </div>
-          <div class="spacetime-demo" aria-label="Conceptual curved spacetime illustration">
-            <div class="spacetime-grid">
-              <span class="mass"></span>
-              <span class="light-path"></span>
-              <span class="traveler"></span>
-            </div>
+          <div class="spacetime-demo">
+            <svg
+              class="spacetime-stage"
+              viewBox="0 0 460 320"
+              role="img"
+              aria-label="A spacetime well: nested rings curve toward a central mass, and a geodesic deflects as it passes by."
+            >
+              <g class="st-rings">
+                <ellipse cx="230" cy="176" rx="208" ry="98" />
+                <ellipse cx="230" cy="176" rx="158" ry="74" />
+                <ellipse cx="230" cy="176" rx="110" ry="52" />
+                <ellipse cx="230" cy="176" rx="64" ry="31" />
+              </g>
+              <g class="st-spokes">
+                <line x1="230" y1="176" x2="22" y2="176" />
+                <line x1="230" y1="176" x2="438" y2="176" />
+                <line x1="230" y1="176" x2="116" y2="88" />
+                <line x1="230" y1="176" x2="344" y2="88" />
+                <line x1="230" y1="176" x2="116" y2="264" />
+                <line x1="230" y1="176" x2="344" y2="264" />
+              </g>
+              <circle class="st-mass" cx="230" cy="176" r="23" />
+              <path
+                class="st-geo"
+                id="st-geo"
+                d="M20 92 C 150 116, 152 244, 292 252 S 418 230, 448 220"
+              />
+              <text class="st-tag" x="86" y="82">geodesic</text>
+              <circle class="st-trav" r="6">
+                <animateMotion dur="5s" repeatCount="indefinite" rotate="auto">
+                  <mpath href="#st-geo" />
+                </animateMotion>
+              </circle>
+            </svg>
             <p class="visual-caption">
               The path looks curved to us, but it is locally as straight as the
               geometry allows.
@@ -397,17 +425,33 @@
         </p>
         <div class="space-transform" aria-hidden="true">
           <div class="transform-node">
-            <span class="planet-symbol">●</span>
+            <svg class="node-icon" viewBox="0 0 60 60">
+              <ellipse class="nring" cx="30" cy="33" rx="25" ry="11" />
+              <ellipse class="nring" cx="30" cy="33" rx="14" ry="6.5" />
+              <circle class="ndot coral" cx="30" cy="33" r="6" />
+              <circle class="ndot lemon" cx="50" cy="28" r="3.2" />
+            </svg>
             <p>points in spacetime</p>
           </div>
           <span class="transform-arrow">→</span>
           <div class="transform-node">
-            <span class="matrix-symbol">1 ρ<br />ρ 1</span>
+            <svg class="node-icon" viewBox="0 0 60 60">
+              <path class="nbrk" d="M16 13 L11 13 L11 47 L16 47" />
+              <path class="nbrk" d="M44 13 L49 13 L49 47 L44 47" />
+              <rect class="ndiag" x="17" y="16" width="12" height="12" rx="3" />
+              <rect class="noff" x="31" y="16" width="12" height="12" rx="3" />
+              <rect class="noff" x="17" y="30" width="12" height="12" rx="3" />
+              <rect class="ndiag" x="31" y="30" width="12" height="12" rx="3" />
+            </svg>
             <p>relationship tables</p>
           </div>
           <span class="transform-arrow">→</span>
           <div class="transform-node highlighted">
-            <span class="eeg-symbol">∿∿∿</span>
+            <svg class="node-icon" viewBox="0 0 60 60">
+              <path class="nwave cyan" d="M8 21 q 6 -8 12 0 t 12 0 t 12 0 t 8 0" />
+              <path class="nwave coral" d="M8 32 q 6 7 12 0 t 12 0 t 12 0 t 8 0" />
+              <path class="nwave violet" d="M8 43 q 6 -6 12 0 t 12 0 t 12 0 t 8 0" />
+            </svg>
             <p>EEG channel relationships</p>
           </div>
         </div>

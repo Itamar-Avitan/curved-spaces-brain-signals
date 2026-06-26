@@ -1033,51 +1033,50 @@ h2 {
   position: relative;
 }
 
-.spacetime-grid {
-  position: relative;
-  height: 470px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 54%, rgba(10, 12, 24, 0.95) 0 8%, transparent 25%),
-    repeating-radial-gradient(ellipse at 50% 54%, transparent 0 22px, rgba(28, 169, 160, 0.28) 23px 25px),
-    repeating-linear-gradient(80deg, transparent 0 35px, rgba(255, 255, 255, 0.08) 36px 37px);
-  transform: perspective(800px) rotateX(58deg);
-  box-shadow: inset 0 -50px 100px rgba(0, 0, 0, 0.38);
+.spacetime-stage {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-.mass {
-  position: absolute;
-  top: 42%;
-  left: 45%;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffe39c, #ef6b5b 48%, #672d51);
-  box-shadow: 0 0 45px rgba(239, 107, 91, 0.65);
-  transform: rotateX(-58deg);
+.st-rings ellipse {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1.4;
 }
 
-.light-path {
-  position: absolute;
-  top: 32%;
-  left: 15%;
-  width: 68%;
-  height: 35%;
-  border-top: 5px solid var(--lemon);
-  border-radius: 50%;
-  filter: drop-shadow(0 0 9px rgba(255, 211, 107, 0.7));
+.st-rings ellipse:last-child {
+  stroke: rgba(255, 211, 107, 0.45);
 }
 
-.traveler {
-  position: absolute;
-  top: 30%;
-  right: 16%;
-  width: 15px;
-  height: 15px;
-  border: 3px solid white;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 0 8px rgba(28, 169, 160, 0.18);
+.st-spokes line {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+
+.st-mass {
+  fill: var(--coral);
+  filter: drop-shadow(0 0 16px rgba(239, 107, 91, 0.55));
+}
+
+.st-geo {
+  fill: none;
+  stroke: var(--lemon);
+  stroke-width: 3.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(255, 211, 107, 0.5));
+}
+
+.st-tag {
+  fill: var(--lemon);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.st-trav {
+  fill: #fff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.85));
 }
 
 .visual-caption {
@@ -1210,24 +1209,58 @@ h2 {
   font-weight: 800;
 }
 
-.planet-symbol,
-.matrix-symbol,
-.eeg-symbol {
-  color: var(--violet);
-  font-size: 3rem;
-  line-height: 1;
+.node-icon {
+  display: block;
+  width: 72px;
+  height: 72px;
 }
 
-.matrix-symbol {
-  font-family: monospace;
-  font-size: 1.4rem;
-  line-height: 1.45;
+.node-icon .nring {
+  fill: none;
+  stroke: rgba(108, 78, 185, 0.4);
+  stroke-width: 1.4;
 }
 
-.eeg-symbol {
-  color: var(--cyan);
-  font-size: 2.2rem;
-  letter-spacing: -0.25em;
+.node-icon .ndot.coral {
+  fill: var(--coral);
+}
+
+.node-icon .ndot.lemon {
+  fill: var(--lemon);
+}
+
+.node-icon .nbrk {
+  fill: none;
+  stroke: #353d52;
+  stroke-width: 2;
+}
+
+.node-icon .ndiag {
+  fill: var(--cyan);
+  opacity: 0.85;
+}
+
+.node-icon .noff {
+  fill: var(--coral);
+  opacity: 0.6;
+}
+
+.node-icon .nwave {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.node-icon .nwave.cyan {
+  stroke: var(--cyan);
+}
+
+.node-icon .nwave.coral {
+  stroke: var(--coral);
+}
+
+.node-icon .nwave.violet {
+  stroke: #8a73d6;
 }
 
 .transform-arrow {
@@ -2884,10 +2917,6 @@ footer a {
     white-space: normal;
   }
 
-  .spacetime-grid {
-    height: 340px;
-  }
-
   .space-transform {
     flex-direction: column;
   }
@@ -2926,7 +2955,8 @@ footer a {
     stroke-dashoffset: 0;
   }
 
-  .hero-trav {
+  .hero-trav,
+  .st-trav {
     display: none;
   }
 
