@@ -239,38 +239,6 @@
           </div>
         </div>
 
-        <figure class="manim-feature">
-          <div class="manim-frame">
-            <video
-              controls
-              playsinline
-              preload="none"
-              poster="/media/curved-spaces-hook-poster.jpg"
-              aria-label="Animated introduction connecting curved space to EEG covariance geometry"
-            >
-              <source src="/media/curved-spaces-hook.mp4" type="video/mp4" />
-              Your browser does not support embedded video.
-            </video>
-          </div>
-          <figcaption>
-            <strong>From physical space to data space</strong>
-            <span>
-              A short visual bridge from straightest paths in curved space to
-              summaries of relationships between EEG channels.
-            </span>
-          </figcaption>
-          <details class="video-transcript">
-            <summary>Read the animation instead</summary>
-            <p>
-              The animation first compares a straight path on a flat grid with
-              a geodesic on a curved grid. It then introduces a metric as the
-              rule that measures local steps. Finally, multichannel EEG becomes
-              a covariance matrix, each matrix becomes a point, and a new trial
-              is compared with learned class centers.
-            </p>
-          </details>
-        </figure>
-
         <div class="history-track" aria-label="A brief history of curved geometry">
           <article>
             <span class="history-year">300 BCE</span>
@@ -622,38 +590,6 @@
               classification, tangent-space features, and session alignment.
             </p>
           </div>
-          <figure class="manim-feature lesson-video">
-            <div class="manim-frame">
-              <video
-                controls
-                playsinline
-                preload="none"
-                poster="/media/covariance-path-poster.jpg"
-                aria-label="Animation explaining two routes between EEG covariance patterns"
-              >
-                <source src="/media/covariance-path.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-              </video>
-            </div>
-            <figcaption>
-              <strong>Why the route changes the meaning of halfway</strong>
-              <span>
-                Two equally sized trial patterns can produce an enlarged
-                entry-wise midpoint. The geometry-aware route changes shape
-                without inventing extra scale in this example.
-              </span>
-            </figcaption>
-            <details class="video-transcript">
-              <summary>Read the animation instead</summary>
-              <p>
-                Pattern A and Pattern B are equally sized covariance ellipses
-                with opposite dominant axes. Entry-wise interpolation enlarges
-                the midpoint. The Riemannian route changes the two axes
-                multiplicatively and preserves area in this example. The final
-                frame links this choice to class centers and BCI predictions.
-              </p>
-            </details>
-          </figure>
           <rg-distance-explorer></rg-distance-explorer>
         </div>
       </section>
@@ -688,37 +624,6 @@
               chosen center becomes the stored prototype for that class.
             </p>
           </div>
-          <figure class="manim-feature lesson-video mean-video">
-            <div class="manim-frame">
-              <video
-                controls
-                playsinline
-                preload="none"
-                poster="/media/riemannian-mean-poster.jpg"
-                aria-label="Animation explaining how EEG training trials become a Riemannian class mean"
-              >
-                <source src="/media/riemannian-mean.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-              </video>
-            </div>
-            <figcaption>
-              <strong>From repeated trials to one class prototype</strong>
-              <span>
-                The Riemannian mean is selected by minimizing the total squared
-                curved-space distance to the class’s training matrices.
-              </span>
-            </figcaption>
-            <details class="video-transcript">
-              <summary>Read the animation instead</summary>
-              <p>
-                Three covariance matrices from the same labeled brain state are
-                shown as points. Two candidate centers are compared by summing
-                squared Riemannian distances to all training points. The
-                lower-distance center is retained as the class prototype and
-                later compared with a new trial.
-              </p>
-            </details>
-          </figure>
           <rg-mean-explorer></rg-mean-explorer>
           <aside class="model-scope-note">
             <strong>Why the examples use ellipses</strong>
@@ -764,38 +669,6 @@
             </p>
           </div>
 
-          <figure class="manim-feature classifier-video">
-            <div class="manim-frame">
-              <video
-                controls
-                playsinline
-                preload="none"
-                poster="/media/mdm-classifier-poster.jpg"
-                aria-label="Animation of a Riemannian minimum distance to mean EEG classifier"
-              >
-                <source src="/media/mdm-classifier.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-              </video>
-            </div>
-            <figcaption>
-              <strong>One complete decoding pass</strong>
-              <span>
-                Training trials form class means; a new trial is assigned to
-                its closest mean.
-              </span>
-            </figcaption>
-            <details class="video-transcript">
-              <summary>Read the animation instead</summary>
-              <p>
-                Labeled left-hand imagery trials form one cluster and right-hand
-                imagery trials form another. A Riemannian mean is learned for each
-                cluster. The decoder measures a new covariance matrix’s
-                distance to both means and predicts the label of the nearer
-                mean.
-              </p>
-            </details>
-          </figure>
-
           <rg-mdm-playground></rg-mdm-playground>
         </div>
       </section>
@@ -834,42 +707,6 @@
               with little recalibration, the geometry’s quiet superpower.
             </p>
           </div>
-          <figure class="manim-feature lesson-video tangent-video">
-            <div class="manim-frame">
-              <video
-                controls
-                playsinline
-                preload="none"
-                poster="/media/tangent-space-poster.jpg"
-                aria-label="Animation mapping a neighborhood of EEG covariance matrices onto a flat tangent space"
-              >
-                <source src="/media/tangent-space.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-              </video>
-            </div>
-            <figcaption>
-              <strong>Why the flat map only works close to the reference</strong>
-              <span>
-                As the neighborhood around the reference shrinks, the curved
-                geodesics straighten and the shape distortion falls toward zero —
-                so nearby matrices behave like ordinary vectors.
-              </span>
-            </figcaption>
-            <details class="video-transcript">
-              <summary>Read the animation instead</summary>
-              <p>
-                Six covariance matrices sit a fixed distance from one reference
-                matrix. On the left, the curved covariance space joins them with
-                geodesic arcs that bow outward; on the right, the log map sends
-                them to vectors joined by straight lines. A live readout reports
-                the shape distortion between the two pictures. Shrinking the
-                neighborhood drives the distortion toward zero, so the flat
-                tangent vectors can feed linear discriminant analysis, logistic
-                regression, or a support-vector machine. Widening it again makes
-                the flat approximation break down.
-              </p>
-            </details>
-          </figure>
           <rg-tangent-explorer></rg-tangent-explorer>
         </div>
       </section>
