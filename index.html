@@ -438,8 +438,9 @@
         <h2>How it connects to EEG</h2>
         <p>
           Now point that geometry at the brain. Each EEG trial becomes a
-          covariance matrix — a single point in a curved space of valid
-          patterns.
+          covariance matrix — a single point in a curved space of valid patterns.
+          Decoders built exactly this way have won five international BCI
+          competitions; here is the representation that makes them work.
         </p>
       </section>
 
@@ -511,47 +512,6 @@
             </article>
           </div>
           <rg-signal-covariance></rg-signal-covariance>
-        </div>
-      </section>
-
-      <section class="bci-purpose section-shell">
-        <div class="purpose-heading">
-          <p class="eyebrow coral">Why go to this trouble</p>
-          <h2>A simple idea that quietly wins.</h2>
-          <p>
-            Summarizing each trial as a covariance matrix and measuring it with
-            the right geometry is plain enough to explain on a single page — yet
-            decoders built exactly this way won five international BCI
-            competitions. The next sections build that decoder one operation at a
-            time.
-          </p>
-        </div>
-      </section>
-
-      <section id="explore" class="explorer-section">
-        <div class="section-shell">
-          <div class="explorer-intro">
-            <div>
-              <p class="eyebrow coral">Try the first idea yourself</p>
-              <h2>Turn two EEG channels into geometry.</h2>
-            </div>
-            <p>
-              Change the relationship between two synthetic channels. Watch
-              their covariance matrix and ellipse respond in real time.
-            </p>
-          </div>
-          <div class="lesson-purpose explore-purpose">
-            <span>Question answered</span>
-            <strong>
-              How does the relationship between two EEG channels become a single
-              geometric object?
-            </strong>
-            <p>
-              Every later step — distance, class center, prediction — operates on
-              this covariance matrix, so the whole decoder starts here.
-            </p>
-          </div>
-          <rg-covariance-explorer></rg-covariance-explorer>
         </div>
       </section>
 

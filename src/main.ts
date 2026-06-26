@@ -1,5 +1,4 @@
 import "./styles.css";
-import "./widgets/covariance-explorer";
 import "./widgets/signal-covariance";
 import "./widgets/distance-explorer";
 import "./widgets/mean-explorer";
