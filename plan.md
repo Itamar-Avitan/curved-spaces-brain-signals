@@ -49,15 +49,21 @@ before the Wix upload.
 - **Codex — §16 GitHub Pages review site deployed and validated
   (2026-06-26 11:07 Asia/Jerusalem):** public URL is
   `https://itamar-avitan.github.io/curved-spaces-brain-signals/`; source repo is
-  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals`; deployed commit
-  `515120ef32bebef739a95c63e83125930c26c4f5`; successful Actions run
-  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225493875`.
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals`; latest deployed
+  commit `2bbc9a804acc29dc2289a2d88527f5d3594f1dd5`; successful latest Actions run
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225967511`.
   Public validation: 16 deployed local URLs return HTTP 200 with expected MIME
   types; Chromium/Firefox/WebKit/mobile Chrome/mobile Safari smoke passed (mobile
   Safari has known internal native-video-control `placard` console noise only);
   reviewer interaction path passed; Lighthouse public scores performance 93,
   accessibility 100, best-practices 100, SEO 63 due solely to intentional
-  `noindex,nofollow`; `npm test` and `npm run build:all` passed.
+  `noindex,nofollow`; `npm test` and `npm run build:all` passed. Note: full
+  Lighthouse/content validation ran on `515120e`; the `91c3a8b` commit is
+  documentation-only and received a final public smoke check: HTTP 200, banner
+  SHA visible, 8 widgets, 5 videos, favicon present, no console/page errors. The
+  latest `2bbc9a8` commit only updates the hosted Colab URL and received a public
+  smoke check: HTTP 200, banner SHA visible, new Colab href exact, 8 widgets, no
+  console/page errors.
 - **Claude — pasted the maintainer Colab URL into the `#notebook` CTA
   (2026-06-26 10:34 Asia/Jerusalem):** at the maintainer's request I edited Codex's
   `notebook-actions` block — set the real Colab href, removed `is-placeholder` /
@@ -75,6 +81,33 @@ before the Wix upload.
   owns the live §16 git/push/Actions flow on `Itamar-Avitan/curved-spaces-brain-signals`,
   so I am NOT running any git operations to avoid a push/Actions race. Standing by to
   verify the public URL once Codex deploys, or to take over only if Codex stalls.
+- **Codex — updated hosted Colab link
+  (2026-06-26 11:18 Asia/Jerusalem):** replaced the notebook CTA with the new
+  maintainer-provided URL:
+  `https://colab.research.google.com/drive/1hqJ4yY4H785s2TBCrJkkwnhs0diGGAOP?usp=sharing`.
+  Validation: Colab GET returns HTTP 200 `text/html`; `npm test` passed 11/11;
+  `npm run build:all` passed; pushed commit
+  `2bbc9a804acc29dc2289a2d88527f5d3594f1dd5`; Actions run
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225967511`
+  succeeded; public smoke confirms the live review page uses the new href.
+- **Codex — Colab-compatible notebook rebuilt; hosted Drive replacement blocked
+  (2026-06-26 12:05 Asia/Jerusalem):** the generated notebook now includes an
+  adaptive environment setup section that installs missing Colab packages and
+  creates/locates `riemannian_eeg_utils.py`, while local `rnd_env` execution still
+  uses the tracked helper. `notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb`
+  is a clean Python 3 upload variant with the same self-contained setup. Validation:
+  `conda run -n rnd_env python notebooks/build_notebook.py`; canonical notebook
+  executed 19/19 cells with zero errors; the Colab variant executed locally under
+  `rnd_env` as a structural check, then `notebooks/publish_notebook.sh` regenerated
+  clean public artifacts; `npm test` and `npm run build:all` passed. Direct
+  replacement of the maintainer-provided Drive file
+  `1hqJ4yY4H785s2TBCrJkkwnhs0diGGAOP` failed with Drive 403
+  `appNotAuthorizedToFile`; anonymous download confirms that hosted file is still
+  the old 41-cell notebook with no setup cells and one `ModuleNotFoundError: mne`
+  output. Fallback Colab-ready copy was uploaded at
+  `https://colab.research.google.com/drive/1Wxnq27N_0s21FsK977YJyp1gjF_zshnC`,
+  but it is private by default, so do not switch the public CTA to it unless the
+  file is shared publicly or the maintainer confirms a Drive replacement.
 
 ## Status at a glance
 
@@ -91,7 +124,7 @@ before the Wix upload.
 | 8   | Tangent-space lesson buildout              | ✅ done                              |
 | 9   | Signal→covariance interactive visual       | ✅ done                              |
 | 10  | Cross-section consistency + progress       | ✅ done                              |
-| 11  | Guided notebook hand-off (Colab + EEGDash) | 🟨 hosted Colab check pending        |
+| 11  | Guided notebook hand-off (Colab + EEGDash) | 🟨 hosted Drive replacement pending  |
 | 12  | Full revision pass (flow/correctness/style) | ✅ done (re-confirm in §15)          |
 | 13  | Newcomer next steps / onboarding hand-off  | ✅ done                              |
 | 14  | Quality & accessibility hardening          | 🟨 VoiceOver pass pending            |
@@ -385,25 +418,30 @@ on Google Colab and supplies the link; the page's job is to give it an obvious h
 *Skills:* native data-science capability (no reputable data-science skill met the
 bar) + `frontend-design` for the page entry point.
 
-- [x] **Page placeholder (priority).** Added a clear, well-marked "Run the guided
-  notebook" call-to-action in the implementation/notebook area next to the existing
-  download link ([index.html:812-819](index.html#L812)). The Colab URL is provided by
-  the maintainer — leave an unmistakable `TODO: paste Colab URL` marker so there is
-  zero ambiguity about where it goes. Keep the offline download as the secondary option.
+- [x] **Page Colab entry point.** Added a clear "Run the guided notebook"
+  call-to-action in the implementation/notebook area next to the existing download
+  link ([index.html:812-819](index.html#L812)). The maintainer-provided Colab URL is
+  live:
+  `https://colab.research.google.com/drive/1hqJ4yY4H785s2TBCrJkkwnhs0diGGAOP?usp=sharing`.
+  Keep the offline download as the secondary option.
 - [x] Revised the notebook ([notebooks/01_riemannian_eeg_motor_imagery.ipynb](notebooks/01_riemannian_eeg_motor_imagery.ipynb))
   to read as a *guided* example for newcomers: explicit purpose per cell, a takeaway
   sentence per figure, tightened section intros. Edit via the generator
   [notebooks/build_notebook.py](notebooks/build_notebook.py), then rebuild. The
-  generated notebook has purpose comments in all 17 code cells and takeaways for
+  generated notebook has purpose comments in all 19 code cells and takeaways for
   all 11 figures.
 - [~] Made it **Colab-runnable**: a guarded `pip install` cell (mne, pyriemann,
-  scikit-learn, …) instead of `rnd_env`, since Colab has no conda env; confirm the
-  dataset download works on a clean Colab runtime. The downloadable `rnd_env` notebook
-  stays the canonical reproducible version. The self-contained generated variant is
-  `notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb`; it embeds the helper module.
-  Isolated local execution from an empty directory passed all 19 code cells and
-  downloaded three EDF files. **Pending check:** upload/run in an actual fresh Colab
-  runtime after the maintainer supplies the URL.
+  scikit-learn, …) plus an embedded helper-module bootstrap for Colab, since Colab
+  has no conda env and cannot see local repo files by default. The canonical
+  `rnd_env` notebook now keeps this adaptive setup too, so the same lesson is usable
+  locally and in Drive. The self-contained generated upload variant is
+  `notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb` with a Python 3 kernelspec.
+  Canonical local execution passed all 19 code cells; the Colab variant also passed
+  all 19 cells locally under `rnd_env` as a structural check. **Pending check:** replace
+  the hosted Drive file and run it in an actual fresh Colab runtime. Direct connector
+  replacement of the maintainer Drive file failed with 403 `appNotAuthorizedToFile`;
+  fallback copy:
+  `https://colab.research.google.com/drive/1Wxnq27N_0s21FsK977YJyp1gjF_zshnC`.
 - [x] **Evaluated EEGDash** ([eegdash.org](https://eegdash.org), `pip install eegdash`,
   Python 3.10+) as a data source: it mirrors 700+ BIDS-first EEG/MEG datasets and
   integrates with MNE-Python and braindecode, so `EEGDash().find(...)` could load a
@@ -428,14 +466,15 @@ bar) + `frontend-design` for the page entry point.
   dataset = EEGDashDataset(cache_dir="./data/eegdash", records=records)
   raw = dataset.datasets[0].raw
   ```
-- **Done when:** the page has an obvious, correctly-placed home for the Colab link
-  (URL pending from the maintainer), the notebook runs top-to-bottom on a fresh Colab
-  runtime, and the EEGDash evaluation is recorded.
+- **Done when:** the page has an obvious, correctly-placed home for the Colab link,
+  the hosted Drive notebook runs top-to-bottom on a fresh Colab runtime, and the
+  EEGDash evaluation is recorded.
 
-Validation 2026-06-26: canonical notebook executed 17/17 code cells with zero
-errors and published artifact hashes match; isolated Colab variant executed
-19/19 code cells with zero errors and a fresh data download; `npm run build`
-passed. Actual hosted Colab verification remains pending.
+Validation 2026-06-26: canonical notebook executed 19/19 code cells with zero
+errors; the clean Colab variant executed 19/19 cells locally under `rnd_env` as a
+structural check; `notebooks/publish_notebook.sh` refreshed `public/downloads/`;
+`npm test` and `npm run build:all` passed. Actual hosted Colab verification remains
+pending because the public Drive file still needs replacement or write permission.
 
 ## 12. Full revision pass — flow, correctness, style *(new)*
 
@@ -539,16 +578,17 @@ Re-run after §7–§14 land; the original scope already passed on 2026-06-25 (b
   inspected across reference selection, low/high distortion, and final hand-off.
 - [~] Execute every notebook cell in the `rnd_env` kernel with no errors, **and**
   run the Colab variant top-to-bottom on a fresh runtime. Canonical notebook
-  passed 17/17 cells; the self-contained Colab variant passed 19/19 cells from
-  an empty directory and downloaded three EDF files. **Pending:** repeat in a
-  real hosted Colab runtime after the maintainer supplies/uploads the URL.
+  passed 19/19 cells; the self-contained Colab variant passed 19/19 cells locally
+  under `rnd_env` as a structural check. **Pending:** replace the hosted Drive
+  notebook and repeat in a real fresh Colab runtime.
 - [x] Verify desktop and mobile layouts across Chromium/Firefox/Safari, including the
   new visuals, and the recorded Lighthouse performance + accessibility scores (§14).
 - [~] Verify keyboard + touch interaction, the new progress indicator, the "run online"
   link, downloadable notebook, media loading, and the absence of browser-console errors.
-  Everything passed except the real "run online" destination: the disabled Colab
-  placeholder and exact `TODO: paste Colab URL` marker were verified; the live URL
-  remains maintainer-supplied.
+  Everything passed except the live Drive notebook content: the CTA points to the
+  maintainer-provided public Colab URL, but anonymous download still returns the old
+  notebook without the Colab setup cells. Replace that Drive file with the generated
+  `notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb` before marking complete.
 - [x] Confirm all eight widgets register and render inside the Wix embed from the
   built `dist/` JavaScript/CSS.
 - [x] Record final validation results below.
@@ -650,8 +690,11 @@ Official implementation references:
   Evidence: initial commit `3611620a021b44cb09e2ad137e6df052707c49da` pushed
   the audited source/public assets; follow-up commit
   `515120ef32bebef739a95c63e83125930c26c4f5` fixed public Lighthouse audit
-  issues. `git status --ignored` confirmed generated/private folders remain
-  ignored.
+  issues; final documentation commit
+  `91c3a8bf3e76c23bb8f4c978dcdc40551cdaa1a3` records the deployment evidence;
+  Colab-link commit `2bbc9a804acc29dc2289a2d88527f5d3594f1dd5` updates the
+  hosted notebook CTA.
+  `git status --ignored` confirmed generated/private folders remain ignored.
 - [x] Update `README.md` with local commands for both targets:
   Wix/library (`npm run build`) and review site (`npm run build:pages`), plus the
   final GitHub Pages URL and the public-review warning.
@@ -684,10 +727,10 @@ Official implementation references:
 - [x] Push `main`, monitor the workflow to completion, and record the successful
   Actions run URL, deployed commit SHA, deployment timestamp, and public page URL.
   Evidence: run
-  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225493875`
+  `https://github.com/Itamar-Avitan/curved-spaces-brain-signals/actions/runs/28225967511`
   completed successfully for commit
-  `515120ef32bebef739a95c63e83125930c26c4f5`; deployment finished
-  2026-06-26 11:05 Asia/Jerusalem; public URL:
+  `2bbc9a804acc29dc2289a2d88527f5d3594f1dd5`; deployment finished
+  2026-06-26 11:15 Asia/Jerusalem; public URL:
   `https://itamar-avitan.github.io/curved-spaces-brain-signals/`.
 
 ### 16e. Validate the public review site

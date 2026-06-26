@@ -18,6 +18,7 @@ NOTEBOOK_DIR = Path(__file__).resolve().parent
 OUTPUT_PATH = NOTEBOOK_DIR / "01_riemannian_eeg_motor_imagery.ipynb"
 COLAB_OUTPUT_PATH = NOTEBOOK_DIR / "01_riemannian_eeg_motor_imagery_colab.ipynb"
 UTILS_PATH = NOTEBOOK_DIR / "riemannian_eeg_utils.py"
+UTILS_SOURCE = UTILS_PATH.read_text(encoding="utf-8")
 
 
 def markdown(source: str) -> nbf.NotebookNode:
@@ -98,6 +99,67 @@ cells = [
         optional, tested discovery snippet appears in the final section.
         """
     ),
+    markdown(
+        """
+        ## Environment setup
+
+        Run the next two cells once before the imports.
+
+        - In **Google Colab**, they install the missing analysis packages and
+          create the helper module inside the runtime.
+        - In the local `rnd_env` environment, they usually report that
+          everything is already available and keep using the tracked helper file.
+
+        This makes the notebook self-contained when opened from Drive/Colab
+        while preserving the reproducible local `rnd_env` workflow.
+        """
+    ),
+    code(
+        """
+        import importlib.util
+        import subprocess
+        import sys
+
+        requirements = {
+            "mne": "mne==1.12.1",
+            "pyriemann": "pyriemann==0.10",
+            "sklearn": "scikit-learn>=1.7",
+            "pandas": "pandas>=2.2",
+            "seaborn": "seaborn>=0.13",
+        }
+        missing = [
+            package
+            for module, package in requirements.items()
+            if importlib.util.find_spec(module) is None
+        ]
+        if missing:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "--quiet", *missing]
+            )
+            print("Installed:", ", ".join(missing))
+        else:
+            print("All required analysis packages are already available.")
+        """
+    ),
+    code(
+        f"""
+        from pathlib import Path
+        import sys
+
+        candidate_paths = [
+            Path.cwd() / "riemannian_eeg_utils.py",
+            Path.cwd() / "notebooks" / "riemannian_eeg_utils.py",
+        ]
+        helper_path = next((path for path in candidate_paths if path.exists()), candidate_paths[0])
+        if helper_path.exists():
+            print(f"Using helper module at {{helper_path}}")
+        else:
+            helper_path.write_text({UTILS_SOURCE!r}, encoding="utf-8")
+            print(f"Created helper module at {{helper_path}}")
+
+        sys.path.insert(0, str(helper_path.parent))
+        """
+    ),
     code(
         """
         from pathlib import Path
@@ -126,7 +188,13 @@ cells = [
         NOTEBOOK_DIR = Path.cwd()
         if not (NOTEBOOK_DIR / "riemannian_eeg_utils.py").exists():
             NOTEBOOK_DIR = Path.cwd() / "notebooks"
-        PROJECT_ROOT = NOTEBOOK_DIR.parent
+        if NOTEBOOK_DIR.name == "notebooks":
+            PROJECT_ROOT = NOTEBOOK_DIR.parent
+        else:
+            # Colab usually runs from /content with the helper module created
+            # in the current directory; keep data/figures under that writable
+            # workspace instead of resolving to /data.
+            PROJECT_ROOT = NOTEBOOK_DIR
         DATA_PATH = PROJECT_ROOT / "data" / "mne"
         FIGURE_PATH = NOTEBOOK_DIR / "figures"
         FIGURE_PATH.mkdir(parents=True, exist_ok=True)
@@ -1078,6 +1146,8 @@ cells = [
 ]
 
 CODE_PURPOSES = [
+    "Install missing packages when running in Colab or a fresh Python runtime.",
+    "Create or locate the helper module so the notebook is self-contained.",
     "Import the analysis tools, define project paths, and report versions.",
     "Reproduce the website's two routes between covariance patterns.",
     "Compare candidate class centers using the Riemannian objective.",
@@ -1124,75 +1194,6 @@ nbf.write(notebook, OUTPUT_PATH)
 print(f"Wrote {OUTPUT_PATH}")
 
 colab_notebook = deepcopy(notebook)
-setup_cell = next(
-    cell
-    for cell in colab_notebook.cells
-    if cell.cell_type == "code" and "versions = pd.Series" in cell.source
-)
-setup_cell.source = setup_cell.source.replace(
-    "PROJECT_ROOT = NOTEBOOK_DIR.parent",
-    "PROJECT_ROOT = NOTEBOOK_DIR",
-)
-
-install_cell = code(
-    """
-    # Purpose: Install only the packages missing from this Colab runtime.
-    import importlib.util
-    import subprocess
-    import sys
-
-    requirements = {
-        "mne": "mne==1.12.1",
-        "pyriemann": "pyriemann==0.10",
-        "sklearn": "scikit-learn>=1.7",
-        "pandas": "pandas>=2.2",
-        "seaborn": "seaborn>=0.13",
-    }
-    missing = [
-        package
-        for module, package in requirements.items()
-        if importlib.util.find_spec(module) is None
-    ]
-    if missing:
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "--quiet", *missing]
-        )
-        print("Installed:", ", ".join(missing))
-    else:
-        print("All required analysis packages are already available.")
-    """
-)
-install_cell.metadata["tags"] = ["colab-setup"]
-
-utils_source = UTILS_PATH.read_text(encoding="utf-8")
-utils_cell = code(
-    f"""
-    # Purpose: Create the small helper module so this notebook is self-contained.
-    from pathlib import Path
-
-    Path("riemannian_eeg_utils.py").write_text(
-        {utils_source!r},
-        encoding="utf-8",
-    )
-    print("Prepared riemannian_eeg_utils.py in the Colab working directory.")
-    """
-)
-utils_cell.metadata["tags"] = ["colab-setup", "hide-input"]
-
-setup_index = colab_notebook.cells.index(setup_cell)
-colab_notebook.cells[setup_index:setup_index] = [
-    markdown(
-        """
-        ## Colab setup
-
-        Run the next two cells once. They install only missing packages and
-        create the helper module used by the analysis. No conda environment or
-        extra uploaded file is required.
-        """
-    ),
-    install_cell,
-    utils_cell,
-]
 colab_notebook.metadata["kernelspec"] = {
     "display_name": "Python 3",
     "language": "python",
