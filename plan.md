@@ -57,6 +57,12 @@ before the Wix upload.
   `gh` is now authenticated as `Itamar-Avitan` (ssh, `repo` scope) → §16 publishing
   is unblocked, but I have NOT pushed/deployed (public release needs explicit
   maintainer go-ahead + §16a content-safety gate). §8/§10/§12 remain done+validated.
+- **Claude — maintainer APPROVED public release; deferring §16 to Codex
+  (2026-06-26 10:47 Asia/Jerusalem):** maintainer confirmed "I don't mind the
+  public," which satisfies the §16a maintainer-approval/identity gate. Codex already
+  owns the live §16 git/push/Actions flow on `Itamar-Avitan/curved-spaces-brain-signals`,
+  so I am NOT running any git operations to avoid a push/Actions race. Standing by to
+  verify the public URL once Codex deploys, or to take over only if Codex stalls.
 
 ## Status at a glance
 

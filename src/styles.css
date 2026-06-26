@@ -1899,11 +1899,11 @@ h2 {
   justify-content: space-between;
   gap: 22px;
   border-radius: 20px;
-  background: var(--coral);
+  background: #b7352b;
   padding: 17px 18px 17px 21px;
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 16px 35px rgba(239, 107, 91, 0.2);
+  box-shadow: 0 16px 35px rgba(183, 53, 43, 0.22);
 }
 
 .notebook-colab > span,
@@ -1918,7 +1918,7 @@ h2 {
 
 .notebook-colab small {
   margin-top: 3px;
-  color: rgba(255, 255, 255, 0.8);
+  color: #fff4ef;
   font-size: 0.68rem;
 }
 
