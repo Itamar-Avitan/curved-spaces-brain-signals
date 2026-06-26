@@ -207,8 +207,9 @@
         <h2>The math of curves</h2>
         <p>
           A single question — can geometry describe a space that bends? — became
-          the language of gravity, and with it a precise way to say what “close”
-          means on a curved space.
+          the language of gravity, and with it a precise way to measure what
+          “close” means on a curved space. That measure of “close” is exactly
+          what a brain-computer interface needs.
         </p>
       </section>
 
@@ -600,7 +601,7 @@
         <div class="section-shell">
           <div class="distance-intro">
             <div>
-              <p class="eyebrow cyan">Question 3 · what counts as between?</p>
+              <p class="eyebrow cyan">Move 1 of 3 · measure distance</p>
               <h2>What should “halfway” between two EEG patterns look like?</h2>
             </div>
             <p>
@@ -661,7 +662,7 @@
         <div class="section-shell">
           <div class="lesson-heading">
             <div>
-              <p class="eyebrow coral">Question 4 · learn one class prototype</p>
+              <p class="eyebrow coral">Move 2 of 3 · build a class center</p>
               <h2>How can many EEG trials become one representative pattern?</h2>
             </div>
             <div>
@@ -731,85 +732,11 @@
         </div>
       </section>
 
-      <section id="tangent" class="tangent-section">
-        <div class="section-shell">
-          <div class="lesson-heading tangent-heading">
-            <div>
-              <p class="eyebrow lemon">Bridge · from geometry to machine learning</p>
-              <h2>A curved surface looks flat when you stay nearby.</h2>
-            </div>
-            <div>
-              <p>
-                Think of a paper map touching the Earth at one location. Near the
-                touching point, the map is useful. The equivalent construction
-                around a covariance reference lets ordinary linear classifiers
-                read curved-space patterns.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: flatten the neighborhood around a reference</span>
-                <strong>Mathematical name: tangent space, reached by the log map</strong>
-              </div>
-            </div>
-          </div>
-          <div class="lesson-purpose tangent-purpose">
-            <span>Question answered</span>
-            <strong>
-              How do curved covariance matrices become inputs for the familiar
-              linear classifiers a BCI can train?
-            </strong>
-            <p>
-              The log map turns each nearby covariance matrix into one vector, so
-              tools like LDA, logistic regression, or an SVM can take over from
-              here. The same re-centering on a reference also makes two recordings
-              line up — which is how a decoder transfers to a new session or person
-              with little recalibration, the geometry’s quiet superpower.
-            </p>
-          </div>
-          <figure class="manim-feature lesson-video tangent-video">
-            <div class="manim-frame">
-              <video
-                controls
-                playsinline
-                preload="none"
-                poster="/media/tangent-space-poster.jpg"
-                aria-label="Animation mapping a neighborhood of EEG covariance matrices onto a flat tangent space"
-              >
-                <source src="/media/tangent-space.mp4" type="video/mp4" />
-                Your browser does not support embedded video.
-              </video>
-            </div>
-            <figcaption>
-              <strong>Why the flat map only works close to the reference</strong>
-              <span>
-                As the neighborhood around the reference shrinks, the curved
-                geodesics straighten and the shape distortion falls toward zero —
-                so nearby matrices behave like ordinary vectors.
-              </span>
-            </figcaption>
-            <details class="video-transcript">
-              <summary>Read the animation instead</summary>
-              <p>
-                Six covariance matrices sit a fixed distance from one reference
-                matrix. On the left, the curved covariance space joins them with
-                geodesic arcs that bow outward; on the right, the log map sends
-                them to vectors joined by straight lines. A live readout reports
-                the shape distortion between the two pictures. Shrinking the
-                neighborhood drives the distortion toward zero, so the flat
-                tangent vectors can feed linear discriminant analysis, logistic
-                regression, or a support-vector machine. Widening it again makes
-                the flat approximation break down.
-              </p>
-            </details>
-          </figure>
-          <rg-tangent-explorer></rg-tangent-explorer>
-        </div>
-      </section>
-
       <section id="classifier" class="classifier-section">
         <div class="section-shell">
           <div class="lesson-heading">
             <div>
-              <p class="eyebrow violet">Put the pieces together</p>
+              <p class="eyebrow violet">Move 3 of 3 · make the prediction</p>
               <h2>From an EEG trial to a BCI decision.</h2>
             </div>
             <div>
@@ -870,6 +797,80 @@
           </figure>
 
           <rg-mdm-playground></rg-mdm-playground>
+        </div>
+      </section>
+
+      <section id="tangent" class="tangent-section">
+        <div class="section-shell">
+          <div class="lesson-heading tangent-heading">
+            <div>
+              <p class="eyebrow lemon">The other route · geometry meets machine learning</p>
+              <h2>A curved surface looks flat when you stay nearby.</h2>
+            </div>
+            <div>
+              <p>
+                MDM decides by comparing a trial to class centers. The other
+                common route flattens the curved space first: near one reference
+                point it behaves like ordinary flat space, and standard linear
+                classifiers can read the patterns there.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: flatten the neighborhood around a reference</span>
+                <strong>Mathematical name: tangent space, reached by the log map</strong>
+              </div>
+            </div>
+          </div>
+          <div class="lesson-purpose tangent-purpose">
+            <span>Question answered</span>
+            <strong>
+              How do curved covariance matrices become inputs for the familiar
+              linear classifiers a BCI can train?
+            </strong>
+            <p>
+              The log map turns each nearby covariance matrix into one vector, so
+              tools like LDA, logistic regression, or an SVM can take over from
+              here. The same re-centering on a reference also makes two recordings
+              line up — which is how a decoder transfers to a new session or person
+              with little recalibration, the geometry’s quiet superpower.
+            </p>
+          </div>
+          <figure class="manim-feature lesson-video tangent-video">
+            <div class="manim-frame">
+              <video
+                controls
+                playsinline
+                preload="none"
+                poster="/media/tangent-space-poster.jpg"
+                aria-label="Animation mapping a neighborhood of EEG covariance matrices onto a flat tangent space"
+              >
+                <source src="/media/tangent-space.mp4" type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <figcaption>
+              <strong>Why the flat map only works close to the reference</strong>
+              <span>
+                As the neighborhood around the reference shrinks, the curved
+                geodesics straighten and the shape distortion falls toward zero —
+                so nearby matrices behave like ordinary vectors.
+              </span>
+            </figcaption>
+            <details class="video-transcript">
+              <summary>Read the animation instead</summary>
+              <p>
+                Six covariance matrices sit a fixed distance from one reference
+                matrix. On the left, the curved covariance space joins them with
+                geodesic arcs that bow outward; on the right, the log map sends
+                them to vectors joined by straight lines. A live readout reports
+                the shape distortion between the two pictures. Shrinking the
+                neighborhood drives the distortion toward zero, so the flat
+                tangent vectors can feed linear discriminant analysis, logistic
+                regression, or a support-vector machine. Widening it again makes
+                the flat approximation break down.
+              </p>
+            </details>
+          </figure>
+          <rg-tangent-explorer></rg-tangent-explorer>
         </div>
       </section>
 
