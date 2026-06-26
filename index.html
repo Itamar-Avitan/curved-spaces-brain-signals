@@ -455,10 +455,11 @@
             <figcaption>
               <strong>Every valid covariance matrix is one point in this cone.</strong>
               <span>
-                Variances can’t be negative, and that single rule bends the space
-                of matrices into a cone. A straight line between two points can
-                exit the cone; the geometry-aware route stays inside it — which is
-                the whole reason the next sections need curved distance.
+                Variances can’t be negative, and that one rule bends the space of
+                matrices into a cone that narrows toward zero. Inside a curved
+                space like this, a flat ruler misjudges distance — average two
+                patterns the straight way and it even invents scale that was in
+                neither (you’ll see it next). A ruler shaped to the cone doesn’t.
               </span>
             </figcaption>
           </figure>
@@ -536,21 +537,24 @@
               <h2>What should “halfway” between two EEG patterns look like?</h2>
             </div>
             <p>
-              A decoder does more than store trials: it compares them, averages
-              them, and sometimes aligns one recording session with another.
-              All of those operations depend on what the space considers a
-              sensible route between two covariance matrices.
+              Before a decoder can average trials, compare them, or align two
+              sessions, it has to choose a rule for distance between covariance
+              matrices. The obvious rule — treat each matrix as a flat list of
+              numbers and measure the straight-line gap — quietly distorts the
+              answer. Here is exactly how it goes wrong.
             </p>
           </div>
           <div class="lesson-purpose">
-            <span>Question answered</span>
+            <span>The case against the straight ruler</span>
             <strong>
-              Why can entry-wise matrix operations distort the scale of an
-              intermediate EEG pattern?
+              Average two equal-strength patterns the straight (Euclidean) way and
+              the result balloons — it invents scale that was in neither.
             </strong>
             <p>
-              This prepares the distance rule used by class means, MDM
-              classification, tangent-space features, and session alignment.
+              Watch the relative area below: the entry-wise midpoint grows past
+              <em>1.00</em> while the geometry-aware one holds it. And a distorted
+              average is a distorted class center — which decides every prediction.
+              This one choice sits under the whole decoder.
             </p>
           </div>
           <rg-distance-explorer></rg-distance-explorer>
