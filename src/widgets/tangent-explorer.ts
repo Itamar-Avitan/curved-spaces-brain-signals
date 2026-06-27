@@ -76,6 +76,45 @@ export class TangentExplorer extends LitElement {
       height: auto;
     }
 
+    .readout {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 18px;
+      margin: 4px 2px 2px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .readout.far {
+      background: rgba(239, 107, 91, 0.16);
+    }
+
+    .rd-metric {
+      color: #dfe0e7;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .rd-metric b {
+      color: #ffd36b;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rd-verdict {
+      color: #c9cbd6;
+      font-size: 0.82rem;
+    }
+
+    .readout.ok .rd-verdict {
+      color: #9fe7d4;
+    }
+
+    .readout.far .rd-verdict {
+      color: #ffd0c7;
+    }
+
     .definitions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -168,25 +207,51 @@ export class TangentExplorer extends LitElement {
   }
 
   render() {
-    const basePoints = [
-      [-0.8, 0.35],
-      [-0.45, -0.5],
-      [0.2, 0.55],
-      [0.68, -0.25],
-    ];
-    const points = basePoints.map(([x, y]) => [
-      x * this.spread,
-      y * this.spread,
-    ]);
-    const localEnough = this.spread <= 0.8;
+    const r = this.spread; // neighborhood size, 0.25..1.5
+    const n = 5;
+    const cy = 198;
+    const leftCx = 232;
+    const rightCx = 668;
+    const ringScreen = 44 + ((r - 0.25) / 1.25) * 86; // 44..130 px
+    const distortion = Math.min(0.2, 0.075 * r * r); // grows with neighborhood
+    const distPct = (distortion * 100).toFixed(distortion < 0.1 ? 1 : 0);
+    const faithful = distortion < 0.035; // ~ r < 0.68
+    const bow = ringScreen * distortion * 2.7; // how far the geodesic arcs bow out
+
+    const angles = Array.from(
+      { length: n },
+      (_, i) => -Math.PI / 2 + (i * 2 * Math.PI) / n,
+    );
+    const ring = (cx: number): Array<readonly [number, number]> =>
+      angles.map(
+        (a) =>
+          [cx + ringScreen * Math.cos(a), cy + ringScreen * Math.sin(a)] as const,
+      );
+    const leftPts = ring(leftCx);
+    const rightPts = ring(rightCx);
+
+    const arcPath = (
+      a: readonly [number, number],
+      b: readonly [number, number],
+    ): string => {
+      const mx = (a[0] + b[0]) / 2;
+      const my = (a[1] + b[1]) / 2;
+      const dx = mx - leftCx;
+      const dy = my - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      const qx = mx + (dx / len) * bow;
+      const qy = my + (dy / len) * bow;
+      return `M ${a[0].toFixed(1)} ${a[1].toFixed(1)} Q ${qx.toFixed(1)} ${qy.toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}`;
+    };
 
     return html`
       <div class="shell">
         <div class="control">
           <div>
-            <strong>Flatten a neighborhood—not the whole world</strong>
+            <strong>Flatten a neighborhood — not the whole world</strong>
             <span>
-              Choose how far the trials sit from the reference pattern.
+              Drag to set how far the trials sit from the reference, and watch how
+              faithfully the flattened copy matches the curved one.
             </span>
           </div>
           <label>
@@ -205,73 +270,56 @@ export class TangentExplorer extends LitElement {
         </div>
 
         <div class="visual">
-          <svg viewBox="0 0 900 390" role="img" aria-label="Mapping a curved neighborhood to a tangent plane">
-            <defs>
-              <linearGradient id="surface" x1="0" x2="1">
-                <stop offset="0" stop-color="#6c4eb9" stop-opacity=".22" />
-                <stop offset="1" stop-color="#1ca9a0" stop-opacity=".18" />
-              </linearGradient>
-            </defs>
-            <text x="185" y="34" fill="#fffaf1" font-size="18" font-weight="700" text-anchor="middle">
-              curved matrix space
-            </text>
-            <path
-              d="M35 235 C95 95 285 80 380 220 C300 340 100 350 35 235 Z"
-              fill="url(#surface)"
-              stroke="#6c4eb9"
-              stroke-width="3"
-            />
-            <circle cx="205" cy="220" r="10" fill="#ffd36b" />
-            <text x="205" y="258" fill="#ffd36b" font-size="13" font-weight="700" text-anchor="middle">
-              reference mean
-            </text>
-            ${points.map(([x, y], index) => {
-              const colors = ["#1ca9a0", "#ef6b5b", "#8d72d4", "#4cc0b8"];
-              return svg`
-                <circle
-                  cx=${205 + x * 125}
-                  cy=${210 - y * 82 - x * x * 12}
-                  r="8"
-                  fill=${colors[index]}
-                />
-              `;
-            })}
+          <svg
+            viewBox="0 0 900 350"
+            role="img"
+            aria-label="A ring of covariance matrices around a reference. On the left the curved space joins them with geodesic arcs that bow outward; on the right the log map sends them to a flat space joined by straight lines. As the neighborhood shrinks, the two pictures agree."
+          >
+            <text x=${leftCx} y="30" fill="#fffaf1" font-size="17" font-weight="700" text-anchor="middle">curved covariance space</text>
+            <circle cx=${leftCx} cy=${cy} r=${ringScreen} fill="none" stroke="#ffd36b" stroke-opacity="0.32" stroke-dasharray="4 6" />
+            ${leftPts.map(
+              (p) =>
+                svg`<line x1=${leftCx} y1=${cy} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
+            )}
+            ${leftPts.map(
+              (p, i) =>
+                svg`<path d=${arcPath(p, leftPts[(i + 1) % n])} fill="none" stroke="#8d72d4" stroke-width="3" stroke-linecap="round" />`,
+            )}
+            ${leftPts.map(
+              (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="6.5" fill="#1ca9a0" />`,
+            )}
+            <circle cx=${leftCx} cy=${cy} r="9" fill="#ffd36b" />
+            <text x=${leftCx} y="338" fill="#ffd36b" font-size="12.5" font-weight="700" text-anchor="middle">reference</text>
 
-            <path d="M405 205 C455 160 485 150 520 168" fill="none" stroke="#ffd36b" stroke-width="4" />
-            <path d="M510 155 L528 169 L507 177" fill="none" stroke="#ffd36b" stroke-width="4" />
-            <text x="465" y="132" fill="#ffd36b" font-size="14" font-weight="700" text-anchor="middle">
-              log map
-            </text>
+            <path d="M412 ${cy} q 38 -24 76 0" fill="none" stroke="#ffd36b" stroke-width="3.5" />
+            <path d="M480 ${cy - 11} l 9 11 l -11 6" fill="none" stroke="#ffd36b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            <text x="450" y=${cy - 24} fill="#ffd36b" font-size="13" font-weight="700" text-anchor="middle">log map</text>
 
-            <text x="710" y="34" fill="#fffaf1" font-size="18" font-weight="700" text-anchor="middle">
-              flat feature space
-            </text>
-            <path
-              d="M545 285 L842 285 L790 100 L500 100 Z"
-              fill="#343a54"
-              stroke="#747b8d"
-              stroke-width="2"
-            />
-            <line x1="680" x2="680" y1="115" y2="278" stroke="#596075" />
-            <line x1="535" x2="815" y1="205" y2="205" stroke="#596075" />
-            <circle cx="680" cy="205" r="10" fill="#ffd36b" />
-            ${points.map(([x, y], index) => {
-              const colors = ["#1ca9a0", "#ef6b5b", "#8d72d4", "#4cc0b8"];
-              return svg`
-                <circle
-                  cx=${680 + x * 125}
-                  cy=${205 - y * 90}
-                  r="8"
-                  fill=${colors[index]}
-                />
-              `;
+            <text x=${rightCx} y="30" fill="#fffaf1" font-size="17" font-weight="700" text-anchor="middle">flat tangent space</text>
+            <line x1=${rightCx - 145} x2=${rightCx + 145} y1=${cy} y2=${cy} stroke="#3a3f59" stroke-width="1" />
+            <line x1=${rightCx} x2=${rightCx} y1=${cy - 132} y2=${cy + 132} stroke="#3a3f59" stroke-width="1" />
+            ${rightPts.map(
+              (p) =>
+                svg`<line x1=${rightCx} y1=${cy} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
+            )}
+            ${rightPts.map((p, i) => {
+              const q = rightPts[(i + 1) % n];
+              return svg`<line x1=${p[0]} y1=${p[1]} x2=${q[0]} y2=${q[1]} stroke="#1ca9a0" stroke-width="3" stroke-linecap="round" />`;
             })}
-            <text x="680" y="335" fill=${localEnough ? "#7de0c5" : "#ffd36b"} font-size="14" font-weight="700" text-anchor="middle">
-              ${localEnough
-                ? "nearby curved points become useful vectors"
-                : "farther points make the flat approximation less local"}
-            </text>
+            ${rightPts.map(
+              (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="6.5" fill="#1ca9a0" />`,
+            )}
+            <circle cx=${rightCx} cy=${cy} r="9" fill="#ffd36b" />
           </svg>
+
+          <div class="readout ${faithful ? "ok" : "far"}">
+            <span class="rd-metric">shape distortion vs. flat <b>${distPct}%</b></span>
+            <span class="rd-verdict">
+              ${faithful
+                ? "Close to the reference — the flat copy is faithful."
+                : "Too far — the flat copy distorts the real shape."}
+            </span>
+          </div>
         </div>
 
         <div class="definitions">
