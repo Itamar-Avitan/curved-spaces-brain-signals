@@ -849,6 +849,95 @@ cells = [
     ),
     markdown(
         r"""
+        MDM does not learn a complicated boundary. It asks one question for each
+        trial:
+
+        \[
+        \hat{y}(C) = \arg\min_k d_R(C, \bar{C}_k).
+        \]
+
+        Here \(C\) is the trial covariance matrix and \(\bar{C}_k\) is the
+        Riemannian mean of class \(k\). The next figure shows these two
+        distances directly.
+        """
+    ),
+    code(
+        """
+        distance_rows = []
+        for trial_index, covariance in enumerate(covariances):
+            distance_to_hands = distance_riemann(covariance, class_means["hands"])
+            distance_to_feet = distance_riemann(covariance, class_means["feet"])
+            predicted_class = int(distance_to_feet < distance_to_hands)
+            distance_rows.append(
+                {
+                    "trial": trial_index,
+                    "true class": CLASS_NAMES[dataset.y[trial_index]],
+                    "run": dataset.metadata.loc[trial_index, "run"],
+                    "distance to hands mean": distance_to_hands,
+                    "distance to feet mean": distance_to_feet,
+                    "distance margin": distance_to_feet - distance_to_hands,
+                    "nearest mean prediction": CLASS_NAMES[predicted_class],
+                    "correct": predicted_class == dataset.y[trial_index],
+                }
+            )
+
+        distance_table = pd.DataFrame(distance_rows)
+        descriptive_mdm_accuracy = distance_table["correct"].mean()
+        display(
+            Markdown(
+                f"**Training-set nearest-mean check:** {descriptive_mdm_accuracy:.1%} "
+                "of trials are closer to their own class mean when all trials are "
+                "used to build the means. This is descriptive only; validation "
+                "below rebuilds the means inside each training fold."
+            )
+        )
+
+        fig, axis = plt.subplots(figsize=(8.5, 5))
+        sns.scatterplot(
+            data=distance_table,
+            x="distance to hands mean",
+            y="distance to feet mean",
+            hue="true class",
+            style="run",
+            s=90,
+            alpha=0.85,
+            ax=axis,
+        )
+        limit = max(
+            distance_table["distance to hands mean"].max(),
+            distance_table["distance to feet mean"].max(),
+        )
+        axis.plot([0, limit], [0, limit], color="#6b7280", linestyle="--")
+        axis.set(
+            xlim=(0, limit * 1.05),
+            ylim=(0, limit * 1.05),
+            title="MDM decision view: which class mean is closer?",
+        )
+        axis.text(
+            limit * 0.08,
+            limit * 0.88,
+            "closer to hands mean",
+            color="#5b47f5",
+            weight="bold",
+        )
+        axis.text(
+            limit * 0.58,
+            limit * 0.12,
+            "closer to feet mean",
+            color="#e75e9b",
+            weight="bold",
+        )
+        axis.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
+        fig.tight_layout()
+        plt.show()
+        display(Markdown(
+            "> **Decision takeaway:** Riemannian MDM is interpretable because "
+            "every prediction is just a comparison of two curved-space distances."
+        ))
+        """
+    ),
+    markdown(
+        r"""
         ## 4. Three complete BCI pipelines
 
         A **pipeline** is the full sequence from one trial to one prediction.
@@ -991,6 +1080,99 @@ cells = [
     ),
     markdown(
         r"""
+        ### Is the gain from covariance, or from Riemannian geometry?
+
+        The papers in the source library make an important distinction:
+        covariance matrices are useful features, but they still need a geometry.
+
+        To isolate that point, compare two nearest-mean classifiers that use the
+        same regularized covariance estimator:
+
+        - **Euclidean covariance mean:** arithmetic class mean + flat Frobenius
+          distance between matrix entries.
+        - **Riemannian MDM:** geometric/Riemannian class mean + affine-invariant
+          Riemannian distance.
+
+        This is not a full model search. It is a controlled diagnostic: same
+        feature type, different geometry.
+        """
+    ),
+    code(
+        """
+        geometry_contrast_pipelines = build_geometry_contrast_pipelines()
+        with mne.use_log_level("ERROR"):
+            geometry_scores, _ = evaluate_leave_one_group_out(
+                geometry_contrast_pipelines,
+                dataset.X,
+                dataset.y,
+                dataset.groups,
+            )
+
+        geometry_summary = (
+            geometry_scores.groupby("model", sort=False)
+            .agg(
+                mean_balanced_accuracy=("balanced_accuracy", "mean"),
+                standard_deviation=("balanced_accuracy", "std"),
+                folds=("fold", "nunique"),
+            )
+            .reset_index()
+        )
+        display(geometry_summary.style.format({
+            "mean_balanced_accuracy": "{:.3f}",
+            "standard_deviation": "{:.3f}",
+        }))
+
+        fig, axis = plt.subplots(figsize=(8, 4.8))
+        sns.stripplot(
+            data=geometry_scores,
+            x="balanced_accuracy",
+            y="model",
+            hue="held_out_group",
+            size=9,
+            jitter=False,
+            palette="viridis",
+            ax=axis,
+        )
+        axis.scatter(
+            geometry_summary["mean_balanced_accuracy"],
+            geometry_summary["model"],
+            marker="|",
+            s=500,
+            linewidth=3,
+            color="#111827",
+            label="Mean",
+        )
+        axis.axvline(0.5, color="#888", linestyle="--", label="Chance")
+        axis.set(
+            xlim=(0.45, 1.01),
+            xlabel="Balanced accuracy",
+            ylabel="",
+            title="Same covariance features; different geometry",
+        )
+        axis.legend(title="Held-out group", bbox_to_anchor=(1.02, 1), loc="upper left")
+        fig.tight_layout()
+        plt.show()
+
+        wide_geometry = geometry_scores.pivot(
+            index="held_out_group",
+            columns="model",
+            values="balanced_accuracy",
+        )
+        mean_delta = (
+            wide_geometry["Riemannian MDM"]
+            - wide_geometry["Euclidean covariance mean"]
+        ).mean()
+        display(Markdown(
+            f"> **Geometry takeaway:** with the covariance estimator held fixed, "
+            f"Riemannian MDM changes mean balanced accuracy by "
+            f"**{mean_delta:+.3f}** compared with a flat Euclidean nearest-mean "
+            f"rule on the same held-out runs. The sign and size are data-dependent; "
+            f"the point is that geometry is a testable modeling choice, not a slogan."
+        ))
+        """
+    ),
+    markdown(
+        r"""
         ### Read the result honestly
 
         On this small, clean, single-participant subset, all three pipelines may
@@ -1079,6 +1261,67 @@ cells = [
         ))
         """
     ),
+    code(
+        """
+        with mne.use_log_level("ERROR"):
+            geometry_low_data_scores = evaluate_low_data_regime(
+                geometry_contrast_pipelines,
+                dataset.X,
+                dataset.y,
+                dataset.groups,
+                trials_per_class=(2, 4, 6, 10),
+                repeats=10,
+                random_state=42,
+            )
+
+        geometry_low_summary = (
+            geometry_low_data_scores.groupby(["trials_per_class", "model"], sort=False)
+            ["balanced_accuracy"]
+            .mean()
+            .reset_index()
+            .pivot(
+                index="trials_per_class",
+                columns="model",
+                values="balanced_accuracy",
+            )
+        )
+        geometry_low_summary["Riemannian advantage"] = (
+            geometry_low_summary["Riemannian MDM"]
+            - geometry_low_summary["Euclidean covariance mean"]
+        )
+        display(geometry_low_summary.style.format("{:.3f}"))
+
+        fig, axis = plt.subplots(figsize=(8.5, 5))
+        sns.lineplot(
+            data=geometry_low_data_scores,
+            x="trials_per_class",
+            y="balanced_accuracy",
+            hue="model",
+            marker="o",
+            linewidth=2.4,
+            markersize=8,
+            errorbar=("ci", 95),
+            ax=axis,
+        )
+        axis.axhline(0.5, color="#888", linestyle="--", label="Chance")
+        axis.set(
+            xticks=[2, 4, 6, 10],
+            ylim=(0.45, 1.01),
+            xlabel="Training trials available per class",
+            ylabel="Balanced accuracy",
+            title="Low-calibration contrast: flat covariance mean vs Riemannian mean",
+        )
+        axis.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
+        fig.tight_layout()
+        plt.show()
+        display(Markdown(
+            "> **Data-efficiency takeaway:** this controlled contrast asks "
+            "whether the curved-space mean and distance help when calibration "
+            "examples are scarce. That is the practical advantage emphasized "
+            "across the Riemannian BCI literature."
+        ))
+        """
+    ),
     markdown(
         r"""
         In this example, the covariance-based methods are often strongest with
@@ -1092,7 +1335,37 @@ cells = [
     ),
     markdown(
         r"""
-        ## 6. Visualize the tangent-space coordinates
+        ## 6. What the source papers add beyond this demo
+
+        The local source library shows a field that is broader than this one
+        motor-imagery notebook:
+
+        - **Barachant et al. (2012)** introduced direct classification of EEG
+          covariance matrices with Riemannian MDM for motor imagery.
+        - **Barachant et al. (2013)** showed how tangent-space/kernel methods
+          can use the same covariance geometry with standard classifiers.
+        - **Congedo, Barachant & Bhatia (2017)** frame the appeal as a mix of
+          simplicity, accuracy, robustness, and transfer-learning potential.
+        - **Zanini et al. (2018)** make the transfer-learning angle concrete:
+          affine alignment can make covariance matrices from different sessions
+          or subjects more comparable.
+        - **Barthélemy et al. (2019)** use the same manifold idea for signal
+          quality: bad EEG segments sit far from the clean-data region.
+        - **P300 and recent deep/SPD extensions** show that the representation
+          is not limited to motor imagery or MDM. Augmented covariance matrices,
+          probabilistic Riemannian outputs, SPD neural networks, and means-field
+          classifiers are all later branches of the same idea.
+
+        The safe beginner message is therefore:
+
+        > Riemannian geometry is not magic accuracy dust. It is a principled
+        > way to compare, average, align, and classify covariance matrices while
+        > respecting their positive-definite structure.
+        """
+    ),
+    markdown(
+        r"""
+        ## 7. Visualize the tangent-space coordinates
 
         The tangent representation has one feature for each unique covariance
         entry. With 17 channels that is \(17(17+1)/2 = 153\) features.
@@ -1139,7 +1412,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 7. Reuse the workflow on your own EEG
+        ## 8. Reuse the workflow on your own EEG
 
         The reusable pattern is short:
 
@@ -1259,8 +1532,11 @@ cells = [
            group. How much harder is cross-participant prediction?
         4. Change the epoch window and explain the choice physiologically.
         5. Plot each trial's distance to both MDM class means.
-        6. Add a Euclidean nearest-mean covariance baseline. Does using a
-           geometry designed for SPD matrices change the result?
+        6. Replace the affine-invariant Riemannian metric with a Log-Euclidean
+           metric where pyRiemann supports it. Which results change?
+        7. Add a simple artifact screen inspired by the Riemannian Potato Field:
+           compute distance from each trial covariance to the global clean-data
+           mean and inspect the farthest trials.
         """
     ),
     markdown(
@@ -1277,6 +1553,12 @@ cells = [
           [Classification of covariance matrices using a Riemannian-based kernel](https://doi.org/10.1016/j.neucom.2012.12.039)
         - Congedo, Barachant & Bhatia (2017),
           [Riemannian geometry for EEG-based brain-computer interfaces; a primer and a review](https://doi.org/10.1080/2326263X.2017.1297192)
+        - Zanini et al. (2018),
+          [Transfer learning: a Riemannian geometry framework with applications to BCI](https://doi.org/10.1109/TBME.2017.2742541)
+        - Barthélemy et al. (2019),
+          [The Riemannian Potato Field: a tool for online signal quality index of EEG](https://doi.org/10.1109/TNSRE.2019.2893113)
+        - Andreev, Cattan & Congedo (2025),
+          [The Riemannian Means Field classifier for EEG-based BCI data](https://arxiv.org/abs/2504.17352)
 
         Dataset citation: Schalk et al. (2004), *BCI2000: A General-Purpose
         Brain-Computer Interface (BCI) System*, IEEE Transactions on Biomedical
@@ -1290,6 +1572,7 @@ CODE_PURPOSES = [
     "Create or locate the helper module so the notebook is self-contained.",
     "Import the analysis tools, define project paths, and report versions.",
     "Reproduce the website's two routes between covariance patterns.",
+    "Break down the Riemannian distance and test channel-rescaling invariance.",
     "Compare candidate class centers using the Riemannian objective.",
     "Download, filter, and epoch the selected motor-imagery runs.",
     "Verify shapes, finite values, labels, and leakage-safe run groups.",
@@ -1299,11 +1582,14 @@ CODE_PURPOSES = [
     "Estimate one regularized covariance matrix per EEG trial.",
     "Inspect two trial-level channel-relationship patterns.",
     "Build the two Riemannian class prototypes and compare them.",
+    "Visualize MDM decisions as distances to the class means.",
     "Fit and evaluate all three pipelines on held-out recording runs.",
     "Plot fold-level full-calibration performance.",
     "Check class-specific errors with normalized confusion matrices.",
+    "Compare Riemannian MDM with a flat Euclidean covariance nearest-mean baseline.",
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
+    "Repeat the geometry contrast in the low-calibration regime.",
     "Map covariance matrices to tangent vectors and display a 2D projection.",
 ]
 

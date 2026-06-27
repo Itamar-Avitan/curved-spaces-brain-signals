@@ -17,6 +17,9 @@ Movement/Imagery dataset through MNE and compares:
 2. covariance matrices + Riemannian MDM;
 3. covariance matrices + tangent-space logistic regression.
 
+It also includes a diagnostic Euclidean covariance nearest-mean baseline so the
+learner can separate "covariance features help" from "Riemannian geometry helps."
+
 The default configuration uses subject 1 and runs 6, 10, and 14
 (imagined hands versus imagined feet). Validation leaves one complete recording
 run out at a time. A second experiment restricts training to 2, 4, 6, or 10
@@ -29,9 +32,13 @@ The notebook explains terminology before use and includes:
 - motor-band power spectra;
 - covariance and correlation matrices;
 - Riemannian class means and distance;
+- a raw Euclidean-vs-Riemannian covariance geometry contrast;
 - run-wise model evaluation and confusion matrices;
 - a low-calibration learning curve;
 - a two-dimensional view of tangent-space features;
+- a short source-library map connecting the demo to MDM, tangent-space kernels,
+  transfer learning, signal-quality detection, P300 extensions, SPD neural
+  networks, and means-field classifiers;
 - reuse guidance, common mistakes, and exercises.
 
 ## Run
