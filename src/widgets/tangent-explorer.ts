@@ -76,6 +76,55 @@ export class TangentExplorer extends LitElement {
       height: auto;
     }
 
+    .tangent-stage {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .t-panel {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .t-panel figcaption {
+      margin-bottom: 4px;
+      color: #fffaf1;
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .t-panel svg {
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .t-logmap {
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      color: #ffd36b;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .t-logmap svg {
+      width: 40px;
+    }
+
+    @media (max-width: 640px) {
+      .tangent-stage {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .t-logmap svg {
+        transform: rotate(90deg);
+      }
+    }
+
     .readout {
       display: flex;
       flex-wrap: wrap;
@@ -209,10 +258,9 @@ export class TangentExplorer extends LitElement {
   render() {
     const r = this.spread; // neighborhood size, 0.25..1.5
     const n = 5;
-    const cy = 198;
-    const leftCx = 232;
-    const rightCx = 668;
-    const ringScreen = 44 + ((r - 0.25) / 1.25) * 86; // 44..130 px
+    const C = 180; // panel centre (each panel is a 360x360 square)
+    const cyMid = 188;
+    const ringScreen = 38 + ((r - 0.25) / 1.25) * 80; // 38..118 px
     const distortion = Math.min(0.2, 0.075 * r * r); // grows with neighborhood
     const distPct = (distortion * 100).toFixed(distortion < 0.1 ? 1 : 0);
     const faithful = distortion < 0.035; // ~ r < 0.68
@@ -222,13 +270,10 @@ export class TangentExplorer extends LitElement {
       { length: n },
       (_, i) => -Math.PI / 2 + (i * 2 * Math.PI) / n,
     );
-    const ring = (cx: number): Array<readonly [number, number]> =>
-      angles.map(
-        (a) =>
-          [cx + ringScreen * Math.cos(a), cy + ringScreen * Math.sin(a)] as const,
-      );
-    const leftPts = ring(leftCx);
-    const rightPts = ring(rightCx);
+    const pts: Array<readonly [number, number]> = angles.map(
+      (a) =>
+        [C + ringScreen * Math.cos(a), cyMid + ringScreen * Math.sin(a)] as const,
+    );
 
     const arcPath = (
       a: readonly [number, number],
@@ -236,8 +281,8 @@ export class TangentExplorer extends LitElement {
     ): string => {
       const mx = (a[0] + b[0]) / 2;
       const my = (a[1] + b[1]) / 2;
-      const dx = mx - leftCx;
-      const dy = my - cy;
+      const dx = mx - C;
+      const dy = my - cyMid;
       const len = Math.hypot(dx, dy) || 1;
       const qx = mx + (dx / len) * bow;
       const qy = my + (dy / len) * bow;
@@ -270,47 +315,55 @@ export class TangentExplorer extends LitElement {
         </div>
 
         <div class="visual">
-          <svg
-            viewBox="0 0 900 350"
-            role="img"
-            aria-label="A ring of covariance matrices around a reference. On the left the curved space joins them with geodesic arcs that bow outward; on the right the log map sends them to a flat space joined by straight lines. As the neighborhood shrinks, the two pictures agree."
-          >
-            <text x=${leftCx} y="30" fill="#fffaf1" font-size="17" font-weight="700" text-anchor="middle">curved covariance space</text>
-            <circle cx=${leftCx} cy=${cy} r=${ringScreen} fill="none" stroke="#ffd36b" stroke-opacity="0.32" stroke-dasharray="4 6" />
-            ${leftPts.map(
-              (p) =>
-                svg`<line x1=${leftCx} y1=${cy} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
-            )}
-            ${leftPts.map(
-              (p, i) =>
-                svg`<path d=${arcPath(p, leftPts[(i + 1) % n])} fill="none" stroke="#8d72d4" stroke-width="3" stroke-linecap="round" />`,
-            )}
-            ${leftPts.map(
-              (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="6.5" fill="#1ca9a0" />`,
-            )}
-            <circle cx=${leftCx} cy=${cy} r="9" fill="#ffd36b" />
-            <text x=${leftCx} y="338" fill="#ffd36b" font-size="12.5" font-weight="700" text-anchor="middle">reference</text>
+          <div class="tangent-stage">
+            <figure class="t-panel">
+              <figcaption>curved covariance space</figcaption>
+              <svg viewBox="0 0 360 360" role="img" aria-label="The curved covariance space joins the matrices around the reference with geodesic arcs that bow outward.">
+                <circle cx=${C} cy=${cyMid} r=${ringScreen} fill="none" stroke="#ffd36b" stroke-opacity="0.32" stroke-dasharray="4 6" />
+                ${pts.map(
+                  (p) =>
+                    svg`<line x1=${C} y1=${cyMid} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
+                )}
+                ${pts.map(
+                  (p, i) =>
+                    svg`<path d=${arcPath(p, pts[(i + 1) % n])} fill="none" stroke="#8d72d4" stroke-width="3" stroke-linecap="round" />`,
+                )}
+                ${pts.map(
+                  (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="7" fill="#1ca9a0" />`,
+                )}
+                <circle cx=${C} cy=${cyMid} r="9" fill="#ffd36b" />
+                <text x=${C} y="348" fill="#ffd36b" font-size="13" font-weight="700" text-anchor="middle">reference</text>
+              </svg>
+            </figure>
 
-            <path d="M412 ${cy} q 38 -24 76 0" fill="none" stroke="#ffd36b" stroke-width="3.5" />
-            <path d="M480 ${cy - 11} l 9 11 l -11 6" fill="none" stroke="#ffd36b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-            <text x="450" y=${cy - 24} fill="#ffd36b" font-size="13" font-weight="700" text-anchor="middle">log map</text>
+            <div class="t-logmap" aria-hidden="true">
+              <span>log map</span>
+              <svg viewBox="0 0 40 24">
+                <path d="M3 12 q 17 -11 31 0" fill="none" stroke="#ffd36b" stroke-width="3" stroke-linecap="round" />
+                <path d="M28 4 l 8 8 l -10 4" fill="none" stroke="#ffd36b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
 
-            <text x=${rightCx} y="30" fill="#fffaf1" font-size="17" font-weight="700" text-anchor="middle">flat tangent space</text>
-            <line x1=${rightCx - 145} x2=${rightCx + 145} y1=${cy} y2=${cy} stroke="#3a3f59" stroke-width="1" />
-            <line x1=${rightCx} x2=${rightCx} y1=${cy - 132} y2=${cy + 132} stroke="#3a3f59" stroke-width="1" />
-            ${rightPts.map(
-              (p) =>
-                svg`<line x1=${rightCx} y1=${cy} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
-            )}
-            ${rightPts.map((p, i) => {
-              const q = rightPts[(i + 1) % n];
-              return svg`<line x1=${p[0]} y1=${p[1]} x2=${q[0]} y2=${q[1]} stroke="#1ca9a0" stroke-width="3" stroke-linecap="round" />`;
-            })}
-            ${rightPts.map(
-              (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="6.5" fill="#1ca9a0" />`,
-            )}
-            <circle cx=${rightCx} cy=${cy} r="9" fill="#ffd36b" />
-          </svg>
+            <figure class="t-panel">
+              <figcaption>flat tangent space</figcaption>
+              <svg viewBox="0 0 360 360" role="img" aria-label="The flat tangent space joins the same matrices with straight lines.">
+                <line x1="30" x2="330" y1=${cyMid} y2=${cyMid} stroke="#3a3f59" stroke-width="1" />
+                <line x1=${C} x2=${C} y1="40" y2="338" stroke="#3a3f59" stroke-width="1" />
+                ${pts.map(
+                  (p) =>
+                    svg`<line x1=${C} y1=${cyMid} x2=${p[0]} y2=${p[1]} stroke="#565b78" stroke-width="1" />`,
+                )}
+                ${pts.map((p, i) => {
+                  const q = pts[(i + 1) % n];
+                  return svg`<line x1=${p[0]} y1=${p[1]} x2=${q[0]} y2=${q[1]} stroke="#1ca9a0" stroke-width="3" stroke-linecap="round" />`;
+                })}
+                ${pts.map(
+                  (p) => svg`<circle cx=${p[0]} cy=${p[1]} r="7" fill="#1ca9a0" />`,
+                )}
+                <circle cx=${C} cy=${cyMid} r="9" fill="#ffd36b" />
+              </svg>
+            </figure>
+          </div>
 
           <div class="readout ${faithful ? "ok" : "far"}">
             <span class="rd-metric">shape distortion vs. flat <b>${distPct}%</b></span>

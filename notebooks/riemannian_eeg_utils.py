@@ -21,7 +21,7 @@ from mne.io import read_raw_edf
 from pyriemann.classification import MDM
 from pyriemann.estimation import Covariances
 from pyriemann.tangentspace import TangentSpace
-from sklearn.base import clone
+from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, balanced_accuracy_score
@@ -50,6 +50,29 @@ DEFAULT_CHANNELS = (
 )
 
 CLASS_NAMES = np.array(["hands", "feet"])
+
+
+class EuclideanCovarianceNearestMean(BaseEstimator, ClassifierMixin):
+    """Nearest class mean classifier using flat Frobenius matrix distance.
+
+    This intentionally treats covariance matrices as ordinary Euclidean arrays.
+    The notebook uses it as a diagnostic contrast against Riemannian MDM, not as
+    a recommended default.
+    """
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "EuclideanCovarianceNearestMean":
+        self.classes_ = np.unique(y)
+        self.means_ = np.stack(
+            [X[y == class_id].mean(axis=0) for class_id in self.classes_]
+        )
+        return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        distances = np.linalg.norm(
+            X[:, np.newaxis, :, :] - self.means_[np.newaxis, :, :, :],
+            axis=(-2, -1),
+        )
+        return self.classes_[np.argmin(distances, axis=1)]
 
 
 @dataclass
@@ -216,6 +239,25 @@ def build_pipelines(random_state: int = 42) -> dict[str, Pipeline]:
                         random_state=random_state,
                     ),
                 ),
+            ]
+        ),
+    }
+
+
+def build_geometry_contrast_pipelines() -> dict[str, Pipeline]:
+    """Create covariance nearest-mean pipelines that differ only by geometry."""
+
+    return {
+        "Euclidean covariance mean": Pipeline(
+            [
+                ("covariance", Covariances(estimator="oas")),
+                ("classifier", EuclideanCovarianceNearestMean()),
+            ]
+        ),
+        "Riemannian MDM": Pipeline(
+            [
+                ("covariance", Covariances(estimator="oas")),
+                ("classifier", MDM(metric="riemann")),
             ]
         ),
     }

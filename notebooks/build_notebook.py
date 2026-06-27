@@ -41,7 +41,7 @@ cells = [
         read and run it. You can execute each section in order; every code cell
         starts with its purpose, and every figure ends with one takeaway.
 
-        We will compare three ways to classify a short EEG trial:
+        We will compare three complete ways to classify a short EEG trial:
 
         1. **CSP + LDA** — a strong, classical motor-imagery baseline.
         2. **Riemannian MDM** — compare each covariance matrix with the average
@@ -49,6 +49,11 @@ cells = [
         3. **Tangent space + logistic regression** — temporarily map the curved
            covariance space to ordinary coordinates, then use a standard
            classifier.
+
+        We will also add one deliberately plain diagnostic baseline: a
+        **Euclidean covariance nearest-mean** classifier. It uses covariance
+        matrices, but it ignores the curved SPD geometry. That contrast makes
+        the advantage of the Riemannian distance visible rather than rhetorical.
 
         The goal is not to prove that one method always wins. The goal is to
         understand what the geometric representation adds, when it helps, and
@@ -62,8 +67,11 @@ cells = [
         - What an EEG trial, channel, and motor-imagery cue mean.
         - Why a covariance matrix is a useful summary of a multichannel trial.
         - Why valid covariance matrices do not fill an ordinary flat space.
+        - How the Riemannian distance turns eigenvalue ratios into a
+          scale-aware distance.
         - How minimum distance to mean (MDM) makes a prediction.
         - What a tangent-space representation is used for.
+        - How to separate "covariance helped" from "Riemannian geometry helped."
         - Why complete recording runs must be held out during validation.
         - Why a method can be useful even when its final accuracy ties a
           classical baseline.
@@ -202,6 +210,7 @@ cells = [
 
         from riemannian_eeg_utils import (
             CLASS_NAMES,
+            build_geometry_contrast_pipelines,
             build_pipelines,
             evaluate_leave_one_group_out,
             evaluate_low_data_regime,
@@ -312,6 +321,137 @@ cells = [
         assert np.isclose(np.sqrt(np.linalg.det(toy_a)), 1.0)
         assert np.sqrt(np.linalg.det(entry_midpoint)) > 2.0
         assert np.isclose(np.sqrt(np.linalg.det(riemannian_midpoint)), 1.0)
+        """
+    ),
+    markdown(
+        r"""
+        ### The geometry in one equation
+
+        For two SPD covariance matrices \(C_1\) and \(C_2\), the
+        affine-invariant Riemannian distance used by pyRiemann is
+
+        \[
+        d_R(C_1,C_2) =
+        \left\|\log\left(C_1^{-1/2}C_2C_1^{-1/2}\right)\right\|_F.
+        \]
+
+        Read this as three operations:
+
+        1. use \(C_1^{-1/2}\) to express \(C_2\) relative to \(C_1\);
+        2. take eigenvalue ratios of that relative transformation;
+        3. measure the size of their logarithms.
+
+        So the geometry compares **multiplicative changes in variance**, not raw
+        entry differences. That matters for EEG because covariance scale can
+        change with electrodes, referencing, sessions, or user state.
+        """
+    ),
+    code(
+        """
+        def matrix_inverse_sqrt(matrix):
+            eigenvalues, eigenvectors = np.linalg.eigh(matrix)
+            return eigenvectors @ np.diag(1 / np.sqrt(eigenvalues)) @ eigenvectors.T
+
+
+        relative_transform = (
+            matrix_inverse_sqrt(toy_a) @ toy_b @ matrix_inverse_sqrt(toy_a)
+        )
+        relative_eigenvalues = np.linalg.eigvalsh(relative_transform)
+
+        distance_breakdown = pd.DataFrame(
+            {
+                "quantity": [
+                    "relative eigenvalue 1",
+                    "relative eigenvalue 2",
+                    "log relative eigenvalue 1",
+                    "log relative eigenvalue 2",
+                    "Euclidean Frobenius distance",
+                    "Riemannian distance",
+                ],
+                "value": [
+                    relative_eigenvalues[0],
+                    relative_eigenvalues[1],
+                    np.log(relative_eigenvalues[0]),
+                    np.log(relative_eigenvalues[1]),
+                    np.linalg.norm(toy_a - toy_b, ord="fro"),
+                    distance_riemann(toy_a, toy_b),
+                ],
+            }
+        )
+        display(distance_breakdown.style.format({"value": "{:.3f}"}))
+
+        t_values = np.linspace(0, 1, 9)
+        path_determinants = pd.DataFrame(
+            {
+                "path position": t_values,
+                "entry-wise determinant": [
+                    np.linalg.det((1 - t) * toy_a + t * toy_b) for t in t_values
+                ],
+                "Riemannian determinant": [
+                    np.linalg.det(geodesic_riemann(toy_a, toy_b, alpha=t))
+                    for t in t_values
+                ],
+            }
+        )
+
+        fig, axis = plt.subplots(figsize=(8, 4.5))
+        sns.lineplot(
+            data=path_determinants.melt(
+                id_vars="path position",
+                var_name="path",
+                value_name="determinant",
+            ),
+            x="path position",
+            y="determinant",
+            hue="path",
+            marker="o",
+            ax=axis,
+        )
+        axis.set(
+            xlabel="Position from pattern A to pattern B",
+            ylabel="determinant",
+            title="The Riemannian path avoids artificial determinant swelling",
+        )
+        axis.legend(frameon=False)
+        fig.tight_layout()
+        plt.show()
+
+        channel_gain = np.diag([3.0, 0.4])
+        rescaled_a = channel_gain @ toy_a @ channel_gain.T
+        rescaled_b = channel_gain @ toy_b @ channel_gain.T
+        invariance_check = pd.DataFrame(
+            {
+                "distance": ["Euclidean Frobenius", "Riemannian"],
+                "before channel rescaling": [
+                    np.linalg.norm(toy_a - toy_b, ord="fro"),
+                    distance_riemann(toy_a, toy_b),
+                ],
+                "after channel rescaling": [
+                    np.linalg.norm(rescaled_a - rescaled_b, ord="fro"),
+                    distance_riemann(rescaled_a, rescaled_b),
+                ],
+            }
+        )
+        invariance_check["absolute change"] = (
+            invariance_check["after channel rescaling"]
+            - invariance_check["before channel rescaling"]
+        ).abs()
+        display(invariance_check.style.format({
+            "before channel rescaling": "{:.3f}",
+            "after channel rescaling": "{:.3f}",
+            "absolute change": "{:.3f}",
+        }))
+        display(Markdown(
+            "> **Math takeaway:** the Riemannian distance is unchanged by this "
+            "invertible channel rescaling, while the raw Euclidean matrix "
+            "distance changes substantially. This is one reason the geometry "
+            "is better matched to covariance matrices."
+        ))
+
+        assert np.isclose(
+            distance_riemann(toy_a, toy_b),
+            distance_riemann(rescaled_a, rescaled_b),
+        )
         """
     ),
     markdown(
