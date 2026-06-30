@@ -11,3 +11,8 @@ notebooks/figures/
 sources/**/*.pdf
 *.log
 .DS_Store
+
+# capstone video: large regenerable build artifacts (keep source, not renders)
+/videos/
+manim/capstone/out/
+manim/capstone/audio/

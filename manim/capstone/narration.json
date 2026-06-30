@@ -1,0 +1,35 @@
+{
+  "title": "The Shape of a Thought",
+  "note": "TIGHTENED cut. One entry per beat; each idea is stated once and the visuals carry the rest. `id` matches the beat key in scenes.py and the audio filename audio/<id>.mp3. Order is the play order of the concatenated narration.",
+  "beats": [
+    {"id": "0.1", "act": "Act0Cold", "text": "Someone closes their eyes and imagines squeezing their left hand. They don't move a muscle. And yet a computer in the room writes the word: left."},
+    {"id": "0.2", "act": "Act0Cold", "text": "No magic — just a few wiggling voltages, and a piece of geometry I want to derive with you, from nothing."},
+
+    {"id": "1.1", "act": "Act1Signal", "text": "An EEG is a handful of electrodes, each recording its own voltage over time. Here are four of them."},
+    {"id": "1.2", "act": "Act1Signal", "text": "The obvious idea — compare these numbers directly — fails. The amplitude drifts with the gel, the day, the person; the same thought, recorded twice, can look numerically nothing alike."},
+    {"id": "1.3", "act": "Act1Signal", "text": "What's stable is how the channels move together. Imagine the left hand, and a certain set of regions rises and falls in concert. That co-movement is the fingerprint — so let's measure exactly that."},
+
+    {"id": "2.1", "act": "Act2Covariance", "text": "Stack the channels into a matrix X, subtract each channel's mean, and form X times X-transpose, over the number of samples."},
+    {"id": "2.2", "act": "Act2Covariance", "text": "That's the covariance matrix. The diagonal is each channel's power; the off-diagonals are how channels co-vary. A whole multi-second recording, compressed into one small object — the shape of the trial."},
+    {"id": "2.3", "act": "Act2Covariance", "text": "It is symmetric, and positive definite — because v-transpose Sigma v is just the squared length of X-transpose v, which can never be negative. Symmetric positive definite: S-P-D, forced by what covariance is."},
+
+    {"id": "3.1", "act": "Act3Cone", "text": "So each trial is one point, in the space of all SPD matrices. Take the two-by-two case: three numbers — a, b, and c — with a and c positive, and a-times-c minus b-squared positive."},
+    {"id": "3.2", "act": "Act3Cone", "text": "Plot every matrix that obeys those rules, and they fill the inside of a cone. Its boundary, where the determinant hits zero, is a wall — a collapsing, degenerate covariance that should feel infinitely far away."},
+    {"id": "3.3", "act": "Act3Cone", "text": "On a curved space the ruler changes from point to point: the trace of P-inverse, U, P-inverse, V. At the identity it's the ordinary flat ruler; toward the wall, every step costs more."},
+    {"id": "3.4", "act": "Act3Cone", "text": "The length of any path is that ruler, integrated along it; the shortest path between two matrices is their geodesic. So what is the shortest route — and why is the straight one a trap?"},
+
+    {"id": "4.1", "act": "Act4Swelling", "text": "Two trials. A is diagonal four, one; B is diagonal one, four. Both have determinant four."},
+    {"id": "4.2", "act": "Act4Swelling", "text": "Average them entry by entry, and watch the determinant: it climbs to six and a quarter — larger than either one. And that's forced, not bad luck — the determinant of the straight average is always at least the geometric mean of the two. Entry-wise averaging invents variance."},
+    {"id": "4.3", "act": "Act4Swelling", "text": "Now travel the cone's own way, along the geodesic. Its determinant holds at exactly four the whole way, because along a geodesic the log-determinant is linear. The straight chord overshoots; the geodesic refuses to inflate — and that gap is the swelling."},
+
+    {"id": "5.1", "act": "Act5Ruler", "text": "Measure that geodesic's length, and it collapses to something clean: the distance is the size of the logarithm of A-to-the-minus-half, B, A-to-the-minus-half — the square root of the sum of squared log-eigenvalues."},
+    {"id": "5.2", "act": "Act5Ruler", "text": "The logarithm is the whole point. As an eigenvalue runs toward that collapsing wall, its log runs to minus infinity, and the distance blows up — so the boundary really is unreachable, for free."},
+    {"id": "5.3", "act": "Act5Ruler", "text": "And the distance is affine-invariant: transform both matrices by any invertible W, and it doesn't change. Re-referencing the electrodes, rescaling them, the skull mixing sources — all just a W. The ruler is blind to exactly the nuisances that defeated raw voltage."},
+
+    {"id": "6.1", "act": "Act6Decoding", "text": "To average many trials, don't average their entries — take the point that minimizes the total squared geodesic distance to all of them. That's the Riemannian mean: one prototype per class."},
+    {"id": "6.2", "act": "Act6Decoding", "text": "Decoding is then almost trivial. A new trial goes to the nearest prototype — minimum distance to mean. No deep network; the geometry did the work."},
+    {"id": "6.3", "act": "Act6Decoding", "text": "And if you want the ordinary machine-learning toolbox, flatten the cone at the mean with the log map. There, a linear classifier is doing honest Riemannian geometry — not an approximation."},
+
+    {"id": "7.1", "act": "Act7Close", "text": "None of this needed a bigger model — only the right geometry. The notebook runs all of it, end to end, on a real recording. Go open it, and watch the math become a decoder."}
+  ]
+}

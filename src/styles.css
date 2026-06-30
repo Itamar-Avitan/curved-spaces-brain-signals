@@ -2284,6 +2284,60 @@ footer a:focus-visible {
   color: var(--ink);
 }
 
+.capstone-section {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(108, 78, 185, 0.28), transparent 30%),
+    radial-gradient(circle at 88% 85%, rgba(28, 169, 160, 0.22), transparent 32%),
+    #20243a;
+  padding: 130px 0 140px;
+  color: var(--cream);
+}
+
+.capstone-intro {
+  max-width: 760px;
+  margin: 0 auto 46px;
+  text-align: center;
+}
+
+.capstone-intro h2 {
+  margin-top: 6px;
+  font-size: clamp(2.3rem, 4.4vw, 4rem);
+  color: var(--cream);
+}
+
+.capstone-lead {
+  max-width: 660px;
+  margin: 22px auto 0;
+  font-size: 1.06rem;
+  line-height: 1.6;
+  color: #c9ccda;
+}
+
+.capstone-player {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.capstone-player video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 90px rgba(8, 10, 22, 0.55);
+  background: #24283b;
+}
+
+.capstone-player figcaption {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: #9a9eb4;
+}
+
 .notebook-section {
   position: relative;
   overflow: hidden;
