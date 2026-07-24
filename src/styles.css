@@ -3588,3 +3588,22 @@ footer a {
     padding: 20px 20px;
   }
 }
+
+/* Part 1 is the longest run of pure set-up on the page. Tightening its vertical
+   rhythm keeps the history and the relativity detour without letting them
+   outweigh the decoder they exist to motivate. */
+.story-section {
+  padding: 84px 0 96px;
+}
+
+.history-track {
+  margin-top: 64px;
+}
+
+.bridge-section {
+  padding: 96px 0;
+}
+
+#part-math.part-divider {
+  padding-top: 92px;
+}

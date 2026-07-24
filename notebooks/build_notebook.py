@@ -1093,10 +1093,85 @@ cells = [
 
         ### Tangent space + logistic regression
 
-        A **tangent space** is a flat coordinate system attached near a
-        reference point on the curved SPD space. Mapping covariance matrices
-        there preserves local geometric relationships and allows a familiar
-        linear classifier to be used.
+        A **tangent space** is a flat coordinate system attached at one
+        reference point on the curved SPD space. Three details matter, and all
+        three are easy to skip past:
+
+        **Where it is attached.** The reference point is not arbitrary and it is
+        not the identity: `TangentSpace` uses the **Riemannian mean of the data
+        it was fitted on**, which is why it must be fitted inside the training
+        fold like everything else. That reference is also exactly the quantity
+        re-centring manipulates in Section 5b.
+
+        **What the map is.** For a reference $\bar{C}$,
+
+        $$ \operatorname{Log}_{\bar C}(C) \;=\; \log\!\left(\bar C^{-1/2} C\, \bar C^{-1/2}\right) $$
+
+        Here `log` is the **matrix** logarithm — eigendecompose, take the log of
+        each eigenvalue, rotate back — not the log of each entry. On the
+        diagonal examples in Section 0 those two happen to agree, which is
+        precisely why it is worth saying out loud that in general they do not.
+
+        **Why there is a $\sqrt{2}$.** The result is symmetric, so its upper
+        triangle carries everything: $d(d+1)/2$ numbers for $d$ channels. But if
+        you simply read them off, each off-diagonal entry is counted once where
+        the matrix contains it twice, and the vector comes out shorter than the
+        matrix. Scaling the off-diagonals by $\sqrt{2}$ fixes that, and the
+        vector's ordinary Euclidean length then equals the matrix's Frobenius
+        norm. The map becomes an **isometry** rather than a lossy repackaging —
+        and without it the channel-coupling features, which is where the motor
+        signal actually lives, are quietly shrunk by a factor of $1/\sqrt{2}$
+        relative to the variances.
+
+        The cell below builds the vectorisation by hand and checks it against
+        pyRiemann, so none of this has to be taken on trust.
+        """
+    ),
+    code(
+        """
+        # Build the tangent vector by hand for one trial, then check it.
+        reference = mean_riemann(covariances)          # the base point
+        whitener = invsqrtm(reference)
+        example = covariances[0]
+
+        symmetric = logm(whitener @ example @ whitener)
+        rows, cols = np.triu_indices(symmetric.shape[0])
+        off_diagonal = rows != cols
+        weights = np.where(off_diagonal, np.sqrt(2.0), 1.0)
+        by_hand = symmetric[rows, cols] * weights
+
+        from_library = TangentSpace(metric="riemann").fit(covariances).transform(
+            example[np.newaxis]
+        )[0]
+
+        n_channels = example.shape[0]
+        checks = pd.Series(
+            {
+                "channels": n_channels,
+                "vector length": len(by_hand),
+                "d(d+1)/2": n_channels * (n_channels + 1) // 2,
+                "max difference vs pyRiemann": f"{np.abs(by_hand - from_library).max():.2e}",
+                "||vector||": f"{np.linalg.norm(by_hand):.6f}",
+                "||matrix||_F (should match)": f"{np.linalg.norm(symmetric, 'fro'):.6f}",
+            },
+            name="value",
+        )
+        display(checks.to_frame())
+
+        # Drop the sqrt(2) and the isometry breaks: the vector is now shorter
+        # than the matrix it represents, with the coupling terms under-weighted.
+        naive = symmetric[rows, cols]
+        display(Markdown(
+            f"> **Math takeaway:** with the $\\sqrt{{2}}$ the vector length "
+            f"({np.linalg.norm(by_hand):.4f}) matches the matrix norm "
+            f"({np.linalg.norm(symmetric, 'fro'):.4f}) exactly. Without it the "
+            f"vector measures only {np.linalg.norm(naive):.4f} -- the "
+            f"off-diagonal, channel-coupling part of the signal has been "
+            f"quietly discounted."
+        ))
+
+        assert np.allclose(by_hand, from_library, atol=1e-10)
+        assert np.isclose(np.linalg.norm(by_hand), np.linalg.norm(symmetric, "fro"))
         """
     ),
     markdown(
@@ -1366,16 +1441,42 @@ cells = [
     ),
     code(
         """
+        # Average the repeats within each fold FIRST. Repeats share a test set,
+        # so treating all 30 as independent (seaborn's default 95% CI over the
+        # raw rows) produces a band far tighter than the design supports.
+        fold_means = (
+            low_data_scores.groupby(["model", "trials_per_class", "fold"])[
+                "balanced_accuracy"
+            ]
+            .mean()
+            .reset_index()
+        )
+
         fig, axis = plt.subplots(figsize=(10, 5.5))
         sns.lineplot(
-            data=low_data_scores,
+            data=fold_means,
             x="trials_per_class",
             y="balanced_accuracy",
             hue="model",
             marker="o",
             linewidth=2.4,
             markersize=8,
-            errorbar=("ci", 95),
+            errorbar="sd",
+            err_style="bars",
+            ax=axis,
+        )
+        # Show the three fold means themselves; with n=3 the spread is the
+        # honest picture and a smooth confidence band is not.
+        sns.stripplot(
+            data=fold_means,
+            x="trials_per_class",
+            y="balanced_accuracy",
+            hue="model",
+            dodge=True,
+            alpha=0.45,
+            size=4,
+            legend=False,
+            native_scale=True,
             ax=axis,
         )
         axis.axhline(0.5, color="#888", linestyle="--", label="Chance")
@@ -1391,6 +1492,12 @@ cells = [
         fig.savefig(FIGURE_PATH / "low-calibration-performance.png", bbox_inches="tight")
         plt.show()
         display(Markdown(
+            "> **Read the spread, not the gaps.** Each test fold holds about 15 "
+            "trials, so one flipped trial moves balanced accuracy by roughly "
+            "6 points. Bars show the standard deviation across the three folds, "
+            "and the faint dots are the folds themselves. Differences smaller "
+            "than the bars -- and certainly smaller than one trial -- are not "
+            "resolvable with this design.\\n>\\n"
             "> **Figure takeaway:** in this single-participant demonstration, "
             "the covariance-based pipelines use the smallest calibration sets "
             "more effectively."
@@ -1427,16 +1534,26 @@ cells = [
         )
         display(geometry_low_summary.style.format("{:.3f}"))
 
+        # Same correction as the previous figure: fold-level first.
+        geometry_fold_means = (
+            geometry_low_data_scores.groupby(
+                ["model", "trials_per_class", "fold"]
+            )["balanced_accuracy"]
+            .mean()
+            .reset_index()
+        )
+
         fig, axis = plt.subplots(figsize=(8.5, 5))
         sns.lineplot(
-            data=geometry_low_data_scores,
+            data=geometry_fold_means,
             x="trials_per_class",
             y="balanced_accuracy",
             hue="model",
             marker="o",
             linewidth=2.4,
             markersize=8,
-            errorbar=("ci", 95),
+            errorbar="sd",
+            err_style="bars",
             ax=axis,
         )
         axis.axhline(0.5, color="#888", linestyle="--", label="Chance")
@@ -1906,6 +2023,7 @@ CODE_PURPOSES = [
     "Inspect two trial-level channel-relationship patterns.",
     "Build the two Riemannian class prototypes and compare them.",
     "Visualize MDM decisions as distances to the class means.",
+    "Build a tangent vector by hand and verify the sqrt(2) isometry.",
     "Fit and evaluate all three pipelines on held-out recording runs.",
     "Plot fold-level full-calibration performance.",
     "Check class-specific errors with normalized confusion matrices.",
