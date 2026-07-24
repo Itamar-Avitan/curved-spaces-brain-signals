@@ -49,7 +49,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "covariance-matrix": {
     term: "Covariance matrix",
     plain:
-      "A small table summarising one trial: how much each channel moved, and how much each pair of channels moved together.",
+      "A small table summarizing one trial: how much each channel moved, and how much each pair of channels moved together.",
     formula: {
       html: `${v("C")} = <span class="frac"><span>1</span><span>${v("n")} − 1</span></span> ${v("X")} ${v("X")}<sup>⊤</sup>`,
       legend: [
@@ -166,7 +166,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   swelling: {
     term: "Swelling",
     plain: "The trap where averaging two patterns entry by entry produces something stronger than either one was.",
-    why: "A class centre built that way is exaggerated, and the class centre decides every prediction. It is the first of the two reasons not to use a straight-line ruler.",
+    why: "A class center built that way is exaggerated, and the class center decides every prediction. It is the first of the two reasons not to use a straight-line ruler.",
     href: "#distance",
     hrefLabel: "Watch it inflate",
     see: ["geodesic", "riemannian-mean"],
@@ -184,17 +184,17 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         { symbol: "arg min", meaning: "the M that makes the total as small as possible" },
       ],
       reading:
-        "The mean is whatever minimises the total squared distance to the examples — the same definition an ordinary average satisfies on a number line, with the distance swapped out.",
+        "The mean is whatever minimizes the total squared distance to the examples — the same definition an ordinary average satisfies on a number line, with the distance swapped out.",
     },
     why: "There is no formula for it; you iterate. It converges to a single answer because this space curves the helpful way — geodesics spread apart rather than reconverging, so there is exactly one minimum.",
     href: "#mean",
-    hrefLabel: "Compare two candidate centres",
+    hrefLabel: "Compare two candidate centers",
     see: ["swelling", "mdm", "curvature"],
   },
 
   mdm: {
     term: "Minimum Distance to Mean (MDM)",
-    plain: "Label a new trial by measuring it against each class's stored centre and taking the nearest one.",
+    plain: "Label a new trial by measuring it against each class's stored center and taking the nearest one.",
     why: "Almost nothing to tune, and it works with very little calibration data — which is why it is a sensible first decoder rather than only a teaching example.",
     href: "#classifier",
     hrefLabel: "Move a trial and watch it decide",
@@ -203,10 +203,10 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
 
   "tangent-space": {
     term: "Tangent space",
-    plain: "A flat set of coordinates laid over one small neighbourhood of the curved space, so ordinary tools work again.",
+    plain: "A flat set of coordinates laid over one small neighborhood of the curved space, so ordinary tools work again.",
     why: "Once each trial is a plain list of numbers, logistic regression, LDA or an SVM can take over. The geometry does its work during feature extraction; the classifier afterwards is completely ordinary.",
     href: "#tangent",
-    hrefLabel: "Flatten a neighbourhood",
+    hrefLabel: "Flatten a neighborhood",
     see: ["log-map", "recentering"],
   },
 
@@ -249,7 +249,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   curvature: {
     term: "Curvature",
     plain: "How much a space departs from being flat — and in which direction.",
-    why: "Here it is non-positive and varies from place to place. That sign is the good one: geodesics spread apart rather than reconverging, so any two points are joined by exactly one shortest path and a class centre is always unique. A sphere curves the other way and has neither property.",
+    why: "Here it is non-positive and varies from place to place. That sign is the good one: geodesics spread apart rather than reconverging, so any two points are joined by exactly one shortest path and a class center is always unique. A sphere curves the other way and has neither property.",
     href: "#story",
     hrefLabel: "Where the analogy stops",
     see: ["geodesic", "riemannian-mean"],
@@ -274,7 +274,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   "leave-one-group-out": {
     term: "Leave-one-group-out validation",
     plain: "Hold out an entire recording run for testing, never individual trials scattered through it.",
-    why: "Trials from one run share drift, electrode positions and the user's state. Splitting them randomly lets the model recognise the run instead of the intention, and the score comes out flattering and wrong.",
+    why: "Trials from one run share drift, electrode positions and the user's state. Splitting them randomly lets the model recognize the run instead of the intention, and the score comes out flattering and wrong.",
     href: "#notebook",
     hrefLabel: "How the notebook tests",
   },

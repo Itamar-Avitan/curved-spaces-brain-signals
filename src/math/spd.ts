@@ -99,7 +99,7 @@ export function congruence(w: Mat2, s: Sym2): Sym2 {
 }
 
 /** Whiten `s` by `reference`: reference^-1/2 · s · reference^-1/2. */
-export function recentre(reference: Sym2, s: Sym2): Sym2 {
+export function recenter(reference: Sym2, s: Sym2): Sym2 {
   const half = invSqrtm(reference);
   return congruence([half[0], half[1], half[1], half[2]], s);
 }
@@ -113,7 +113,7 @@ export function recentre(reference: Sym2, s: Sym2): Sym2 {
  * P^-1 Q is generally not symmetric.
  */
 export function distance(p: Sym2, q: Sym2): number {
-  const { values } = eigen(recentre(p, q));
+  const { values } = eigen(recenter(p, q));
   return Math.hypot(Math.log(values[0]), Math.log(values[1]));
 }
 
@@ -136,13 +136,13 @@ export function euclideanInterpolate(p: Sym2, q: Sym2, t: number): Sym2 {
 export function geodesic(p: Sym2, q: Sym2, t: number): Sym2 {
   const u = Math.max(0, Math.min(1, t));
   const half = sqrtm(p);
-  const scaled = powm(recentre(p, q), u);
+  const scaled = powm(recenter(p, q), u);
   return congruence([half[0], half[1], half[1], half[2]], scaled);
 }
 
 /** The log map, whitened convention: log(P^-1/2 Q P^-1/2). */
 export function logMap(reference: Sym2, s: Sym2): Sym2 {
-  return logm(recentre(reference, s));
+  return logm(recenter(reference, s));
 }
 
 /** Inverse of {@link logMap}. */
@@ -181,12 +181,12 @@ export function arithmeticMean(matrices: readonly Sym2[]): Sym2 {
 }
 
 /**
- * Riemannian (Frechet) mean: the matrix minimising the total squared Riemannian
+ * Riemannian (Frechet) mean: the matrix minimizing the total squared Riemannian
  * distance to the inputs.
  *
  * Computed by the standard fixed point — log-map everything to the tangent space at
  * the current estimate, average there, exp-map back — which converges because the
- * manifold has non-positive curvature, so the minimiser is unique.
+ * manifold has non-positive curvature, so the minimizer is unique.
  */
 export function riemannianMean(
   matrices: readonly Sym2[],
@@ -213,10 +213,10 @@ export function riemannianMean(
 }
 
 export function totalSquaredDistance(
-  centre: Sym2,
+  center: Sym2,
   matrices: readonly Sym2[],
 ): number {
-  return matrices.reduce((sum, m) => sum + distance(centre, m) ** 2, 0);
+  return matrices.reduce((sum, m) => sum + distance(center, m) ** 2, 0);
 }
 
 /**
@@ -249,7 +249,7 @@ export function tangentRing(
 }
 
 /**
- * How much the flat tangent copy misrepresents the neighbourhood, as a fraction.
+ * How much the flat tangent copy misrepresents the neighborhood, as a fraction.
  *
  * The log map is exact along rays from the reference but not between two points
  * that both sit away from it. Because the manifold has non-positive curvature the

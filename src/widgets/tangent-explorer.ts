@@ -2,7 +2,7 @@ import { LitElement, css, html, svg } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { tangentDistortion, type Sym2 } from "../math/spd";
 
-/** The reference the neighbourhood is flattened around. */
+/** The reference the neighborhood is flattened around. */
 const REFERENCE: Sym2 = [1, 0, 1];
 
 @customElement("rg-tangent-explorer")
@@ -262,10 +262,10 @@ export class TangentExplorer extends LitElement {
   render() {
     const r = this.spread; // neighborhood size, 0.25..1.5
     const n = 5;
-    const C = 180; // panel centre (each panel is a 360x360 square)
+    const C = 180; // panel center (each panel is a 360x360 square)
     const cyMid = 188;
     const ringScreen = 38 + ((r - 0.25) / 1.25) * 80; // 38..118 px
-    // Measured, not modelled: place `n` matrices on a geodesic circle of radius r
+    // Measured, not modeled: place `n` matrices on a geodesic circle of radius r
     // around the reference and compare their true pairwise Riemannian distances
     // with the distances between their flattened tangent-space images.
     const distortion = tangentDistortion(REFERENCE, r, n);

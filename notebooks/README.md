@@ -35,7 +35,7 @@ The notebook explains terminology before use and includes:
   actually do;
 - a demonstration that positive-definiteness is a real constraint: push one
   off-diagonal entry and an eigenvalue goes negative;
-- run-wise re-centring, with an honest reading of why three runs of one session
+- run-wise re-centering, with an honest reading of why three runs of one session
   can show the mechanism but not much of the accuracy gain;
 - a working Riemannian potato (artifact flagging by distance to the mean);
 - sensor and signal figures;

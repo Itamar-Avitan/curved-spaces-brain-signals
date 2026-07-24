@@ -268,7 +268,7 @@ export class NextSteps extends LitElement {
 
   render() {
     return html`
-      <section class="section" aria-labelledby="next-steps-title">
+      <section class="section" aria-labeledby="next-steps-title">
         <div class="heading">
           <div>
             <p class="eyebrow">From lesson to first project</p>
@@ -309,7 +309,7 @@ export class NextSteps extends LitElement {
         </div>
 
         <div class="resource-rack">
-          <section class="resource-group" aria-labelledby="datasets-title">
+          <section class="resource-group" aria-labeledby="datasets-title">
             <p class="group-label">Choose data</p>
             <h3 id="datasets-title">Datasets to explore</h3>
             <ul>
@@ -331,7 +331,7 @@ export class NextSteps extends LitElement {
             </ul>
           </section>
 
-          <section class="resource-group" aria-labelledby="tools-title">
+          <section class="resource-group" aria-labeledby="tools-title">
             <p class="group-label">Build the pipeline</p>
             <h3 id="tools-title">Core tools</h3>
             <ul>
@@ -353,7 +353,7 @@ export class NextSteps extends LitElement {
             </ul>
           </section>
 
-          <section class="resource-group" aria-labelledby="learning-title">
+          <section class="resource-group" aria-labeledby="learning-title">
             <p class="group-label">Keep learning</p>
             <h3 id="learning-title">Guides and community</h3>
             <ul>

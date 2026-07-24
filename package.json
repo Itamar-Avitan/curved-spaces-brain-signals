@@ -8,6 +8,7 @@
     "build": "tsc --noEmit -p tsconfig.app.json && vite build",
     "build:pages": "tsc --noEmit -p tsconfig.app.json && vite build --config vite.pages.config.ts && node scripts/validate-pages-build.mjs",
     "build:all": "npm run build && npm run build:pages && node scripts/validate-build-targets.mjs",
+    "audit:terms": "node scripts/audit-terms.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "preview:pages": "vite preview --config vite.pages.config.ts --host 127.0.0.1",
     "test": "vitest run"

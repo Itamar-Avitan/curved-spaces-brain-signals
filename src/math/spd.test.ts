@@ -11,7 +11,7 @@ import {
   geodesic,
   logm,
   principalAngle,
-  recentre,
+  recenter,
   riemannianMean,
   sqrtm,
   tangentDistortion,
@@ -180,7 +180,7 @@ describe("riemannianMean", () => {
     closeTo(riemannianMean([A2, B2]), geodesic(A2, B2, 0.5), 6);
   });
 
-  it("beats the arithmetic mean at minimising total squared distance", () => {
+  it("beats the arithmetic mean at minimizing total squared distance", () => {
     const trials: Sym2[] = [A2, B2, [1.6, 0.3, 2.2]];
     const riemannian = totalSquaredDistance(riemannianMean(trials), trials);
     const arithmetic = totalSquaredDistance(arithmeticMean(trials), trials);
@@ -203,7 +203,7 @@ describe("tangentVector", () => {
 
 });
 
-describe("tangentDistortion — a measured number, not a modelled one", () => {
+describe("tangentDistortion — a measured number, not a modeled one", () => {
   it("places the ring at exactly the requested geodesic radius", () => {
     for (const radius of [0.25, 1, 1.5]) {
       for (const m of tangentRing(IDENTITY, radius, 5)) {
@@ -212,11 +212,11 @@ describe("tangentDistortion — a measured number, not a modelled one", () => {
     }
   });
 
-  it("vanishes as the neighbourhood shrinks", () => {
+  it("vanishes as the neighborhood shrinks", () => {
     expect(tangentDistortion(IDENTITY, 0.01, 5)).toBeLessThan(1e-4);
   });
 
-  it("grows monotonically with the neighbourhood", () => {
+  it("grows monotonically with the neighborhood", () => {
     const radii = [0.25, 0.5, 0.75, 1, 1.25, 1.5];
     const values = radii.map((r) => tangentDistortion(IDENTITY, r, 5));
     for (let i = 1; i < values.length; i += 1) {
@@ -240,33 +240,33 @@ describe("tangentDistortion — a measured number, not a modelled one", () => {
   });
 });
 
-describe("recentre — the transfer-learning move", () => {
+describe("recenter — the transfer-learning move", () => {
   it("sends a session's own mean to the identity", () => {
     const session: Sym2[] = [A2, B2, [1.6, 0.3, 2.2]];
     const mean = riemannianMean(session);
-    closeTo(recentre(mean, mean), IDENTITY, 6);
+    closeTo(recenter(mean, mean), IDENTITY, 6);
   });
 
   it("preserves within-session structure exactly, because it is an isometry", () => {
-    // This is the half of the claim that makes recentring free: the between-session
+    // This is the half of the claim that makes recentering free: the between-session
     // shift is cancelled, and nothing inside the session is distorted.
     const session: Sym2[] = [A2, B2, [1.6, 0.3, 2.2]];
     const mean = riemannianMean(session);
     const before = distance(session[0], session[1]);
-    const after = distance(recentre(mean, session[0]), recentre(mean, session[1]));
+    const after = distance(recenter(mean, session[0]), recenter(mean, session[1]));
     expect(after).toBeCloseTo(before);
   });
 
   it("makes a drifted session geometrically identical to the original", () => {
     // Session B is session A seen through a different amplifier / reference.
-    // After each is recentred on its own mean, every internal distance matches:
+    // After each is recenterd on its own mean, every internal distance matches:
     // the between-session shift is gone and nothing within either was damaged.
     const session: Sym2[] = [A2, B2, [1.6, 0.3, 2.2]];
     const drift: Mat2 = [1.4, 0.5, -0.3, 1.1];
     const shifted = session.map((c) => congruence(drift, c));
 
-    const alignedA = session.map((c) => recentre(riemannianMean(session), c));
-    const alignedB = shifted.map((c) => recentre(riemannianMean(shifted), c));
+    const alignedA = session.map((c) => recenter(riemannianMean(session), c));
+    const alignedB = shifted.map((c) => recenter(riemannianMean(shifted), c));
 
     for (let i = 0; i < session.length; i += 1) {
       for (let j = i + 1; j < session.length; j += 1) {
@@ -279,15 +279,15 @@ describe("recentre — the transfer-learning move", () => {
   });
 
   it("leaves a residual rotation — which is why RPA adds a rotation step", () => {
-    // Recentring pins both sessions' means to the identity, but two whiteners of
+    // Recentering pins both sessions' means to the identity, but two whiteners of
     // the same matrix differ by an orthogonal factor, so the clouds still differ
-    // by a rotation. Worth teaching: recentring is most of the job, not all of it.
+    // by a rotation. Worth teaching: recentering is most of the job, not all of it.
     const session: Sym2[] = [A2, B2, [1.6, 0.3, 2.2]];
     const drift: Mat2 = [1.4, 0.5, -0.3, 1.1];
     const shifted = session.map((c) => congruence(drift, c));
 
-    const a = recentre(riemannianMean(session), session[0]);
-    const b = recentre(riemannianMean(shifted), shifted[0]);
+    const a = recenter(riemannianMean(session), session[0]);
+    const b = recenter(riemannianMean(shifted), shifted[0]);
 
     // Same eigenvalues (so same shape), different orientation.
     expect(eigen(b).values[0]).toBeCloseTo(eigen(a).values[0], 6);

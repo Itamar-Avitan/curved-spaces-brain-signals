@@ -29,7 +29,7 @@ export const PREDICTIONS: Record<string, Prediction> = {
       {
         label: "Stronger than either one",
         response:
-          "Right — and that is the trap. Averaging entry by entry invents variation that neither trial contained. A class centre built this way is exaggerated, and the class centre decides every prediction.",
+          "Right — and that is the trap. Averaging entry by entry invents variation that neither trial contained. A class center built this way is exaggerated, and the class center decides every prediction.",
         correct: true,
       },
       {
@@ -75,7 +75,7 @@ export const PREDICTIONS: Record<string, Prediction> = {
       {
         label: "About 50% — no better than guessing",
         response:
-          "That is what a big enough shift does, and it is why calibration-free BCI is hard. Now press re-centre: the same decoder, the same data, back up near the ceiling.",
+          "That is what a big enough shift does, and it is why calibration-free BCI is hard. Now press re-center: the same decoder, the same data, back up near the ceiling.",
         correct: true,
       },
       {
@@ -86,7 +86,7 @@ export const PREDICTIONS: Record<string, Prediction> = {
       {
         label: "The same as its same-day score",
         response:
-          "Only if nothing moved. Slide the drift up and watch the score fall — then re-centre and watch it come back.",
+          "Only if nothing moved. Slide the drift up and watch the score fall — then re-center and watch it come back.",
       },
     ],
   },

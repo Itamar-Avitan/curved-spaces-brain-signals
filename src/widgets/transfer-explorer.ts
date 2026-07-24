@@ -4,7 +4,7 @@ import {
   congruence,
   distance,
   logMap,
-  recentre,
+  recenter,
   riemannianMean,
   type Mat2,
   type Sym2,
@@ -228,7 +228,7 @@ export class TransferExplorer extends LitElement {
       stroke-width: 2.2;
     }
 
-    .centre {
+    .center {
       fill: none;
       stroke: #22283b;
       stroke-width: 2;
@@ -385,13 +385,13 @@ export class TransferExplorer extends LitElement {
 
   /** Nearest-class-mean, trained on Monday and applied to Tuesday. */
   private accuracy(train: Sym2[][], test: Sym2[][]): number {
-    const centres = train.map((trials) => riemannianMean(trials));
+    const centers = train.map((trials) => riemannianMean(trials));
     let correct = 0;
     let total = 0;
     test.forEach((trials, trueClass) => {
       for (const trial of trials) {
         const predicted =
-          distance(trial, centres[0]) <= distance(trial, centres[1]) ? 0 : 1;
+          distance(trial, centers[0]) <= distance(trial, centers[1]) ? 0 : 1;
         if (predicted === trueClass) correct += 1;
         total += 1;
       }
@@ -406,12 +406,12 @@ export class TransferExplorer extends LitElement {
       trials.map((c) => congruence(mixing, c)),
     );
 
-    // Re-centring whitens each session by its OWN mean, so it needs no labels
+    // Re-centering whitens each session by its OWN mean, so it needs no labels
     // and no data from the other session.
     const prep = (session: Sym2[][]): Sym2[][] => {
       if (!this.aligned) return session;
       const mean = riemannianMean(session.flat());
-      return session.map((trials) => trials.map((c) => recentre(mean, c)));
+      return session.map((trials) => trials.map((c) => recenter(mean, c)));
     };
 
     const mon = prep(monday);
@@ -482,7 +482,7 @@ export class TransferExplorer extends LitElement {
               this.aligned = !this.aligned;
             }}
           >
-            ${this.aligned ? "✓ Re-centred" : "Re-centre each session"}
+            ${this.aligned ? "✓ Re-centerd" : "Re-center each session"}
           </button>
         </div>
 
@@ -524,7 +524,7 @@ export class TransferExplorer extends LitElement {
               <strong>${pct(shown)}</strong>
               <em>
                 ${this.aligned
-                  ? `up from ${pct(naive)} without re-centring`
+                  ? `up from ${pct(naive)} without re-centering`
                   : "no alignment applied"}
               </em>
             </div>
@@ -536,7 +536,7 @@ export class TransferExplorer extends LitElement {
             <p class="note">
               ${this.aligned
                 ? "Each session is whitened by its own Riemannian mean. That needs no labels from Tuesday — only its own trials — which is why it works for a brand-new user."
-                : "Tuesday's trials land somewhere else entirely, so Monday's class centres point at the wrong regions."}
+                : "Tuesday's trials land somewhere else entirely, so Monday's class centers point at the wrong regions."}
             </p>
           </div>
         </div>
@@ -544,7 +544,7 @@ export class TransferExplorer extends LitElement {
         <div class="verdict">
           <b>Why it is free</b>
           <p>
-            Re-centring is itself a congruence, so it leaves every distance
+            Re-centering is itself a congruence, so it leaves every distance
             <em>inside</em> a session exactly as it was — nothing is distorted or
             thrown away. And the difference between sessions is also a congruence,
             so it cancels. One move, both halves. No Euclidean method can claim
@@ -556,11 +556,11 @@ export class TransferExplorer extends LitElement {
           <summary>Check your understanding: why doesn't this just erase the signal?</summary>
           <p>
             Because it only removes what the two sessions share — the common
-            centre. The class structure lives in how trials sit
-            <em>relative</em> to that centre, and congruence preserves every one
-            of those relative distances exactly. What is left after re-centring is
+            center. The class structure lives in how trials sit
+            <em>relative</em> to that center, and congruence preserves every one
+            of those relative distances exactly. What is left after re-centering is
             a residual rotation, which is why more advanced alignment methods add
-            a rotation step on top. Re-centring alone does most of the work, for
+            a rotation step on top. Re-centering alone does most of the work, for
             free, with no labels.
           </p>
         </details>

@@ -88,18 +88,18 @@ export class ConceptCheck extends LitElement {
     },
     {
       prompt:
-        "A decoder trained last week fails today. You re-centre both sessions. Why does that not throw away the signal?",
+        "A decoder trained last week fails today. You re-center both sessions. Why does that not throw away the signal?",
       choices: [
         ["labels", "Because it uses the new session's labels to correct itself."],
         [
           "isometry",
-          "Because re-centring preserves every distance inside a session — it only moves the sessions onto a common origin.",
+          "Because re-centering preserves every distance inside a session — it only moves the sessions onto a common origin.",
         ],
         ["average", "Because it averages the two sessions together."],
       ],
       correct: "isometry",
       correctFeedback:
-        "Exactly. Re-centring is itself one of those channel-mixing operations, so distances within a session survive untouched, while the shift between sessions — also one of them — cancels. And it needs no labels from the new session, which is what makes calibration-free use possible.",
+        "Exactly. Re-centering is itself one of those channel-mixing operations, so distances within a session survive untouched, while the shift between sessions — also one of them — cancels. And it needs no labels from the new session, which is what makes calibration-free use possible.",
       incorrectFeedback:
         "Not quite. It needs no labels at all, and it does not merge the sessions. It whitens each session by its own mean, which leaves the structure inside each one exactly as it was.",
     },

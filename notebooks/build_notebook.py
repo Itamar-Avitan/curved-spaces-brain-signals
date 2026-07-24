@@ -264,6 +264,21 @@ cells = [
         - class centers are used by MDM to predict a new trial.
         """
     ),
+    markdown(
+        r"""
+        > **Predict first.** Pattern A and Pattern B are equally strong, but different channels dominate. If you average the two matrices entry by entry, how strong is the result?
+        >
+        - stronger than either one
+        - exactly as strong as both
+        - weaker than either one
+        >
+        > <details><summary>Commit to one, then open this.</summary>
+        >
+        > Stronger. Entry-wise averaging invents variation that neither trial contained -- the determinant of the midpoint exceeds both endpoints. The assertion in the next cell checks exactly this.
+        >
+        > </details>
+        """
+    ),
     code(
         """
         toy_a = np.diag([0.25, 4.0])
@@ -344,6 +359,28 @@ cells = [
         So the geometry compares **multiplicative changes in variance**, not raw
         entry differences. That matters for EEG because covariance scale can
         change with electrodes, referencing, sessions, or user state.
+        """
+    ),
+    markdown(
+        r"""
+        > **Predict first.** Further down this cell you will mix the two channels
+        > together with an invertible matrix — the algebra of switching your
+        > reference montage, or of the skull smearing sources across electrodes.
+        > The brain has not changed. Which distances move?
+        >
+        - both the Euclidean and the Riemannian one
+        - the Euclidean one only
+        - neither of them
+        >
+        > <details><summary>Commit to one, then open this.</summary>
+        >
+        > The Euclidean one only, and by a lot — over 500% for the gain case and
+        > about 38% for the mixing case. The Riemannian distance is unchanged to
+        > every decimal shown, because it is *defined* to be blind to exactly
+        > this family of transformations. That single property is why the method
+        > suits EEG, and the assertion at the end of the cell enforces it.
+        >
+        > </details>
         """
     ),
     code(
@@ -1101,7 +1138,7 @@ cells = [
         not the identity: `TangentSpace` uses the **Riemannian mean of the data
         it was fitted on**, which is why it must be fitted inside the training
         fold like everything else. That reference is also exactly the quantity
-        re-centring manipulates in Section 5b.
+        re-centering manipulates in Section 5b.
 
         **What the map is.** For a reference $\bar{C}$,
 
@@ -1193,6 +1230,27 @@ cells = [
 
         **Balanced accuracy** is the average recall across the two classes.
         Chance level is approximately 0.5, and each class contributes equally.
+        """
+    ),
+    markdown(
+        r"""
+        That paragraph is the most important claim in this notebook, and it is
+        the one you have the least reason to take on trust — the helper module
+        was written into your runtime as one long string, so you have not
+        actually seen the code that makes it true.
+
+        So here it is. The cell below prints the real source of the two
+        functions that do the work. Read the loop: the class means, the CSP
+        filters and the tangent reference are all built from `X[train]` only,
+        and `X[test]` is touched exactly once, to predict.
+        """
+    ),
+    code(
+        """
+        import inspect
+
+        print(inspect.getsource(build_pipelines))
+        print(inspect.getsource(evaluate_leave_one_group_out))
         """
     ),
     code(
@@ -1411,6 +1469,21 @@ cells = [
         training trials.
         """
     ),
+    markdown(
+        r"""
+        > **Predict first.** With only two labeled trials per class, which of the three pipelines do you expect to do best -- and does your answer change at ten trials per class?
+        >
+        - CSP + LDA at both sizes
+        - the covariance-based methods at both sizes
+        - the covariance-based methods when data is scarce, CSP once there is enough
+        >
+        > <details><summary>Commit to one, then open this.</summary>
+        >
+        > The third. With two trials per class the covariance methods lead by about ten points; by ten trials per class CSP+LDA has caught up and edges ahead. The honest claim is about data efficiency, not peak accuracy.
+        >
+        > </details>
+        """
+    ),
     code(
         """
         with mne.use_log_level("ERROR"):
@@ -1588,7 +1661,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 5b. Re-centring: the transfer result the theory promises
+        ## 5b. Re-centering: the transfer result the theory promises
 
         Everything so far has been inside one recording session. The claim the
         Riemannian BCI literature makes loudest is about *across* sessions: a
@@ -1607,7 +1680,7 @@ cells = [
         alignment works perfectly as a transformation and does not help the
         accuracy — and it is left in for that reason. A tutorial that only ever
         shows its method winning teaches you nothing about when to reach for it.
-        Second, re-centring is fitted on each run *separately and without labels*,
+        Second, re-centering is fitted on each run *separately and without labels*,
         so it does not leak anything the held-out run would not know about itself.
         """
     ),
@@ -1615,7 +1688,7 @@ cells = [
         """
         from pyriemann.utils.mean import mean_riemann as _mean_riemann
 
-        def recentre_by_run(matrices, runs):
+        def recenter_by_run(matrices, runs):
             \"\"\"Whiten each run by its own Riemannian mean. No labels used.\"\"\"
             out = np.empty_like(matrices)
             for run in np.unique(runs):
@@ -1626,26 +1699,26 @@ cells = [
                 )
             return out
 
-        recentred = recentre_by_run(covariances, dataset.groups)
+        recenterd = recenter_by_run(covariances, dataset.groups)
 
         # How far apart do the runs sit, before and after?
         def run_mean_spread(matrices, runs):
-            centres = [_mean_riemann(matrices[runs == r]) for r in np.unique(runs)]
+            centers = [_mean_riemann(matrices[runs == r]) for r in np.unique(runs)]
             pairs = [
                 distance_riemann(a, b)
-                for i, a in enumerate(centres)
-                for b in centres[i + 1 :]
+                for i, a in enumerate(centers)
+                for b in centers[i + 1 :]
             ]
             return float(np.mean(pairs))
 
         spread = pd.DataFrame(
             {
-                "mean distance between run centres": [
+                "mean distance between run centers": [
                     run_mean_spread(covariances, dataset.groups),
-                    run_mean_spread(recentred, dataset.groups),
+                    run_mean_spread(recenterd, dataset.groups),
                 ],
             },
-            index=["before re-centring", "after re-centring"],
+            index=["before re-centering", "after re-centering"],
         )
         display(spread.style.format("{:.4f}"))
 
@@ -1657,13 +1730,13 @@ cells = [
             \"\"\"
             fold_scores = []
             for train, test in LeaveOneGroupOut().split(matrices, labels, groups):
-                centres = {
+                centers = {
                     label: _mean_riemann(matrices[train][labels[train] == label])
                     for label in np.unique(labels)
                 }
                 predictions = np.array(
                     [
-                        min(centres, key=lambda k: distance_riemann(centres[k], m))
+                        min(centers, key=lambda k: distance_riemann(centers[k], m))
                         for m in matrices[test]
                     ]
                 )
@@ -1677,8 +1750,8 @@ cells = [
 
         transfer_scores = []
         for label, matrices in [
-            ("without re-centring", covariances),
-            ("with re-centring", recentred),
+            ("without re-centering", covariances),
+            ("with re-centering", recenterd),
         ]:
             scores = nearest_mean_logo(matrices, dataset.y, dataset.groups)
             transfer_scores.append(
@@ -1697,15 +1770,15 @@ cells = [
         display(Markdown(
             "> **Transfer takeaway -- and it is a negative result, deliberately "
             "left in.** The mechanism works exactly as advertised: the distance "
-            "between run centres goes to zero, because that is precisely what "
+            "between run centers goes to zero, because that is precisely what "
             "the transformation is built to do. The accuracy does *not* "
             "improve; here it drops slightly. That is the honest outcome for "
             "this dataset, and it is worth more than a flattering one. Three "
             "runs recorded back to back in a single session were already well "
-            "aligned, so there was no session shift to remove -- and re-centring "
+            "aligned, so there was no session shift to remove -- and re-centering "
             "discarded the small genuine differences between runs along with "
             "the nuisance that was not there.\\n>\\n"
-            "> The lesson generalises: **alignment is a hypothesis about your "
+            "> The lesson generalizes: **alignment is a hypothesis about your "
             "data, not a free improvement.** It pays off when the thing "
             "separating your recordings really is a congruence -- different "
             "days, different headsets, different people. Run this same cell on "
@@ -1715,8 +1788,8 @@ cells = [
 
         # The move is designed to send each run's own mean to the identity.
         for run in np.unique(dataset.groups):
-            centred = _mean_riemann(recentred[dataset.groups == run])
-            assert np.allclose(centred, np.eye(centred.shape[0]), atol=1e-6)
+            centerd = _mean_riemann(recenterd[dataset.groups == run])
+            assert np.allclose(centerd, np.eye(centerd.shape[0]), atol=1e-6)
         """
     ),
     markdown(
@@ -2024,6 +2097,7 @@ CODE_PURPOSES = [
     "Build the two Riemannian class prototypes and compare them.",
     "Visualize MDM decisions as distances to the class means.",
     "Build a tangent vector by hand and verify the sqrt(2) isometry.",
+    "Print the real validation code instead of asking you to trust it.",
     "Fit and evaluate all three pipelines on held-out recording runs.",
     "Plot fold-level full-calibration performance.",
     "Check class-specific errors with normalized confusion matrices.",
@@ -2031,7 +2105,7 @@ CODE_PURPOSES = [
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
     "Repeat the geometry contrast in the low-calibration regime.",
-    "Re-centre each run on its own mean and test whether transfer improves.",
+    "Re-center each run on its own mean and test whether transfer improves.",
     "Flag artifact trials by their distance to the mean (Riemannian potato).",
     "Map covariance matrices to tangent vectors and display a 2D projection.",
 ]

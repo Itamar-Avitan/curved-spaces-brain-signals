@@ -4,7 +4,7 @@ import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { GLOSSARY } from "../glossary";
 
 /**
- * One boxed formula with every symbol labelled underneath and a plain-English
+ * One boxed formula with every symbol labeled underneath and a plain-English
  * reading. The third rung of the page's term ladder: plain idea -> the formula
  * -> the formal name.
  *

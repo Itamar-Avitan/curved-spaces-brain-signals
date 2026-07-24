@@ -12,7 +12,7 @@ along the way?
 > log for the changes themselves. In short: F1, F2, F3, F5, F6, F8 and F9 are
 > fixed; F4 is half fixed (the analogy now stops on the curvature sign; Part 1 is
 > shorter but still the longest run of set-up on the page); F7 is partly fixed
-> (the MDM axes are still mislabelled and the SPD cone is still decorative — that
+> (the MDM axes are still mislabeled and the SPD cone is still decorative — that
 > is T3.4, still open); F10 needed a correction, noted inline below.
 
 **Reviewed:** the live dev build at 1440px and 390px, every section screenshotted and

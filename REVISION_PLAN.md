@@ -34,11 +34,11 @@ Shipped so far (see git log for detail):
 | T3.2 full 2×2 SPD math module | done — `src/math/spd.ts`, 34 tests |
 | T3.3 rotating geodesic | done — "Tilted" pose in the distance explorer |
 | T4.1 affine-invariance demo | done — `<rg-invariance-explorer>` |
-| T4.2 transfer / re-centring demo | done — `<rg-transfer-explorer>` |
+| T4.2 transfer / re-centering demo | done — `<rg-transfer-explorer>` |
 | T4.3 geometry-vs-features result | done — surfaced on the page |
 | T4.4 results framing | done — crossover + resolution limit stated |
 | T5.1 non-diagonal congruence | done |
-| T5.2 notebook re-centring | done |
+| T5.2 notebook re-centering | done |
 | T5.3 non-commuting toy example | done |
 | T5.5 SPD display bug + positivity probe | done |
 | T5.6 Fréchet iteration | done |
@@ -46,13 +46,21 @@ Shipped so far (see git log for detail):
 | T6.2 checkpoint before the CTA | done |
 | T7.1 predict-before-reveal | done — `<rg-predict>`, 3 prompts |
 | T7.2 expanded concept check | done — 3 → 6 questions |
+| T3.4 SPD cone as a coordinate system | done — `<rg-cone-explorer>`, drawn to scale |
+| T3.5 honest MDM axes | done |
+| T5.4 tangent space taught properly | done — log map, base point, √2 isometry verified |
+| T5.8 notebook predict-before-run | done — 3 prompts with folded answers |
+| T5.9 invalid confidence intervals | done — per-fold, with the resolution limit stated |
+| T5.10 validation code made visible | done — printed with `inspect.getsource` |
+| C3 first-use audit | done — `npm run audit:terms`, currently clean |
 
-Still open: **T3.4** (SPD cone as a real coordinate system), **T5.4** (teach the
-tangent space properly and move it earlier), **T5.8** (notebook TODO cells),
-**T5.9** (fix the invalid CIs), **T5.10** (unhide the validation code, re-place
-the exercises), **T6.1** (rebalance Part 1 — the analogy is fixed, the length is
-not), **T7.3** (mobile length), **T0.x** (thesis doc), **C3** (the first-use
-audit script), **C7** (two cold readers).
+Still open: **T5.10 (part two)** — the exercises are still stranded behind two
+optional appendices and have no solutions; **T7.3** (mobile length — the page is
+now ~56,000px on a phone, and the jargon popover bought back less than the new
+sections added); **T0.1/T0.2** (write the thesis and outcomes down as a file);
+**T1.4** (a full copy pass against the spine sentence); **C2** (restate the
+"question answered" boxes as answers in the reader's words); **C7** (two cold
+readers — the one thing that cannot be automated).
 
 ---
 

@@ -127,7 +127,7 @@
         <div class="chapter-progress" aria-hidden="true"><span></span></div>
       </nav>
 
-      <section class="learning-route section-shell" aria-labelledby="route-title">
+      <section class="learning-route section-shell" aria-labeledby="route-title">
         <div class="route-heading">
           <p class="eyebrow cyan">How to read this guide</p>
           <h2 id="route-title">From the math of curves to your own BCI.</h2>
@@ -145,7 +145,7 @@
           <li class="p2">
             <span>Part 2</span>
             <strong>How it connects to EEG</strong>
-            <em>Each trial becomes a covariance matrix: one point in a curved space.</em>
+            <em>Each trial becomes a <rg-term key="covariance-matrix">covariance matrix</rg-term>: one point in a curved space.</em>
           </li>
           <li class="p3">
             <span>Part 3</span>
@@ -163,7 +163,7 @@
             <p class="route-brief-label">By the end, you will be able to</p>
             <ul>
               <li>Explain why one EEG trial becomes a covariance matrix.</li>
-              <li>Say why a Riemannian mean beats an entry-wise average as a class center.</li>
+              <li>Say why a <rg-term key="riemannian-mean">Riemannian mean</rg-term> beats an entry-wise average as a class center.</li>
               <li>Trace how the decoder turns a new trial into a predicted label.</li>
             </ul>
           </div>
@@ -254,7 +254,7 @@
               </g>
             </svg>
             <h3>Gauss</h3>
-            <p>Curvature measured from within.</p>
+            <p><rg-term key="curvature">Curvature</rg-term> measured from within.</p>
           </article>
           <article>
             <span class="history-year">1854</span>
@@ -360,7 +360,7 @@
             from the well above. A gravity well bends paths back together. The
             space of covariance matrices bends them apart, and that is the
             lucky direction: any two points are joined by exactly one shortest
-            route, so a class centre is always unique and the algorithm that
+            route, so a class center is always unique and the algorithm that
             finds it always converges. On a sphere neither is true.
           </p>
         </aside>
@@ -734,7 +734,7 @@
             <p>
               The log map turns each nearby covariance matrix into one vector, so
               tools like LDA, logistic regression, or an SVM can take over from
-              here. The same re-centering on a reference also makes two recordings
+              here. The same <rg-term key="recentering">re-centering</rg-term> on a reference also makes two recordings
               line up — which is how a decoder transfers to a new session or person
               with little recalibration, the geometry’s quiet superpower.
             </p>
@@ -764,7 +764,7 @@
               </p>
               <div class="term-ladder">
                 <span>Plain idea: slide each session onto the same starting point</span>
-                <strong>Mathematical name: re-centring (Riemannian alignment)</strong>
+                <strong>Mathematical name: re-centering (Riemannian alignment)</strong>
               </div>
             </div>
           </div>
@@ -776,7 +776,7 @@
               a day it has never seen?
             </strong>
             <p>
-              Drag the drift up to break the decoder, then re-centre and watch it
+              Drag the drift up to break the decoder, then re-center and watch it
               come back — without a single label from the new session.
             </p>
           </div>
@@ -794,10 +794,10 @@
             <p>
               The demo above is synthetic, and picked to show the mechanism
               clearly. The companion notebook runs the same move on real
-              recordings and gets a <em>negative</em> result: the run centres
+              recordings and gets a <em>negative</em> result: the run centers
               collapse together exactly as they should, and the accuracy does
               not improve. The three runs there came from one sitting, so there
-              was no session shift to remove — and re-centring threw away the
+              was no session shift to remove — and re-centering threw away the
               small real differences along with the nuisance that wasn’t there.
               Alignment is a hypothesis about your data, not a free upgrade. It
               pays when what separates your recordings really is a change of
@@ -807,7 +807,7 @@
         </div>
       </section>
 
-      <section class="method-guide section-shell" aria-labelledby="method-guide-title">
+      <section class="method-guide section-shell" aria-labeledby="method-guide-title">
         <div class="method-guide-heading">
           <div>
             <p class="eyebrow cyan">In practice · choose the tool for the job</p>
@@ -877,7 +877,8 @@
               <span>02</span>
               <div>
                 <h3>Changing distributions</h3>
-                <p>EEG shifts across time, sessions, devices, and participants; alignment may help but must be tested.</p>
+                <p>EEG shifts across time, sessions, devices, and participants;
+                  <rg-term key="recentering">re-centering</rg-term> may help, but it has to be tested rather than assumed.</p>
               </div>
             </article>
             <article>
@@ -1130,7 +1131,7 @@
 
       <rg-next-steps></rg-next-steps>
 
-      <section class="glossary-section section-shell" aria-labelledby="glossary-title">
+      <section class="glossary-section section-shell" aria-labeledby="glossary-title">
         <div class="glossary-heading">
           <p class="eyebrow violet">Keep the language straight</p>
           <div>

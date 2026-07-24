@@ -375,7 +375,7 @@ export class SignalCovariance extends LitElement {
           : "The channels currently share little linear variation.";
 
     return html`
-      <section class="shell" aria-labelledby="signal-covariance-title">
+      <section class="shell" aria-labeledby="signal-covariance-title">
         <div class="heading">
           <div>
             <p class="eyebrow">Watch the representation change</p>
