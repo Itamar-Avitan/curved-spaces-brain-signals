@@ -32,6 +32,12 @@ export class RgTerm extends LitElement {
     above: false,
   };
   @state() private sheet = false;
+  /**
+   * Tabbing to a term scrolls it into view, and that scroll is still settling
+   * when the reader presses Enter. Without a grace period the card opens while
+   * the trigger is momentarily off-screen and closes itself immediately.
+   */
+  private openedAt = 0;
 
   private readonly onDocumentDown = (event: Event) => {
     if (!this.open) return;
@@ -51,8 +57,33 @@ export class RgTerm extends LitElement {
   };
 
   private readonly onReflow = () => {
-    if (this.open) this.close();
+    if (!this.open) return;
+    if (this.sheet) return; // pinned to the bottom of the screen already
+
+    const trigger = this.renderRoot.querySelector<HTMLButtonElement>(".trigger");
+    if (!trigger) return;
+
+    const box = trigger.getBoundingClientRect();
+    const offScreen = box.bottom < 0 || box.top > window.innerHeight;
+    if (offScreen && performance.now() - this.openedAt > 500) {
+      this.close();
+      return;
+    }
+    this.placement = this.placeFor(box);
   };
+
+  /** Where the card should sit relative to the trigger. */
+  private placeFor(box: DOMRect) {
+    const width = 340;
+    const margin = 14;
+    const roomBelow = window.innerHeight - box.bottom;
+    const above = roomBelow < 280 && box.top > 280;
+    const left = Math.min(
+      Math.max(margin, box.left + box.width / 2 - width / 2),
+      window.innerWidth - width - margin,
+    );
+    return { top: above ? box.top - 10 : box.bottom + 10, left, above };
+  }
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -92,22 +123,11 @@ export class RgTerm extends LitElement {
     this.sheet = window.innerWidth < 640;
 
     if (!this.sheet) {
-      const width = 340;
-      const margin = 14;
-      const roomBelow = window.innerHeight - box.bottom;
-      const above = roomBelow < 280 && box.top > 280;
-      const left = Math.min(
-        Math.max(margin, box.left + box.width / 2 - width / 2),
-        window.innerWidth - width - margin,
-      );
-      this.placement = {
-        top: above ? box.top - 10 : box.bottom + 10,
-        left,
-        above,
-      };
+      this.placement = this.placeFor(box);
     }
 
     this.activeKey = this.key;
+    this.openedAt = performance.now();
     this.open = true;
     document.dispatchEvent(
       new CustomEvent(OPEN_EVENT, { detail: this, bubbles: false }),
