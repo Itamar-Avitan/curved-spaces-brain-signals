@@ -53,14 +53,18 @@ Shipped so far (see git log for detail):
 | T5.9 invalid confidence intervals | done — per-fold, with the resolution limit stated |
 | T5.10 validation code made visible | done — printed with `inspect.getsource` |
 | C3 first-use audit | done — `npm run audit:terms`, currently clean |
+| C1/C2/C5 copy pass | done — 6 boxes now state the answer, spine in the lede, hedge words gone |
+| T1.4 outcomes synced | done — includes the two-reasons question |
+| T7.3 mobile length | done — 67 → 54 phone screens, desktop unchanged |
 
-Still open: **T5.10 (part two)** — the exercises are still stranded behind two
-optional appendices and have no solutions; **T7.3** (mobile length — the page is
-now ~56,000px on a phone, and the jargon popover bought back less than the new
-sections added); **T0.1/T0.2** (write the thesis and outcomes down as a file);
-**T1.4** (a full copy pass against the spine sentence); **C2** (restate the
-"question answered" boxes as answers in the reader's words); **C7** (two cold
-readers — the one thing that cannot be automated).
+Still open: **T5.10 (part two)** — the notebook's seven exercises are still
+stranded behind two optional appendices and have no solutions; **T0.1** (write
+the thesis down as its own file rather than leaving it in this plan); and
+**C7** (two cold readers), which the author explicitly deferred.
+
+The page is still 54 phone screens. That is the honest floor for a guide with
+ten interactive widgets; shortening it further means removing something a reader
+can handle, which is the part that makes it work.
 
 ---
 
