@@ -25,12 +25,32 @@ function initChapterProgress(): void {
     })
     .filter((section): section is HTMLElement => section !== null);
 
+  // Below ~720px the strip is wider than the screen and scrolls horizontally,
+  // so the later parts sit off-screen. Keep whichever part you are reading
+  // visible in it rather than making you discover the sideways scroll.
+  const revealInStrip = (link: HTMLAnchorElement): void => {
+    if (map.scrollWidth <= map.clientWidth) return;
+    const strip = link.offsetLeft + link.offsetWidth / 2 - map.clientWidth / 2;
+    const target = Math.max(0, Math.min(strip, map.scrollWidth - map.clientWidth));
+    if (Math.abs(target - map.scrollLeft) < 4) return;
+    map.scrollTo({
+      left: target,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    });
+  };
+
   const setActive = (id: string): void => {
     for (const link of links) {
       const isActive = link.getAttribute("href") === `#${id}`;
       link.classList.toggle("is-active", isActive);
-      if (isActive) link.setAttribute("aria-current", "true");
-      else link.removeAttribute("aria-current");
+      if (isActive) {
+        link.setAttribute("aria-current", "true");
+        revealInStrip(link);
+      } else {
+        link.removeAttribute("aria-current");
+      }
     }
   };
 

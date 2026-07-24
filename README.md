@@ -25,6 +25,7 @@ The generated ES module registers:
 - `<rg-mean-explorer>`
 - `<rg-mdm-playground>`
 - `<rg-invariance-explorer>`
+- `<rg-transfer-explorer>`
 - `<rg-tangent-explorer>`
 - `<rg-concept-check>`
 - `<rg-next-steps>`

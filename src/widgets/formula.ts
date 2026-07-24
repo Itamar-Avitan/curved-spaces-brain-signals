@@ -110,7 +110,7 @@ export class RgFormula extends LitElement {
 
     .legend > div {
       display: grid;
-      grid-template-columns: 92px 1fr;
+      grid-template-columns: minmax(96px, max-content) 1fr;
       gap: 14px;
       border-bottom: 1px solid rgba(46, 53, 74, 0.07);
       padding: 10px 24px;
@@ -125,6 +125,7 @@ export class RgFormula extends LitElement {
       font-size: 0.98rem;
       font-style: italic;
       color: #6c4eb9;
+      white-space: nowrap;
     }
 
     dd {

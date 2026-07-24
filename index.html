@@ -353,10 +353,15 @@
         <aside class="analogy-boundary section-shell">
           <strong>Where the analogy stops</strong>
           <p>
-            EEG covariance matrices are not physical spacetime, and the page is
-            not applying Einstein’s field equations to the brain. The shared
-            idea is narrower: first identify the objects in your space, then
-            choose a distance rule that respects their structure.
+            The shared idea is narrow: identify the objects in your space, then
+            choose a distance rule that respects their structure. Push the
+            picture further and it misleads —
+            <strong>the space we are about to build curves the opposite way</strong>
+            from the well above. A gravity well bends paths back together. The
+            space of covariance matrices bends them apart, and that is the
+            lucky direction: any two points are joined by exactly one shortest
+            route, so a class centre is always unique and the algorithm that
+            finds it always converges. On a sphere neither is true.
           </p>
         </aside>
       </section>
@@ -411,8 +416,10 @@
         <p>
           Now point that geometry at the brain. A few seconds of signal, many
           electrodes at once — and all of it folds into a single, structured
-          object. Decoders built on it have won a string of international BCI
-          competitions; here is the representation that makes them work.
+          object. Between 2014 and 2016, pipelines built on this representation
+          took first place in five international neural-decoding competitions,
+          against fields of 260 to 688 teams. Here is the representation that
+          makes them work.
         </p>
       </section>
 
@@ -773,6 +780,48 @@
         </div>
       </section>
 
+      <section id="transfer" class="transfer-section">
+        <div class="section-shell">
+          <div class="lesson-heading">
+            <div>
+              <p class="eyebrow cyan">The payoff · why any of this was worth it</p>
+              <h2>A decoder that survives tomorrow.</h2>
+            </div>
+            <div>
+              <p>
+                Everything so far has been about one recording. The reason the
+                field cares about this geometry is what happens across two —
+                because in practice a BCI is unusable if every session starts
+                with twenty minutes of recalibration.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: slide each session onto the same starting point</span>
+                <strong>Mathematical name: re-centring (Riemannian alignment)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="lesson-purpose transfer-purpose">
+            <span>Question answered</span>
+            <strong>
+              What does the geometry actually buy a working BCI, in accuracy, on
+              a day it has never seen?
+            </strong>
+            <p>
+              Drag the drift up to break the decoder, then re-centre and watch it
+              come back — without a single label from the new session.
+            </p>
+          </div>
+
+          <rg-transfer-explorer></rg-transfer-explorer>
+
+          <div class="formula-block">
+            <p class="formula-label">One line, and it needs no labels</p>
+            <rg-formula key="recentering"></rg-formula>
+          </div>
+        </div>
+      </section>
+
       <section class="method-guide section-shell" aria-labelledby="method-guide-title">
         <div class="method-guide-heading">
           <div>
@@ -912,6 +961,16 @@
               notebook is that exact pipeline, end to end, on a real motor-imagery
               recording — runnable in your browser with nothing to install.
             </p>
+          </div>
+
+          <div class="handoff-check">
+            <p class="eyebrow cyan">One checkpoint before you go</p>
+            <h3>Can you answer these three without scrolling back?</h3>
+            <p class="handoff-lede">
+              If any of them feels shaky, the linked section will fix it in a
+              minute. The notebook assumes all three.
+            </p>
+            <rg-concept-check></rg-concept-check>
           </div>
 
           <div class="notebook-launch">
@@ -1081,7 +1140,6 @@
             </article>
           </div>
 
-          <rg-concept-check></rg-concept-check>
         </div>
       </section>
 
