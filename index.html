@@ -456,41 +456,7 @@
           </div>
           <rg-covariance-explorer></rg-covariance-explorer>
 
-          <figure class="cone-figure">
-            <svg class="cone-stage" viewBox="0 0 440 360" role="img" aria-label="An SPD cone: every valid covariance matrix is a single point inside a curved, cone-shaped space.">
-              <defs>
-                <linearGradient id="conegrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#6c4eb9" stop-opacity=".22" />
-                  <stop offset="1" stop-color="#1ca9a0" stop-opacity=".06" />
-                </linearGradient>
-              </defs>
-              <path class="cf-body" d="M220 332 L52 72 A168 44 0 0 0 388 72 Z" />
-              <path class="cf-rim-back" d="M52 72 A168 44 0 0 1 388 72" />
-              <path class="cf-rim-front" d="M52 72 A168 44 0 0 0 388 72" />
-              <ellipse class="cf-mat cyan" cx="160" cy="150" rx="14" ry="8" transform="rotate(-20 160 150)" />
-              <ellipse class="cf-mat coral" cx="270" cy="132" rx="10" ry="13" transform="rotate(15 270 132)" />
-              <ellipse class="cf-mat lemon" cx="220" cy="196" rx="13" ry="10" transform="rotate(-8 220 196)" />
-              <circle class="cf-dot" cx="192" cy="112" r="3.5" />
-              <circle class="cf-dot" cx="295" cy="182" r="3.5" />
-              <circle class="cf-dot" cx="152" cy="202" r="3.5" />
-              <circle class="cf-apex" cx="220" cy="332" r="4" />
-              <text class="cf-label" x="220" y="58" text-anchor="middle">the SPD cone</text>
-            </svg>
-            <figcaption>
-              <strong>Every valid covariance matrix is one point in this cone.</strong>
-              <span>
-                A variance can’t be negative, so only some tables are possible —
-                and the possible ones fill this cone, narrowing toward zero. That
-                gives us the <em>shape</em> of the space. How far apart two points
-                in it are is a second, separate decision:
-                <strong>which ruler you measure with.</strong> Measure in straight
-                lines and averaging two patterns can invent a strength neither one
-                had (you’ll see it next). Choose a ruler built for this space and
-                it can’t — and that choice, not the shape, is what makes the
-                geometry curved.
-              </span>
-            </figcaption>
-          </figure>
+          <rg-cone-explorer></rg-cone-explorer>
           <div class="pipeline" aria-label="EEG to Riemannian classification pipeline">
             <article>
               <span class="pipeline-number">1</span>

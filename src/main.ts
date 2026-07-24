@@ -4,6 +4,7 @@ import "./widgets/formula";
 import "./widgets/predict";
 import "./widgets/glossary-index";
 import "./widgets/covariance-explorer";
+import "./widgets/cone-explorer";
 import "./widgets/signal-covariance";
 import "./widgets/distance-explorer";
 import "./widgets/mean-explorer";
