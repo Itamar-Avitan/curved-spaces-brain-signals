@@ -63,8 +63,9 @@
             </h1>
             <p class="hero-lede">
               A 19th-century idea about measuring curved space became the
-              language of gravity. Today the same idea decides which
-              multichannel brain-signal patterns are truly alike.
+              language of gravity. It also solves a stubborn problem in
+              brain-computer interfaces: how to compare two recordings while
+              ignoring everything the equipment did to them.
             </p>
             <div class="hero-cta">
               <a class="primary-button" href="#story">
@@ -150,7 +151,7 @@
           <li class="p3">
             <span>Part 3</span>
             <strong>Using it: the decoder</strong>
-            <em>Distance, a class center, a prediction — and the bridge to machine learning.</em>
+            <em>Distance, a class center, a prediction — then why this distance, and what happens tomorrow.</em>
           </li>
           <li class="p4">
             <span>Part 4</span>
@@ -163,8 +164,9 @@
             <p class="route-brief-label">By the end, you will be able to</p>
             <ul>
               <li>Explain why one EEG trial becomes a covariance matrix.</li>
-              <li>Say why a <rg-term key="riemannian-mean">Riemannian mean</rg-term> beats an entry-wise average as a class center.</li>
               <li>Trace how the decoder turns a new trial into a predicted label.</li>
+              <li>Give <em>two</em> reasons not to measure distance in straight lines.</li>
+              <li>Say what breaks when you record the same person tomorrow — and what fixes it.</li>
             </ul>
           </div>
           <dl class="route-facts">
@@ -174,7 +176,7 @@
             </div>
             <div>
               <dt>Time</dt>
-              <dd>About 35 minutes, plus 30–45 minutes for the notebook.</dd>
+              <dd>About 50 minutes, plus 30–45 minutes for the notebook.</dd>
             </div>
             <div>
               <dt>Prerequisites</dt>
@@ -522,9 +524,10 @@
         <span class="part-kicker">Part 3 of 4</span>
         <h2>Using it: the decoder</h2>
         <p>
-          With every trial now a point, a decoder needs three moves — measure
-          distance, build a class center, and predict the nearest one — plus a
-          bridge to ordinary machine learning.
+          With every trial now a point, a decoder needs three moves: measure
+          distance, build a class center, predict the nearest one. Then two
+          questions that decide whether it survives contact with real hardware —
+          why <em>this</em> distance, and what happens tomorrow.
         </p>
       </section>
 
@@ -532,7 +535,7 @@
         <div class="section-shell">
           <div class="distance-intro">
             <div>
-              <p class="eyebrow cyan">Move 1 of 3 · measure distance</p>
+              <p class="eyebrow cyan">Move 1 · measure distance</p>
               <h2>What should “halfway” between two EEG patterns look like?</h2>
             </div>
             <p>
@@ -560,7 +563,7 @@
           <rg-distance-explorer></rg-distance-explorer>
 
           <div class="formula-block">
-            <p class="formula-label">The path you just dragged, written down</p>
+            <p class="formula-label">The path you dragged, written down</p>
             <rg-formula key="geodesic"></rg-formula>
           </div>
         </div>
@@ -570,7 +573,7 @@
         <div class="section-shell">
           <div class="lesson-heading">
             <div>
-              <p class="eyebrow coral">Move 2 of 3 · build a class center</p>
+              <p class="eyebrow coral">Move 2 · build a class center</p>
               <h2>How can many EEG trials become one representative pattern?</h2>
             </div>
             <div>
@@ -586,10 +589,10 @@
             </div>
           </div>
           <div class="lesson-purpose mean-purpose">
-            <span>Question answered</span>
+            <span>The sentence to leave with</span>
             <strong>
-              What exactly is averaged, and how does that average become a BCI
-              decision rule?
+              A class center is whatever sits at the smallest total distance
+              from its examples.
             </strong>
             <p>
               Each ellipse is already a covariance summary of one trial. The
@@ -618,7 +621,7 @@
         <div class="section-shell">
           <div class="lesson-heading">
             <div>
-              <p class="eyebrow violet">Move 3 of 3 · make the prediction</p>
+              <p class="eyebrow violet">Move 3 · make the prediction</p>
               <h2>From an EEG trial to a BCI decision.</h2>
             </div>
             <div>
@@ -635,10 +638,10 @@
           </div>
 
           <div class="lesson-purpose classifier-purpose">
-            <span>Question answered</span>
+            <span>The sentence to leave with</span>
             <strong>
-              How do the trial summary, the class center, and the distance rule
-              combine into one prediction?
+              To label a new trial, measure it against each class center and
+              take the nearest one.
             </strong>
             <p>
               This is the decision the BCI actually ships: measure a new trial’s
@@ -671,10 +674,10 @@
           </div>
 
           <div class="lesson-purpose invariance-purpose">
-            <span>Question answered</span>
+            <span>The sentence to leave with</span>
             <strong>
-              Why is this particular distance the right one for EEG — and not just
-              some other curved alternative?
+              Rewire the amplifier and the straight-line distance changes. The
+              Riemannian one does not move at all.
             </strong>
             <p>
               Volume conduction, electrode gain, and your choice of reference all
@@ -726,10 +729,10 @@
             </div>
           </div>
           <div class="lesson-purpose tangent-purpose">
-            <span>Question answered</span>
+            <span>The sentence to leave with</span>
             <strong>
-              How do curved covariance matrices become inputs for the familiar
-              linear classifiers a BCI can train?
+              Flatten around one reference point and every trial becomes a plain
+              list of numbers that ordinary machine learning can read.
             </strong>
             <p>
               The log map turns each nearby covariance matrix into one vector, so
@@ -770,10 +773,10 @@
           </div>
 
           <div class="lesson-purpose transfer-purpose">
-            <span>Question answered</span>
+            <span>The sentence to leave with</span>
             <strong>
-              What does the geometry actually buy a working BCI, in accuracy, on
-              a day it has never seen?
+              Re-centering each session on its own average cancels the
+              difference between sessions without damaging what is inside them.
             </strong>
             <p>
               Drag the drift up to break the decoder, then re-center and watch it
@@ -792,8 +795,8 @@
           <aside class="transfer-caveat">
             <strong>And when it doesn’t help</strong>
             <p>
-              The demo above is synthetic, and picked to show the mechanism
-              clearly. The companion notebook runs the same move on real
+              The demo above is synthetic, and its numbers were chosen to show
+              the mechanism. The companion notebook runs the same move on real
               recordings and gets a <em>negative</em> result: the run centers
               collapse together exactly as they should, and the accuracy does
               not improve. The three runs there came from one sitting, so there
@@ -820,10 +823,11 @@
           </p>
         </div>
         <div class="lesson-purpose method-purpose">
-          <span>Question answered</span>
+          <span>The sentence to leave with</span>
           <strong>
-            Once EEG trials are covariance matrices, which decoder should you
-            actually reach for?
+            These methods share a representation and differ in what they learn
+            from it — so the right one depends on how much calibration data you
+            can ask for.
           </strong>
           <p>
             MDM, tangent-space models, and CSP + LDA trade interpretability,
@@ -918,12 +922,13 @@
             <p class="eyebrow cyan">Optional deep dive · watch it derived</p>
             <h2>Want to see the whole idea get built?</h2>
             <p class="capstone-lead">
-              A short film — about five minutes — for anyone who'd rather watch
-              the argument derived than read it: the covariance matrix, the curved
-              cone it lives on, why the straight ruler swells, the affine-invariant
-              distance that shrugs off the noise, and the nearest center that reads
-              the thought. Every step is shown on screen, not asserted. Skip it if
-              you like — or take the scenic route, then go run it in the notebook.
+              A five-minute film for anyone who would rather watch the argument
+              built than read it. It derives the whole chain on screen: the
+              covariance matrix, the cone it lives in, why the straight ruler
+              swells, the distance that shrugs off the recording, and the
+              nearest center that reads the thought. Nothing is asserted.
+              Entirely optional — skip it, or take the scenic route and then go
+              run the notebook.
             </p>
           </div>
           <figure class="capstone-player">
