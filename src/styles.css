@@ -3616,3 +3616,48 @@ main section[id],
 main [id] {
   scroll-margin-top: 76px;
 }
+
+/* Mobile-only fold for reference material. The button is inserted by
+   src/mobile-collapse.ts and stays hidden above the breakpoint. */
+.collapse-toggle {
+  display: block;
+  width: 100%;
+  margin: 4px 0 8px;
+  border: 1px solid rgba(46, 53, 74, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 13px 16px;
+  color: inherit;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.collapse-toggle::after {
+  content: " ↓";
+  opacity: 0.55;
+}
+
+.collapse-toggle[aria-expanded="true"]::after {
+  content: " ↑";
+}
+
+.collapse-toggle:focus-visible {
+  outline: 3px solid var(--violet, #6c4eb9);
+  outline-offset: 3px;
+}
+
+.limits-section .collapse-toggle,
+.tangent-section .collapse-toggle {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fffaf1;
+}
+
+/* These blocks set `display: grid`, which outranks the user-agent rule for
+   [hidden] and left them visible when collapsed. */
+[data-collapse-mobile][hidden] {
+  display: none !important;
+}

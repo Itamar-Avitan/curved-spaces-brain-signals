@@ -235,7 +235,7 @@
           </div>
         </div>
 
-        <div class="history-track" aria-label="A brief history of curved geometry">
+        <div class="history-track" aria-label="A brief history of curved geometry" data-collapse-mobile="the four-step history">
           <article>
             <span class="history-year">300 BCE</span>
             <svg class="history-icon" viewBox="0 0 108 80" aria-hidden="true">
@@ -377,39 +377,6 @@
           meaningful notions of “near,” “far,” and “between.”
           <strong>Even a collection of data tables.</strong>
         </p>
-        <div class="space-transform" aria-hidden="true">
-          <div class="transform-node">
-            <svg class="node-icon" viewBox="0 0 60 60">
-              <ellipse class="nring" cx="30" cy="33" rx="25" ry="11" />
-              <ellipse class="nring" cx="30" cy="33" rx="14" ry="6.5" />
-              <circle class="ndot coral" cx="30" cy="33" r="6" />
-              <circle class="ndot lemon" cx="50" cy="28" r="3.2" />
-            </svg>
-            <p>points in spacetime</p>
-          </div>
-          <span class="transform-arrow">→</span>
-          <div class="transform-node">
-            <svg class="node-icon" viewBox="0 0 60 60">
-              <path class="nbrk" d="M16 13 L11 13 L11 47 L16 47" />
-              <path class="nbrk" d="M44 13 L49 13 L49 47 L44 47" />
-              <rect class="ndiag" x="17" y="16" width="12" height="12" rx="3" />
-              <rect class="noff" x="31" y="16" width="12" height="12" rx="3" />
-              <rect class="noff" x="17" y="30" width="12" height="12" rx="3" />
-              <rect class="ndiag" x="31" y="30" width="12" height="12" rx="3" />
-            </svg>
-            <p>relationship tables</p>
-          </div>
-          <span class="transform-arrow">→</span>
-          <div class="transform-node highlighted">
-            <svg class="node-icon" viewBox="0 0 60 60">
-              <path class="nwave cyan" d="M8 21 q 6 -8 12 0 t 12 0 t 12 0 t 8 0" />
-              <path class="nwave coral" d="M8 32 q 6 7 12 0 t 12 0 t 12 0 t 8 0" />
-              <path class="nwave violet" d="M8 43 q 6 -6 12 0 t 12 0 t 12 0 t 8 0" />
-            </svg>
-            <p>EEG channel relationships</p>
-          </div>
-        </div>
-
       </section>
 
       <section id="part-eeg" class="part-divider eeg section-shell" aria-label="Part 2: How it connects to EEG">
@@ -459,7 +426,7 @@
           <rg-covariance-explorer></rg-covariance-explorer>
 
           <rg-cone-explorer></rg-cone-explorer>
-          <div class="pipeline" aria-label="EEG to Riemannian classification pipeline">
+          <div class="pipeline" aria-label="EEG to Riemannian classification pipeline" data-collapse-mobile="the four-step overview">
             <article>
               <span class="pipeline-number">1</span>
               <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
@@ -835,7 +802,7 @@
             the data you have.
           </p>
         </div>
-        <div class="method-table" role="table" aria-label="Comparison of EEG decoding methods">
+        <div class="method-table" role="table" aria-label="Comparison of EEG decoding methods" data-collapse-mobile="the comparison table">
           <div class="method-row method-header" role="row">
             <span role="columnheader">Method</span>
             <span role="columnheader">What it learns</span>
@@ -869,7 +836,7 @@
             <p class="eyebrow lemon">What geometry does not solve</p>
             <h2>A better ruler cannot repair a bad measurement.</h2>
           </div>
-          <div class="limits-list">
+          <div class="limits-list" data-collapse-mobile="the four limitations">
             <article>
               <span>01</span>
               <div>
@@ -1070,7 +1037,7 @@
             </div>
           </aside>
 
-          <div class="notebook-path" aria-label="Notebook learning path">
+          <div class="notebook-path" aria-label="Notebook learning path" data-collapse-mobile="the three notebook stages">
             <article>
               <span>01</span>
               <h3>See the EEG</h3>
@@ -1108,7 +1075,7 @@
             </p>
           </div>
 
-          <div class="concept-to-code" aria-label="Connections between website lessons and notebook sections">
+          <div class="concept-to-code" aria-label="Connections between website lessons and notebook sections" data-collapse-mobile="the page-to-notebook map">
             <article>
               <span>Website: halfway and distance</span>
               <strong>Notebook: two-channel path comparison</strong>
@@ -1134,7 +1101,7 @@
         </div>
       </section>
 
-      <rg-next-steps></rg-next-steps>
+      <div data-collapse-mobile="where to go next"><rg-next-steps></rg-next-steps></div>
 
       <section class="glossary-section section-shell" aria-labeledby="glossary-title">
         <div class="glossary-heading">
@@ -1148,7 +1115,7 @@
           </p>
           </div>
         </div>
-        <rg-glossary></rg-glossary>
+        <div data-collapse-mobile="all 19 terms"><rg-glossary></rg-glossary></div>
       </section>
 
       <section id="references" class="references-section">
@@ -1172,7 +1139,7 @@
               </span>
             </a>
           </div>
-          <ol>
+          <ol data-collapse-mobile="the nine sources">
             <li>
               <a href="https://hal.science/hal-01570120">
                 Congedo, Barachant &amp; Bhatia (2017)

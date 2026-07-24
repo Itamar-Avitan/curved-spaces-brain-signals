@@ -30,6 +30,11 @@ The generated ES module registers:
 - `<rg-concept-check>`
 - `<rg-next-steps>`
 
+Reference material — comparison tables, the glossary index, the reading library
+— folds behind a toggle below 720px via `src/mobile-collapse.ts`. Mark a block
+with `data-collapse-mobile="label"`. Desktop is unaffected; the interactive
+teaching sections are never folded.
+
 Every technical term and formula is defined once in `src/glossary.ts`. `<rg-term>`
 (the click-to-explain popover), `<rg-formula>`, and the `<rg-glossary>` index all
 read from it, so definitions cannot drift between the place a term is introduced
