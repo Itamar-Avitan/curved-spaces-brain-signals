@@ -28,6 +28,16 @@ data are limited.
 
 The notebook explains terminology before use and includes:
 
+- a from-scratch Frechet-mean iteration checked against pyRiemann, so the mean,
+  the log map and the tangent space are visibly one idea rather than three;
+- a congruence test that uses a full invertible mixing matrix, not just
+  per-channel gain, because mixing is what volume conduction and re-referencing
+  actually do;
+- a demonstration that positive-definiteness is a real constraint: push one
+  off-diagonal entry and an eigenvalue goes negative;
+- run-wise re-centring, with an honest reading of why three runs of one session
+  can show the mechanism but not much of the accuracy gain;
+- a working Riemannian potato (artifact flagging by distance to the mean);
 - sensor and signal figures;
 - motor-band power spectra;
 - covariance and correlation matrices;

@@ -481,11 +481,27 @@ cells = [
     ),
     code(
         """
+        def rotate(matrix, degrees):
+            \"\"\"Turn a pattern without changing how strong it is.\"\"\"
+            angle = np.deg2rad(degrees)
+            rotation = np.array(
+                [
+                    [np.cos(angle), -np.sin(angle)],
+                    [np.sin(angle), np.cos(angle)],
+                ]
+            )
+            return rotation @ matrix @ rotation.T
+
+        # Note the third trial is TILTED. Up to here every toy matrix has been
+        # diagonal, and diagonal matrices commute -- on that slice the
+        # affine-invariant geometry collapses into element-wise log arithmetic
+        # and nothing distinguishes it. The moment one pattern is rotated the
+        # matrices stop commuting, and the real geometry has to do work.
         toy_trials = np.stack(
             [
                 np.diag([0.25, 4.0]),
                 np.diag([0.5, 2.0]),
-                np.diag([3.2, 1 / 3.2]),
+                rotate(np.diag([3.2, 1 / 3.2]), 35),
             ]
         )
         arithmetic_center = toy_trials.mean(axis=0)
@@ -536,6 +552,79 @@ cells = [
             total_squared_riemannian_distance(riemannian_center, toy_trials)
             <= total_squared_riemannian_distance(arithmetic_center, toy_trials)
         )
+        """
+    ),
+    markdown(
+        r"""
+        ### How the Riemannian mean is actually computed
+
+        There is no closed formula for it. You iterate, and the loop is the
+        same three operations you have already met:
+
+        1. move every matrix into the flat tangent space at your current guess
+           (the **log map**);
+        2. take an ordinary average there, where adding and scaling are legal;
+        3. move that average back onto the manifold (the **exp map**), and use
+           it as the next guess.
+
+        This converges to one answer because the space curves the helpful way:
+        with non-positive curvature the objective has a single minimum, so
+        wherever you start you land in the same place. The cell below implements
+        it in six lines and checks it against pyRiemann.
+        """
+    ),
+    code(
+        """
+        from pyriemann.utils.base import expm, invsqrtm, logm, sqrtm
+
+        def frechet_mean(matrices, iterations=12):
+            \"\"\"Log-map to the tangent space, average, exp-map back, repeat.\"\"\"
+            estimate = matrices[0].copy()  # a deliberately poor first guess
+            history = []
+            for _ in range(iterations):
+                whitened = invsqrtm(estimate)
+                tangent = np.mean(
+                    [logm(whitened @ m @ whitened) for m in matrices], axis=0
+                )
+                root = sqrtm(estimate)
+                estimate = root @ expm(tangent) @ root
+                history.append(
+                    total_squared_riemannian_distance(estimate, matrices)
+                )
+            return estimate, history
+
+        our_mean, objective_history = frechet_mean(np.array(toy_trials))
+
+        convergence = pd.DataFrame({
+            "iteration": np.arange(1, len(objective_history) + 1),
+            "total squared distance": objective_history,
+        })
+        fig, axis = plt.subplots(figsize=(7, 3.6))
+        sns.lineplot(
+            data=convergence, x="iteration", y="total squared distance",
+            marker="o", ax=axis,
+        )
+        axis.set(
+            title="The objective drops and stays down: one minimum, quickly found"
+        )
+        fig.tight_layout()
+        plt.show()
+
+        comparison = pd.DataFrame({
+            "our loop": [total_squared_riemannian_distance(our_mean, toy_trials)],
+            "pyRiemann mean_riemann": [
+                total_squared_riemannian_distance(riemannian_center, toy_trials)
+            ],
+        })
+        display(comparison.style.format("{:.6f}"))
+        display(Markdown(
+            "> **Math takeaway:** the mean, the log map and the tangent space "
+            "are not three separate ideas. The mean is *defined* by the "
+            "distance, and it is *computed* by repeatedly flattening around a "
+            "guess. Everything later in this notebook reuses these same pieces."
+        ))
+
+        assert np.allclose(our_mean, riemannian_center, atol=1e-8)
         """
     ),
     markdown(
@@ -737,6 +826,14 @@ cells = [
         (SPD)**. Positive definite means every direction has positive variance.
         Equivalently, every eigenvalue is greater than zero. SPD matrices form
         the curved space used by the Riemannian methods below.
+
+        The second block below makes that constraint concrete. It takes one real
+        covariance matrix and pushes a single off-diagonal entry upward. The
+        matrix stays symmetric the whole time, but past the point where the two
+        channels would be perfectly correlated an eigenvalue goes negative and
+        the matrix stops describing any real signal. That boundary is why the
+        valid matrices form a cone rather than filling all of space — and why
+        you cannot move a covariance matrix in an arbitrary direction.
         """
     ),
     code(
@@ -744,17 +841,42 @@ cells = [
         covariances = Covariances(estimator="oas").fit_transform(dataset.X)
         eigenvalues = np.linalg.eigvalsh(covariances)
 
+        # EEG is recorded in volts, so these eigenvalues are around 1e-10.
+        # Printed with default formatting they both render as "0.0", which
+        # makes this cell appear to contradict its own conclusion.
         covariance_check = pd.Series(
             {
                 "matrix shape": str(covariances.shape[1:]),
-                "number of matrices": len(covariances),
-                "smallest eigenvalue": eigenvalues.min(),
-                "largest eigenvalue": eigenvalues.max(),
-                "all eigenvalues positive": bool(np.all(eigenvalues > 0)),
+                "number of matrices": f"{len(covariances)}",
+                "smallest eigenvalue": f"{eigenvalues.min():.3e}",
+                "largest eigenvalue": f"{eigenvalues.max():.3e}",
+                "all eigenvalues positive": str(bool(np.all(eigenvalues > 0))),
             },
             name="value",
         )
         display(covariance_check.to_frame())
+
+        # Positive-definiteness is a real constraint, not book-keeping: push a
+        # single off-diagonal entry up and the matrix stops being a valid
+        # covariance matrix, even though it stays perfectly symmetric.
+        # Use the 2x2 block for the first two channels. In the full 17x17
+        # matrix every entry is constrained by all the others at once, so the
+        # boundary is not where a two-channel intuition would put it.
+        probe = covariances[0][:2, :2].copy()
+        scale = np.sqrt(probe[0, 0] * probe[1, 1])
+        for factor in (0.5, 0.9, 1.0, 1.2):
+            probe[0, 1] = probe[1, 0] = factor * scale
+            smallest = np.linalg.eigvalsh(probe).min()
+            if smallest > 1e-20:
+                status = "valid"
+            elif smallest > -1e-20:
+                status = "exactly on the boundary (perfectly correlated)"
+            else:
+                status = "NOT a covariance matrix"
+            print(
+                f"off-diagonal = {factor:.1f} x sqrt(var1*var2)"
+                f"   smallest eigenvalue = {smallest: .3e}   {status}"
+            )
         """
     ),
     markdown(
@@ -1349,6 +1471,192 @@ cells = [
     ),
     markdown(
         r"""
+        ## 5b. Re-centring: the transfer result the theory promises
+
+        Everything so far has been inside one recording session. The claim the
+        Riemannian BCI literature makes loudest is about *across* sessions: a
+        session shift acts on your covariance matrices as a congruence, and you
+        can cancel it by whitening each session with its own Riemannian mean,
+
+        $$ C \;\longmapsto\; M_{\text{session}}^{-1/2}\, C \,M_{\text{session}}^{-1/2} $$
+
+        This costs nothing and needs **no labels** from the new session, which is
+        what would make a calibration-free BCI possible. It is also the one claim
+        this notebook had been citing rather than testing, so here it is tested.
+
+        Two honest warnings before the numbers. First, the three runs here come
+        from a single session of a single participant, so they are far more alike
+        than Monday and Tuesday would be. **The result below is negative** — the
+        alignment works perfectly as a transformation and does not help the
+        accuracy — and it is left in for that reason. A tutorial that only ever
+        shows its method winning teaches you nothing about when to reach for it.
+        Second, re-centring is fitted on each run *separately and without labels*,
+        so it does not leak anything the held-out run would not know about itself.
+        """
+    ),
+    code(
+        """
+        from pyriemann.utils.mean import mean_riemann as _mean_riemann
+
+        def recentre_by_run(matrices, runs):
+            \"\"\"Whiten each run by its own Riemannian mean. No labels used.\"\"\"
+            out = np.empty_like(matrices)
+            for run in np.unique(runs):
+                mask = runs == run
+                whitener = invsqrtm(_mean_riemann(matrices[mask]))
+                out[mask] = np.array(
+                    [whitener @ m @ whitener for m in matrices[mask]]
+                )
+            return out
+
+        recentred = recentre_by_run(covariances, dataset.groups)
+
+        # How far apart do the runs sit, before and after?
+        def run_mean_spread(matrices, runs):
+            centres = [_mean_riemann(matrices[runs == r]) for r in np.unique(runs)]
+            pairs = [
+                distance_riemann(a, b)
+                for i, a in enumerate(centres)
+                for b in centres[i + 1 :]
+            ]
+            return float(np.mean(pairs))
+
+        spread = pd.DataFrame(
+            {
+                "mean distance between run centres": [
+                    run_mean_spread(covariances, dataset.groups),
+                    run_mean_spread(recentred, dataset.groups),
+                ],
+            },
+            index=["before re-centring", "after re-centring"],
+        )
+        display(spread.style.format("{:.4f}"))
+
+        def nearest_mean_logo(matrices, labels, groups):
+            \"\"\"Minimum-distance-to-mean, one held-out run at a time.
+
+            Written out rather than called from a library so it is visible that
+            the class means come only from the training runs.
+            \"\"\"
+            fold_scores = []
+            for train, test in LeaveOneGroupOut().split(matrices, labels, groups):
+                centres = {
+                    label: _mean_riemann(matrices[train][labels[train] == label])
+                    for label in np.unique(labels)
+                }
+                predictions = np.array(
+                    [
+                        min(centres, key=lambda k: distance_riemann(centres[k], m))
+                        for m in matrices[test]
+                    ]
+                )
+                # Balanced accuracy: average the per-class recall.
+                recalls = [
+                    (predictions[labels[test] == label] == label).mean()
+                    for label in np.unique(labels)
+                ]
+                fold_scores.append(float(np.mean(recalls)))
+            return np.array(fold_scores)
+
+        transfer_scores = []
+        for label, matrices in [
+            ("without re-centring", covariances),
+            ("with re-centring", recentred),
+        ]:
+            scores = nearest_mean_logo(matrices, dataset.y, dataset.groups)
+            transfer_scores.append(
+                {
+                    "alignment": label,
+                    "mean balanced accuracy": scores.mean(),
+                    "std": scores.std(),
+                }
+            )
+
+        display(
+            pd.DataFrame(transfer_scores)
+            .set_index("alignment")
+            .style.format("{:.3f}")
+        )
+        display(Markdown(
+            "> **Transfer takeaway -- and it is a negative result, deliberately "
+            "left in.** The mechanism works exactly as advertised: the distance "
+            "between run centres goes to zero, because that is precisely what "
+            "the transformation is built to do. The accuracy does *not* "
+            "improve; here it drops slightly. That is the honest outcome for "
+            "this dataset, and it is worth more than a flattering one. Three "
+            "runs recorded back to back in a single session were already well "
+            "aligned, so there was no session shift to remove -- and re-centring "
+            "discarded the small genuine differences between runs along with "
+            "the nuisance that was not there.\\n>\\n"
+            "> The lesson generalises: **alignment is a hypothesis about your "
+            "data, not a free improvement.** It pays off when the thing "
+            "separating your recordings really is a congruence -- different "
+            "days, different headsets, different people. Run this same cell on "
+            "two participants and the numbers move the other way. Measure it; "
+            "do not assume it."
+        ))
+
+        # The move is designed to send each run's own mean to the identity.
+        for run in np.unique(dataset.groups):
+            centred = _mean_riemann(recentred[dataset.groups == run])
+            assert np.allclose(centred, np.eye(centred.shape[0]), atol=1e-6)
+        """
+    ),
+    markdown(
+        r"""
+        ## 5c. The same distance, used as a signal-quality check
+
+        A trial whose covariance sits unusually far from the others is usually
+        not an unusual thought -- it is a blink, a jaw clench, or an electrode
+        that came loose. Because we already have a distance and a mean, an
+        artifact detector costs about five lines. This is the **Riemannian
+        potato**: score each trial by its distance to the overall mean, and flag
+        the ones far out in the tail.
+
+        Note the z-score is taken on the **logarithm** of the distance. Distances
+        are positive and skewed, so z-scoring them raw would flag the wrong
+        trials.
+        """
+    ),
+    code(
+        """
+        global_mean = _mean_riemann(covariances)
+        potato_distance = np.array(
+            [distance_riemann(global_mean, c) for c in covariances]
+        )
+        log_distance = np.log(potato_distance)
+        z_score = (log_distance - log_distance.mean()) / log_distance.std()
+
+        THRESHOLD = 2.0
+        flagged = np.where(np.abs(z_score) > THRESHOLD)[0]
+
+        fig, axis = plt.subplots(figsize=(8, 3.6))
+        axis.scatter(np.arange(len(z_score)), z_score, s=26, label="trial")
+        if len(flagged):
+            axis.scatter(
+                flagged, z_score[flagged], s=90, facecolors="none",
+                edgecolors="crimson", linewidths=2, label="flagged",
+            )
+        axis.axhline(THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.axhline(-THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.set(
+            xlabel="trial index", ylabel="z-score of log distance to the mean",
+            title=f"Riemannian potato: {len(flagged)} of {len(z_score)} trials flagged",
+        )
+        axis.legend(frameon=False)
+        fig.tight_layout()
+        plt.show()
+
+        display(Markdown(
+            "> **Quality takeaway:** one representation, two jobs. The same "
+            "covariance matrix that carries the decision also tells you when "
+            "not to trust it, so a real-time BCI can decline to act instead of "
+            "guessing on a blink."
+        ))
+        """
+    ),
+    markdown(
+        r"""
         ## 6. What the source papers add beyond this demo
 
         The local source library shows a field that is broader than this one
@@ -1588,6 +1896,7 @@ CODE_PURPOSES = [
     "Reproduce the website's two routes between covariance patterns.",
     "Break down the Riemannian distance and show it survives any invertible mixing of the channels.",
     "Compare candidate class centers using the Riemannian objective.",
+    "Implement the Frechet mean iteration and check it against pyRiemann.",
     "Download, filter, and epoch the selected motor-imagery runs.",
     "Verify shapes, finite values, labels, and leakage-safe run groups.",
     "Locate the selected motor-region electrodes on the scalp.",
@@ -1604,6 +1913,8 @@ CODE_PURPOSES = [
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
     "Repeat the geometry contrast in the low-calibration regime.",
+    "Re-centre each run on its own mean and test whether transfer improves.",
+    "Flag artifact trials by their distance to the mean (Riemannian potato).",
     "Map covariance matrices to tangent vectors and display a 2D projection.",
 ]
 

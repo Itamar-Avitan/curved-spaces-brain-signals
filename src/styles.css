@@ -3553,3 +3553,38 @@ footer a {
     padding: 78px 0;
   }
 }
+
+/* The transfer widget is synthetic; the notebook's real-data run is a null
+   result. Saying so is the same discipline the limits section already models. */
+.transfer-caveat {
+  display: grid;
+  grid-template-columns: 0.42fr 1fr;
+  gap: 26px;
+  margin-top: 44px;
+  border-left: 4px solid var(--coral, #ef6b5b);
+  border-radius: 4px 20px 20px 4px;
+  background: #fff2ec;
+  padding: 26px 30px;
+}
+
+.transfer-caveat strong {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: #8f3227;
+}
+
+.transfer-caveat p {
+  margin: 0;
+  color: #4c4340;
+  font-size: 0.97rem;
+  line-height: 1.72;
+}
+
+@media (max-width: 900px) {
+  .transfer-caveat {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 20px;
+  }
+}

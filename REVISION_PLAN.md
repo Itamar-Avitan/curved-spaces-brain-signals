@@ -18,6 +18,44 @@ you only do six things, do the ★ tasks.
 
 ---
 
+## Progress
+
+Shipped so far (see git log for detail):
+
+| Task | State |
+|---|---|
+| T1.1 causal claim about curvature | done |
+| T1.2 fabricated distortion number | done — now measured |
+| T1.3 mobile part-nav | done — auto-scrolls to the active part |
+| T1.5 competition claim | done — five wins, 260–688 teams |
+| T2.1 formula layer | done — `src/glossary.ts` + `<rg-formula>`, 5 on the page |
+| T2.2 jargon popover | done — `<rg-term>`, 15 terms, glossary generated from the same module |
+| T3.1 remount covariance explorer | done |
+| T3.2 full 2×2 SPD math module | done — `src/math/spd.ts`, 34 tests |
+| T3.3 rotating geodesic | done — "Tilted" pose in the distance explorer |
+| T4.1 affine-invariance demo | done — `<rg-invariance-explorer>` |
+| T4.2 transfer / re-centring demo | done — `<rg-transfer-explorer>` |
+| T4.3 geometry-vs-features result | done — surfaced on the page |
+| T4.4 results framing | done — crossover + resolution limit stated |
+| T5.1 non-diagonal congruence | done |
+| T5.2 notebook re-centring | done |
+| T5.3 non-commuting toy example | done |
+| T5.5 SPD display bug + positivity probe | done |
+| T5.6 Fréchet iteration | done |
+| T5.7 Riemannian potato | done |
+| T6.2 checkpoint before the CTA | done |
+| T7.1 predict-before-reveal | done — `<rg-predict>`, 3 prompts |
+| T7.2 expanded concept check | done — 3 → 6 questions |
+
+Still open: **T3.4** (SPD cone as a real coordinate system), **T5.4** (teach the
+tangent space properly and move it earlier), **T5.8** (notebook TODO cells),
+**T5.9** (fix the invalid CIs), **T5.10** (unhide the validation code, re-place
+the exercises), **T6.1** (rebalance Part 1 — the analogy is fixed, the length is
+not), **T7.3** (mobile length), **T0.x** (thesis doc), **C3** (the first-use
+audit script), **C7** (two cold readers).
+
+---
+
 ## The comprehension contract — how we'll know it actually landed
 
 Everything below this line is a correctness fix. Correctness is necessary and **not
