@@ -274,12 +274,18 @@ export class MdmPlayground extends LitElement {
         <div class="controls">
           <div>
             <strong>Move the new EEG trial</strong>
-            <span>This is synthetic data for intuition.</span>
+            <span>
+              Synthetic, and deliberately simple: both axes are logs of a
+              single channel's variance. In these coordinates the geodesics
+              are straight lines, which is exactly why this plot looks flat —
+              the curvature lives in the channel-to-channel direction, which
+              this two-slider view leaves out.
+            </span>
           </div>
           <label>
-            Channel-pattern direction 1 <b>${this.testX.toFixed(2)}</b>
+            log of channel 1's variance <b>${this.testX.toFixed(2)}</b>
             <input
-              aria-label="Test trial first log coordinate"
+              aria-label="Log of channel 1 variance for the new trial"
               type="range"
               min="-1.3"
               max="1.3"
@@ -289,9 +295,9 @@ export class MdmPlayground extends LitElement {
             />
           </label>
           <label>
-            Channel-pattern direction 2 <b>${this.testY.toFixed(2)}</b>
+            log of channel 2's variance <b>${this.testY.toFixed(2)}</b>
             <input
-              aria-label="Test trial second log coordinate"
+              aria-label="Log of channel 2 variance for the new trial"
               type="range"
               min="-1"
               max="1"
