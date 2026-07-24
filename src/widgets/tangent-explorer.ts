@@ -1,5 +1,9 @@
 import { LitElement, css, html, svg } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { tangentDistortion, type Sym2 } from "../math/spd";
+
+/** The reference the neighbourhood is flattened around. */
+const REFERENCE: Sym2 = [1, 0, 1];
 
 @customElement("rg-tangent-explorer")
 export class TangentExplorer extends LitElement {
@@ -261,10 +265,15 @@ export class TangentExplorer extends LitElement {
     const C = 180; // panel centre (each panel is a 360x360 square)
     const cyMid = 188;
     const ringScreen = 38 + ((r - 0.25) / 1.25) * 80; // 38..118 px
-    const distortion = Math.min(0.2, 0.075 * r * r); // grows with neighborhood
+    // Measured, not modelled: place `n` matrices on a geodesic circle of radius r
+    // around the reference and compare their true pairwise Riemannian distances
+    // with the distances between their flattened tangent-space images.
+    const distortion = tangentDistortion(REFERENCE, r, n);
     const distPct = (distortion * 100).toFixed(distortion < 0.1 ? 1 : 0);
-    const faithful = distortion < 0.035; // ~ r < 0.68
-    const bow = ringScreen * distortion * 2.7; // how far the geodesic arcs bow out
+    const faithful = distortion < 0.02;
+    // Visual gain only — the bow is proportional to the measured distortion above,
+    // scaled up so a couple of percent is perceptible at this size.
+    const bow = ringScreen * distortion * 8;
 
     const angles = Array.from(
       { length: n },

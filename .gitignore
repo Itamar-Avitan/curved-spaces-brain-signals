@@ -16,3 +16,6 @@ sources/**/*.pdf
 /videos/
 manim/capstone/out/
 manim/capstone/audio/
+
+# review screenshots: regenerable from the dev server, ~13MB
+/review-notes/screenshots/

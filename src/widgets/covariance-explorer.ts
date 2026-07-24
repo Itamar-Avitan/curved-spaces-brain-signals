@@ -365,7 +365,8 @@ export class CovarianceExplorer extends LitElement {
             With more EEG channels, this ellipse becomes a many-dimensional
             shape encoded by one covariance matrix. Valid matrices of this kind
             are called symmetric positive-definite, or SPD. Their collection is
-            the curved data space we will learn to navigate.
+            the data space we will learn to navigate — and choosing how to
+            measure distance across it is the whole rest of this guide.
           </p>
         </div>
       </div>

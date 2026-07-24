@@ -22,10 +22,19 @@ The generated ES module registers:
 - `<rg-signal-covariance>`
 - `<rg-distance-explorer>`
 - `<rg-mean-explorer>`
-- `<rg-tangent-explorer>`
 - `<rg-mdm-playground>`
+- `<rg-invariance-explorer>`
+- `<rg-tangent-explorer>`
 - `<rg-concept-check>`
 - `<rg-next-steps>`
+
+The geometry behind the widgets lives in two modules. `src/math/spd.ts` models full
+2×2 SPD matrices under the affine-invariant metric and is the one to build on:
+its test suite asserts congruence invariance, which is the property the whole
+lesson rests on. `src/math/geometry.ts` is the older diagonal-only model, kept
+for the widgets that have not been migrated yet — note that diagonal SPD
+matrices form a *flat* submanifold, so anything built on it cannot demonstrate
+curvature or invariance.
 
 Load `dist/riemannian-eeg-widgets.js` from an HTTPS host, then add the desired
 custom-element tag in Wix.

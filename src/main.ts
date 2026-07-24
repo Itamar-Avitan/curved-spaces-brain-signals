@@ -1,9 +1,11 @@
 import "./styles.css";
+import "./widgets/covariance-explorer";
 import "./widgets/signal-covariance";
 import "./widgets/distance-explorer";
 import "./widgets/mean-explorer";
 import "./widgets/tangent-explorer";
 import "./widgets/mdm-playground";
+import "./widgets/invariance-explorer";
 import "./widgets/concept-check";
 import "./widgets/next-steps";
 import "./chapter-progress";

@@ -428,9 +428,26 @@
               It is mirrored across its diagonal and represents a valid amount
               of variation in every direction. Matrices with these properties
               are called <strong>symmetric positive-definite (SPD)</strong>.
-              Their curved collection is the <strong>SPD manifold</strong>.
+              Their collection is the <strong>SPD manifold</strong> — and once we
+              pick a rule for measuring distance inside it, that space behaves as
+              a curved one.
             </p>
           </div>
+
+          <div class="lesson-purpose covariance-purpose">
+            <span>Take one apart</span>
+            <strong>
+              The diagonal is how much each channel varies. The off-diagonal is
+              how much they vary <em>together</em> — and that is where the motor
+              signal lives.
+            </strong>
+            <p>
+              Turn up the channel relationship and watch the ellipse tilt. That
+              tilt is the off-diagonal number, and a BCI is largely a machine for
+              noticing when it changes.
+            </p>
+          </div>
+          <rg-covariance-explorer></rg-covariance-explorer>
 
           <figure class="cone-figure">
             <svg class="cone-stage" viewBox="0 0 440 360" role="img" aria-label="An SPD cone: every valid covariance matrix is a single point inside a curved, cone-shaped space.">
@@ -455,11 +472,15 @@
             <figcaption>
               <strong>Every valid covariance matrix is one point in this cone.</strong>
               <span>
-                Variances can’t be negative, and that one rule bends the space of
-                matrices into a cone that narrows toward zero. Inside a curved
-                space like this, a flat ruler misjudges distance — average two
-                patterns the straight way and it can inflate a scale that neither
-                one had (you’ll see it next). A ruler shaped to the cone doesn’t.
+                A variance can’t be negative, so only some tables are possible —
+                and the possible ones fill this cone, narrowing toward zero. That
+                gives us the <em>shape</em> of the space. How far apart two points
+                in it are is a second, separate decision:
+                <strong>which ruler you measure with.</strong> Measure in straight
+                lines and averaging two patterns can invent a strength neither one
+                had (you’ll see it next). Choose a ruler built for this space and
+                it can’t — and that choice, not the shape, is what makes the
+                geometry curved.
               </span>
             </figcaption>
           </figure>
@@ -637,6 +658,55 @@
           </div>
 
           <rg-mdm-playground></rg-mdm-playground>
+        </div>
+      </section>
+
+      <section id="invariance" class="invariance-section">
+        <div class="section-shell">
+          <div class="lesson-heading">
+            <div>
+              <p class="eyebrow coral">The keystone · why <em>this</em> ruler</p>
+              <h2>The measurement lies. The geometry is built to ignore the lie.</h2>
+            </div>
+            <div>
+              <p>
+                Swelling is one reason to distrust the straight ruler. Here is the
+                other, and it is the one that decides whether a decoder survives
+                contact with real hardware.
+              </p>
+              <div class="term-ladder">
+                <span>Plain idea: rewire the recording and the distance shouldn’t care</span>
+                <strong>Mathematical name: affine invariance</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="lesson-purpose invariance-purpose">
+            <span>Question answered</span>
+            <strong>
+              Why is this particular distance the right one for EEG — and not just
+              some other curved alternative?
+            </strong>
+            <p>
+              Volume conduction, electrode gain, and your choice of reference all
+              do the same thing to a covariance matrix. Try each one below and
+              watch which ruler notices.
+            </p>
+          </div>
+
+          <rg-invariance-explorer></rg-invariance-explorer>
+
+          <aside class="invariance-note">
+            <strong>One family, one fix</strong>
+            <p>
+              Volume conduction, the lead field, electrode gain, re-referencing,
+              whitening, spatial filtering, session drift — every one of them
+              multiplies your covariance matrix on both sides by the same kind of
+              invertible matrix. Because the affine-invariant distance is blind to
+              that whole family, you get much of the benefit of untangling the
+              signal without ever having to untangle it.
+            </p>
+          </aside>
         </div>
       </section>
 

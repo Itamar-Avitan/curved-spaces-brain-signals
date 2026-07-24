@@ -3278,3 +3278,80 @@ footer a {
     transition: none;
   }
 }
+
+/* Purpose block inside the lavender EEG section: the default mint card is tuned
+   for the cream sections and its negative top margin collides with the heading. */
+.lesson-purpose.covariance-purpose {
+  margin: 56px 0 32px;
+  background: #fbf9ff;
+  box-shadow: inset 0 0 0 1px rgba(108, 78, 185, 0.16);
+}
+
+.lesson-purpose.covariance-purpose span {
+  background: var(--violet);
+}
+
+@media (max-width: 900px) {
+  .lesson-purpose.covariance-purpose {
+    margin: 36px 0 24px;
+  }
+}
+
+/* Part 3 keystone: why this metric and not another. Sits between the lavender
+   classifier section and the dark tangent section. */
+.invariance-section {
+  background: #fdf6ee;
+  padding: 120px 0;
+}
+
+.invariance-section .eyebrow.coral em {
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.lesson-purpose.invariance-purpose {
+  background: #ffe9df;
+}
+
+.lesson-purpose.invariance-purpose span {
+  /* Darker than --coral so the white label clears AA on the tinted card. */
+  background: #a93a31;
+}
+
+.invariance-note {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr;
+  gap: 28px;
+  margin-top: 44px;
+  border-radius: 22px;
+  background: #22283b;
+  padding: 30px 34px;
+  color: #fff;
+}
+
+.invariance-note strong {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.invariance-note p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.97rem;
+  line-height: 1.72;
+}
+
+@media (max-width: 900px) {
+  .invariance-section {
+    padding: 78px 0;
+  }
+
+  .invariance-note {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 24px 22px;
+  }
+}
