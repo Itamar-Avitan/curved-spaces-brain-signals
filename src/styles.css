@@ -3607,3 +3607,12 @@ footer a {
 #part-math.part-divider {
   padding-top: 92px;
 }
+
+/* The part strip is sticky, so anything jumped to via an in-page link would
+   otherwise land underneath it. Applies to the term cards' "go to section"
+   links as well as the part navigation. */
+:target,
+main section[id],
+main [id] {
+  scroll-margin-top: 76px;
+}

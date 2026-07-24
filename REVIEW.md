@@ -5,6 +5,16 @@ its notebook genuinely understand Riemannian geometry for EEG — can they expla
 use it, see its benefits — and did they learn something real about Riemannian geometry
 along the way?
 
+> **Status note, added after the revision work.** This document records the page
+> as it stood before any changes; it is kept as-is so the reasoning stays
+> auditable. Most of what it describes has since been addressed — see
+> [`REVISION_PLAN.md`](REVISION_PLAN.md) for the task-by-task state and the git
+> log for the changes themselves. In short: F1, F2, F3, F5, F6, F8 and F9 are
+> fixed; F4 is half fixed (the analogy now stops on the curvature sign; Part 1 is
+> shorter but still the longest run of set-up on the page); F7 is partly fixed
+> (the MDM axes are still mislabelled and the SPD cone is still decorative — that
+> is T3.4, still open); F10 needed a correction, noted inline below.
+
 **Reviewed:** the live dev build at 1440px and 390px, every section screenshotted and
 read visually; all widget source in `src/`; the math modules in `src/math/`; the
 companion Colab notebook; the page copy in `index.html`.
