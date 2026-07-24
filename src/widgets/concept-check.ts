@@ -53,6 +53,56 @@ export class ConceptCheck extends LitElement {
       incorrectFeedback:
         "Not quite. MDM uses geometric distance to the learned class centers; matrix size and training order are not the decision rule.",
     },
+    {
+      prompt:
+        "Give the SECOND reason not to use plain straight-line distance here. The first is that averaging inflates the result.",
+      choices: [
+        ["slow", "Straight-line distance is too slow to compute."],
+        [
+          "invariance",
+          "It changes when the recording changes, even though the brain did not.",
+        ],
+        ["negative", "Straight-line distance can come out negative."],
+      ],
+      correct: "invariance",
+      correctFeedback:
+        "That is the one that matters most in practice. Re-reference the montage or let an electrode drift and the straight-line distance moves; the affine-invariant distance does not move at all.",
+      incorrectFeedback:
+        "Not quite. Speed is not the problem, and distances are never negative. The issue is that a straight-line distance confuses a change in the recording with a change in the brain.",
+    },
+    {
+      prompt: "What does “affine-invariant” actually promise?",
+      choices: [
+        [
+          "congruence",
+          "Mixing the channels with any invertible matrix leaves the distance unchanged.",
+        ],
+        ["scale", "Every covariance matrix is rescaled to the same size first."],
+        ["linear", "The classifier that uses it must be linear."],
+      ],
+      correct: "congruence",
+      correctFeedback:
+        "Yes. Volume conduction, electrode gain, whitening and re-referencing are all that one operation, so a single property covers the whole family of things that go wrong between recordings.",
+      incorrectFeedback:
+        "Not quite. It is a promise about a specific family of transformations: sandwiching the matrix between an invertible matrix and its transpose leaves the distance exactly as it was.",
+    },
+    {
+      prompt:
+        "A decoder trained last week fails today. You re-centre both sessions. Why does that not throw away the signal?",
+      choices: [
+        ["labels", "Because it uses the new session's labels to correct itself."],
+        [
+          "isometry",
+          "Because re-centring preserves every distance inside a session — it only moves the sessions onto a common origin.",
+        ],
+        ["average", "Because it averages the two sessions together."],
+      ],
+      correct: "isometry",
+      correctFeedback:
+        "Exactly. Re-centring is itself one of those channel-mixing operations, so distances within a session survive untouched, while the shift between sessions — also one of them — cancels. And it needs no labels from the new session, which is what makes calibration-free use possible.",
+      incorrectFeedback:
+        "Not quite. It needs no labels at all, and it does not merge the sessions. It whitens each session by its own mean, which leaves the structure inside each one exactly as it was.",
+    },
   ] as const;
 
   static styles = css`

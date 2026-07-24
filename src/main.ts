@@ -1,6 +1,7 @@
 import "./styles.css";
 import "./widgets/term";
 import "./widgets/formula";
+import "./widgets/predict";
 import "./widgets/glossary-index";
 import "./widgets/covariance-explorer";
 import "./widgets/signal-covariance";
