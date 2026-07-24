@@ -416,42 +416,56 @@ cells = [
         fig.tight_layout()
         plt.show()
 
-        channel_gain = np.diag([3.0, 0.4])
-        rescaled_a = channel_gain @ toy_a @ channel_gain.T
-        rescaled_b = channel_gain @ toy_b @ channel_gain.T
-        invariance_check = pd.DataFrame(
-            {
-                "distance": ["Euclidean Frobenius", "Riemannian"],
-                "before channel rescaling": [
-                    np.linalg.norm(toy_a - toy_b, ord="fro"),
-                    distance_riemann(toy_a, toy_b),
-                ],
-                "after channel rescaling": [
-                    np.linalg.norm(rescaled_a - rescaled_b, ord="fro"),
-                    distance_riemann(rescaled_a, rescaled_b),
-                ],
-            }
-        )
-        invariance_check["absolute change"] = (
-            invariance_check["after channel rescaling"]
-            - invariance_check["before channel rescaling"]
-        ).abs()
+        # Two kinds of recording change. Both are congruences C -> W C W^T;
+        # only the second one is what actually happens to EEG.
+        channel_gain = np.diag([3.0, 0.4])            # per-channel gain only
+        volume_conduction = np.array([[1.2, 0.7],     # a full, invertible mix
+                                      [-0.4, 0.9]])
+
+        def congruence(mixing, matrix):
+            return mixing @ matrix @ mixing.T
+
+        rows = []
+        for label, mixing in [
+            ("per-channel gain", channel_gain),
+            ("channel mixing", volume_conduction),
+        ]:
+            mixed_a = congruence(mixing, toy_a)
+            mixed_b = congruence(mixing, toy_b)
+            rows.append({
+                "recording change": label,
+                "Euclidean before": np.linalg.norm(toy_a - toy_b, ord="fro"),
+                "Euclidean after": np.linalg.norm(mixed_a - mixed_b, ord="fro"),
+                "Riemannian before": distance_riemann(toy_a, toy_b),
+                "Riemannian after": distance_riemann(mixed_a, mixed_b),
+            })
+
+        invariance_check = pd.DataFrame(rows)
         display(invariance_check.style.format({
-            "before channel rescaling": "{:.3f}",
-            "after channel rescaling": "{:.3f}",
-            "absolute change": "{:.3f}",
+            "Euclidean before": "{:.3f}",
+            "Euclidean after": "{:.3f}",
+            "Riemannian before": "{:.3f}",
+            "Riemannian after": "{:.3f}",
         }))
         display(Markdown(
-            "> **Math takeaway:** the Riemannian distance is unchanged by this "
-            "invertible channel rescaling, while the raw Euclidean matrix "
-            "distance changes substantially. This is one reason the geometry "
-            "is better matched to covariance matrices."
+            "> **Math takeaway:** the Riemannian distance is unchanged by "
+            "*any* invertible mixing of the channels, not just by rescaling "
+            "them one at a time. That matters because the mixing case is the "
+            "realistic one: volume conduction through the skull, a change of "
+            "reference montage, and a different electrode montage all mix "
+            "channels into each other. The Euclidean distance moves under "
+            "both. This single property is the main reason the geometry suits "
+            "EEG covariance matrices."
         ))
 
-        assert np.isclose(
-            distance_riemann(toy_a, toy_b),
-            distance_riemann(rescaled_a, rescaled_b),
-        )
+        # Invariance holds for every invertible mixing, so assert it on both.
+        for mixing in (channel_gain, volume_conduction):
+            assert np.isclose(
+                distance_riemann(toy_a, toy_b),
+                distance_riemann(
+                    congruence(mixing, toy_a), congruence(mixing, toy_b)
+                ),
+            )
         """
     ),
     markdown(
@@ -1572,7 +1586,7 @@ CODE_PURPOSES = [
     "Create or locate the helper module so the notebook is self-contained.",
     "Import the analysis tools, define project paths, and report versions.",
     "Reproduce the website's two routes between covariance patterns.",
-    "Break down the Riemannian distance and test channel-rescaling invariance.",
+    "Break down the Riemannian distance and show it survives any invertible mixing of the channels.",
     "Compare candidate class centers using the Riemannian objective.",
     "Download, filter, and epoch the selected motor-imagery runs.",
     "Verify shapes, finite values, labels, and leakage-safe run groups.",

@@ -1,19 +1,63 @@
-import { LitElement, css, html, svg } from "lit";
+import { LitElement, css, html, nothing, svg } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import {
+  congruence,
   determinant,
-  interpolateEntries,
-  interpolateGeometry,
-  type DiagonalMatrix2,
-} from "../math/geometry";
+  eigen,
+  euclideanInterpolate,
+  geodesic,
+  type Sym2,
+} from "../math/spd";
+
+/** Rotate an SPD matrix by `angle`, keeping its eigenvalues. */
+function rotate(s: Sym2, angle: number): Sym2 {
+  const c = Math.cos(angle);
+  const n = Math.sin(angle);
+  return congruence([c, -n, n, c], s);
+}
+
+/**
+ * Two ways to pose the same pair of trials.
+ *
+ * `aligned` is the classic swelling demo: both patterns share the coordinate
+ * axes, so they commute and the geodesic only rescales the axes.
+ *
+ * `rotated` tilts the second one. The matrices no longer commute, and the
+ * geodesic has to TURN the ellipse to get there — the visible signature of
+ * curvature, and the one thing that cannot be explained away as "take logs
+ * before averaging".
+ */
+const POSES = {
+  aligned: {
+    label: "Axis-aligned",
+    note: "Both patterns line up with the axes, so the path only stretches and squeezes.",
+    start: [0.25, 0, 4] as Sym2,
+    end: [4, 0, 0.25] as Sym2,
+  },
+  rotated: {
+    label: "Tilted",
+    note: "Now the second pattern is turned. Watch the path rotate the ellipse — no amount of rescaling alone gets you there.",
+    start: [0.25, 0, 4] as Sym2,
+    end: rotate([4, 0, 0.25] as Sym2, Math.PI / 3),
+  },
+} as const;
+
+type PoseKey = keyof typeof POSES;
 
 @customElement("rg-distance-explorer")
 export class DistanceExplorer extends LitElement {
   @state() private position = 0.5;
   @state() private isPlaying = false;
 
-  private readonly start: DiagonalMatrix2 = [0.25, 4];
-  private readonly end: DiagonalMatrix2 = [4, 0.25];
+  @state() private pose: PoseKey = "aligned";
+
+  private get start(): Sym2 {
+    return POSES[this.pose].start;
+  }
+
+  private get end(): Sym2 {
+    return POSES[this.pose].end;
+  }
   private animationFrame?: number;
   private animationStartedAt = 0;
 
@@ -137,6 +181,68 @@ export class DistanceExplorer extends LitElement {
       font-size: 0.74rem;
       font-weight: 800;
       text-align: center;
+    }
+
+    .pose-row {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 8px 16px;
+      align-items: center;
+      border-bottom: 1px solid rgba(46, 53, 74, 0.1);
+      padding: 16px 30px;
+      background: #fffdf8;
+    }
+
+    .pose-label {
+      color: #6c4eb9;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pose-buttons {
+      display: flex;
+      gap: 7px;
+    }
+
+    .pose-buttons button {
+      min-height: 36px;
+      border: 1px solid rgba(46, 53, 74, 0.18);
+      border-radius: 99px;
+      background: #fff;
+      padding: 6px 15px;
+      color: #3c4459;
+      font-size: 0.79rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pose-buttons button[aria-pressed="true"] {
+      border-color: #6c4eb9;
+      background: #6c4eb9;
+      color: #fff;
+    }
+
+    .pose-note {
+      margin: 0;
+      color: #616879;
+      font-size: 0.79rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 820px) {
+      .pose-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pose-punch {
+      display: block;
+      margin-top: 8px;
+      color: #12766f;
+      font-style: normal;
+      font-weight: 700;
     }
 
     .control {
@@ -419,7 +525,69 @@ export class DistanceExplorer extends LitElement {
         transform: rotate(90deg);
       }
 
-      .control {
+      .pose-row {
+      display: grid;
+      grid-template-columns: auto auto 1fr;
+      gap: 8px 16px;
+      align-items: center;
+      border-bottom: 1px solid rgba(46, 53, 74, 0.1);
+      padding: 16px 30px;
+      background: #fffdf8;
+    }
+
+    .pose-label {
+      color: #6c4eb9;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pose-buttons {
+      display: flex;
+      gap: 7px;
+    }
+
+    .pose-buttons button {
+      min-height: 36px;
+      border: 1px solid rgba(46, 53, 74, 0.18);
+      border-radius: 99px;
+      background: #fff;
+      padding: 6px 15px;
+      color: #3c4459;
+      font-size: 0.79rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .pose-buttons button[aria-pressed="true"] {
+      border-color: #6c4eb9;
+      background: #6c4eb9;
+      color: #fff;
+    }
+
+    .pose-note {
+      margin: 0;
+      color: #616879;
+      font-size: 0.79rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 820px) {
+      .pose-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pose-punch {
+      display: block;
+      margin-top: 8px;
+      color: #12766f;
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    .control {
         grid-template-columns: 1fr;
       }
 
@@ -516,13 +684,18 @@ export class DistanceExplorer extends LitElement {
     this.position = position;
   }
 
-  private ellipse(matrix: DiagonalMatrix2, color: string) {
-    const radiusX = 48 * Math.sqrt(matrix[0]);
-    const radiusY = 48 * Math.sqrt(matrix[1]);
-    const startX = 48 * Math.sqrt(this.start[0]);
-    const startY = 48 * Math.sqrt(this.start[1]);
-    const endX = 48 * Math.sqrt(this.end[0]);
-    const endY = 48 * Math.sqrt(this.end[1]);
+  private ellipse(matrix: Sym2, color: string) {
+    const axes = (m: Sym2) => {
+      const { values, angle } = eigen(m);
+      return {
+        rx: 48 * Math.sqrt(values[0]),
+        ry: 48 * Math.sqrt(values[1]),
+        deg: ((angle * 180) / Math.PI).toFixed(2),
+      };
+    };
+    const now = axes(matrix);
+    const from = axes(this.start);
+    const to = axes(this.end);
 
     return svg`
       <svg viewBox="0 0 300 235" role="img" aria-label="Endpoint covariance ellipses and the current intermediate pattern">
@@ -531,8 +704,9 @@ export class DistanceExplorer extends LitElement {
         <ellipse
           cx="150"
           cy="117.5"
-          rx=${startX}
-          ry=${startY}
+          rx=${from.rx}
+          ry=${from.ry}
+          transform=${`rotate(${from.deg} 150 117.5)`}
           fill="none"
           stroke="#1ca9a0"
           stroke-width="2"
@@ -542,8 +716,9 @@ export class DistanceExplorer extends LitElement {
         <ellipse
           cx="150"
           cy="117.5"
-          rx=${endX}
-          ry=${endY}
+          rx=${to.rx}
+          ry=${to.ry}
+          transform=${`rotate(${to.deg} 150 117.5)`}
           fill="none"
           stroke="#ef6b5b"
           stroke-width="2"
@@ -553,8 +728,9 @@ export class DistanceExplorer extends LitElement {
         <ellipse
           cx="150"
           cy="117.5"
-          rx=${radiusX}
-          ry=${radiusY}
+          rx=${now.rx}
+          ry=${now.ry}
+          transform=${`rotate(${now.deg} 150 117.5)`}
           fill="${color}22"
           stroke=${color}
           stroke-width="4"
@@ -568,16 +744,12 @@ export class DistanceExplorer extends LitElement {
   }
 
   render() {
-    const entryPath = interpolateEntries(
+    const entryPath = euclideanInterpolate(
       this.start,
       this.end,
       this.position,
     );
-    const geometryPath = interpolateGeometry(
-      this.start,
-      this.end,
-      this.position,
-    );
+    const geometryPath = geodesic(this.start, this.end, this.position);
     const entryArea = Math.sqrt(determinant(entryPath));
     const geometryArea = Math.sqrt(determinant(geometryPath));
     const atEndpoint = this.position < 0.02 || this.position > 0.98;
@@ -591,13 +763,33 @@ export class DistanceExplorer extends LitElement {
             <h3>It has seen A and B. What should count as “between” them?</h3>
           </div>
           <p class="problem-copy">
-            Imagine two valid EEG trials from nearby recording conditions.
-            Pattern A varies mostly in channel 2; Pattern B varies mostly in
-            channel 1. Both contain the same total amount of variation. A
-            decoder that averages trials or aligns sessions must decide what
-            intermediate patterns mean.
+            Imagine two valid EEG trials from nearby recording conditions, both
+            carrying the same total amount of variation but arranged
+            differently. A decoder that averages trials or aligns sessions must
+            decide what the patterns in between them mean.
           </p>
         </section>
+
+        <div class="pose-row">
+          <span class="pose-label">How the two patterns sit</span>
+          <div class="pose-buttons" role="group" aria-label="Pattern alignment">
+            ${(Object.keys(POSES) as PoseKey[]).map(
+              (key) => html`
+                <button
+                  type="button"
+                  aria-pressed=${key === this.pose ? "true" : "false"}
+                  @click=${() => {
+                    this.stopAnimation();
+                    this.pose = key;
+                  }}
+                >
+                  ${POSES[key].label}
+                </button>
+              `,
+            )}
+          </div>
+          <p class="pose-note">${POSES[this.pose].note}</p>
+        </div>
 
         <div class="endpoint-key">
           <div class="endpoint-card">
@@ -611,7 +803,7 @@ export class DistanceExplorer extends LitElement {
           <div class="endpoint-card end">
             <i aria-hidden="true"></i>
             <div>
-              <strong>Pattern B · channel 1 dominates</strong>
+              <strong>Pattern B · ${this.pose === "rotated" ? "same shape, turned" : "channel 1 dominates"}</strong>
               <span>Relative ellipse area: 1.00</span>
             </div>
           </div>
@@ -669,7 +861,9 @@ export class DistanceExplorer extends LitElement {
             <h3>Average each matrix entry</h3>
             <p class="formal-name">Formal name: Euclidean interpolation</p>
             <p class="method-explanation">
-              Every diagonal value changes by the same additive amount. The
+              ${this.pose === "rotated"
+                ? "Each entry slides straight to its target. The"
+                : "Every diagonal value changes by the same additive amount. The"}
               result remains a valid covariance matrix, but its overall scale
               can grow beyond both observed endpoints.
             </p>
@@ -706,9 +900,11 @@ export class DistanceExplorer extends LitElement {
             <h3>Change the axes multiplicatively</h3>
             <p class="formal-name">Formal name: Riemannian geodesic</p>
             <p class="method-explanation">
-              One axis contracts while the other expands by matching
-              multiplicative factors. This route follows the geometry used to
-              define Riemannian distance.
+              ${this.pose === "rotated"
+                ? "The path has to turn the ellipse, not just resize it — the two patterns cannot be reached from one another by rescaling the axes alone."
+                : "One axis contracts while the other expands by matching multiplicative factors."}
+              This route follows the geometry used to define Riemannian
+              distance.
             </p>
             ${this.ellipse(geometryPath, "#6c4eb9")}
             <div class="readout">
@@ -728,6 +924,13 @@ export class DistanceExplorer extends LitElement {
               <strong>The halfway pattern changes shape, not total scale.</strong>
               Its relative area stays at 1.00 because this example’s endpoints
               have equal determinant.
+              ${this.pose === "rotated"
+                ? html`<em class="pose-punch"
+                    >It also rotates — and rotation is exactly what no amount of
+                    “take the logs and average” can produce. This is the part of
+                    the geometry that is genuinely curved.</em
+                  >`
+                : nothing}
             </p>
           </section>
         </div>

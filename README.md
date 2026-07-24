@@ -18,6 +18,7 @@ custom elements in `src/widgets/` are the deployable units intended for Wix.
 The final Wix page owns the prose, headings, references, and page structure.
 The generated ES module registers:
 
+- `<rg-term>` · `<rg-formula>` · `<rg-glossary>`
 - `<rg-covariance-explorer>`
 - `<rg-signal-covariance>`
 - `<rg-distance-explorer>`
@@ -27,6 +28,11 @@ The generated ES module registers:
 - `<rg-tangent-explorer>`
 - `<rg-concept-check>`
 - `<rg-next-steps>`
+
+Every technical term and formula is defined once in `src/glossary.ts`. `<rg-term>`
+(the click-to-explain popover), `<rg-formula>`, and the `<rg-glossary>` index all
+read from it, so definitions cannot drift between the place a term is introduced
+and the place it is listed.
 
 The geometry behind the widgets lives in two modules. `src/math/spd.ts` models full
 2×2 SPD matrices under the affine-invariant metric and is the one to build on:

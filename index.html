@@ -291,12 +291,12 @@
               pulling force. Matter changes the geometry of spacetime, and
               objects follow the straightest possible paths through that curved
               geometry. Mathematicians call such a path a
-              <strong>geodesic</strong>.
+              <rg-term key="geodesic"><strong>geodesic</strong></rg-term>.
             </p>
             <div class="metric-card">
               <span class="metric-symbol">g</span>
               <div>
-                <strong>The metric: a distance rule</strong>
+                <strong><rg-term key="metric">The metric</rg-term>: a distance rule</strong>
                 <p>It tells us how to measure a tiny step at each location.</p>
               </div>
             </div>
@@ -424,11 +424,11 @@
             <p>
               Instead of comparing thousands of voltage samples one by one, we
               summarize how every pair of electrodes changes together. This
-              summary is called a <strong>covariance matrix</strong>.
+              summary is called a <rg-term key="covariance-matrix"><strong>covariance matrix</strong></rg-term>.
               It is mirrored across its diagonal and represents a valid amount
               of variation in every direction. Matrices with these properties
-              are called <strong>symmetric positive-definite (SPD)</strong>.
-              Their collection is the <strong>SPD manifold</strong> — and once we
+              are called <rg-term key="spd"><strong>symmetric positive-definite (SPD)</strong></rg-term>.
+              Their collection is the <rg-term key="spd-manifold"><strong>SPD manifold</strong></rg-term> — and once we
               pick a rule for measuring distance inside it, that space behaves as
               a curved one.
             </p>
@@ -537,6 +537,11 @@
             </article>
           </div>
           <rg-signal-covariance></rg-signal-covariance>
+
+          <div class="formula-block">
+            <p class="formula-label">Now the same thing in symbols</p>
+            <rg-formula key="covariance-matrix"></rg-formula>
+          </div>
         </div>
       </section>
 
@@ -569,7 +574,7 @@
             <span>The case against the straight ruler</span>
             <strong>
               Average two equal-strength patterns the straight (Euclidean) way and
-              the result balloons — it invents scale that was in neither.
+              the result <rg-term key="swelling">balloons</rg-term> — it invents scale that was in neither.
             </strong>
             <p>
               Watch the relative area below: the entry-wise midpoint grows past
@@ -579,6 +584,11 @@
             </p>
           </div>
           <rg-distance-explorer></rg-distance-explorer>
+
+          <div class="formula-block">
+            <p class="formula-label">The path you just dragged, written down</p>
+            <rg-formula key="geodesic"></rg-formula>
+          </div>
         </div>
       </section>
 
@@ -597,7 +607,7 @@
               </p>
               <div class="term-ladder">
                 <span>Plain idea: the center by curved-space distance</span>
-                <strong>Mathematical name: Riemannian mean</strong>
+                <strong>Mathematical name: <rg-term key="riemannian-mean">Riemannian mean</rg-term></strong>
               </div>
             </div>
           </div>
@@ -613,6 +623,11 @@
             </p>
           </div>
           <rg-mean-explorer></rg-mean-explorer>
+
+          <div class="formula-block">
+            <p class="formula-label">What “the center” actually means</p>
+            <rg-formula key="riemannian-mean"></rg-formula>
+          </div>
           <aside class="model-scope-note">
             <strong>Why the examples use ellipses</strong>
             <p>
@@ -640,7 +655,7 @@
               </p>
               <div class="term-ladder">
                 <span>Plain idea: choose the nearest learned class center</span>
-                <strong>Mathematical name: Minimum Distance to Mean (MDM)</strong>
+                <strong>Mathematical name: <rg-term key="mdm">Minimum Distance to Mean (MDM)</rg-term></strong>
               </div>
             </div>
           </div>
@@ -676,7 +691,7 @@
               </p>
               <div class="term-ladder">
                 <span>Plain idea: rewire the recording and the distance shouldn’t care</span>
-                <strong>Mathematical name: affine invariance</strong>
+                <strong>Mathematical name: <rg-term key="affine-invariant">affine invariance</rg-term></strong>
               </div>
             </div>
           </div>
@@ -696,13 +711,18 @@
 
           <rg-invariance-explorer></rg-invariance-explorer>
 
+          <div class="formula-block">
+            <p class="formula-label">The ruler that would not move</p>
+            <rg-formula key="affine-invariant"></rg-formula>
+          </div>
+
           <aside class="invariance-note">
             <strong>One family, one fix</strong>
             <p>
               Volume conduction, the lead field, electrode gain, re-referencing,
               whitening, spatial filtering, session drift — every one of them
               multiplies your covariance matrix on both sides by the same kind of
-              invertible matrix. Because the affine-invariant distance is blind to
+              invertible matrix — a <rg-term key="congruence">congruence</rg-term>. Because the affine-invariant distance is blind to
               that whole family, you get much of the benefit of untangling the
               signal without ever having to untangle it.
             </p>
@@ -726,7 +746,7 @@
               </p>
               <div class="term-ladder">
                 <span>Plain idea: flatten the neighborhood around a reference</span>
-                <strong>Mathematical name: tangent space, reached by the log map</strong>
+                <strong>Mathematical name: <rg-term key="tangent-space">tangent space</rg-term>, reached by the <rg-term key="log-map">log map</rg-term></strong>
               </div>
             </div>
           </div>
@@ -745,6 +765,11 @@
             </p>
           </div>
           <rg-tangent-explorer></rg-tangent-explorer>
+
+          <div class="formula-block">
+            <p class="formula-label">The step that makes a trial into a vector</p>
+            <rg-formula key="log-map"></rg-formula>
+          </div>
         </div>
       </section>
 
@@ -792,7 +817,7 @@
             <span role="cell">Reference points and preprocessing must stay inside each training fold</span>
           </div>
           <div class="method-row" role="row">
-            <strong role="cell">CSP + LDA</strong>
+            <strong role="cell"><rg-term key="csp">CSP + LDA</rg-term></strong>
             <span role="cell">Spatial filters with class-separating variance</span>
             <span role="cell">Motor imagery has two classes and enough calibration data</span>
             <span role="cell">CSP can overfit with few trials and must be fitted inside validation</span>
@@ -825,7 +850,7 @@
               <span>03</span>
               <div>
                 <h3>Weak validation</h3>
-                <p>Randomly mixing nearby trials can leak recording-specific information and inflate performance.</p>
+                <p>Randomly mixing nearby trials can leak recording-specific information and inflate performance. Hold out <rg-term key="leave-one-group-out">whole runs</rg-term> instead.</p>
               </div>
             </article>
             <article>
@@ -840,7 +865,7 @@
         <aside class="potato-note section-shell">
           <div>
             <p class="eyebrow cyan">…but geometry can also guard the signal</p>
-            <strong>The Riemannian “potato”: an automatic quality check.</strong>
+            <strong>The <rg-term key="potato">Riemannian “potato”</rg-term>: an automatic quality check.</strong>
           </div>
           <p>
             The same covariance matrices double as a live signal-quality score. A
@@ -933,9 +958,12 @@
               <p class="eyebrow coral">What this example shows</p>
               <h3>Geometry can make limited data more useful.</h3>
               <p>
-                With two training trials per class, the covariance-based
-                methods were more accurate than CSP in this experiment. With
-                fuller calibration, all three methods performed similarly.
+                With only two training trials per class, the covariance-based
+                methods were more accurate than CSP here. Give every method
+                plenty of calibration data and the ordering flips — CSP + LDA
+                edges ahead at ten trials per class. The honest summary is not
+                “Riemannian wins”; it is that it needs less from the user to
+                get going.
               </p>
               <div class="score-row">
                 <div>
@@ -952,12 +980,45 @@
                 </div>
               </div>
               <p class="result-caveat">
-                These are mean balanced accuracies for one participant with
-                two training trials per class. They demonstrate the workflow,
-                not a universal performance guarantee.
+                Mean balanced accuracy for one participant at two training
+                trials per class. With roughly fifteen test trials per fold, a
+                single flipped trial moves the score about 6 points — so treat
+                gaps smaller than that as noise, and this whole panel as a
+                demonstration of the workflow rather than a benchmark.
               </p>
             </article>
           </div>
+
+          <aside class="geometry-contrast">
+            <div>
+              <p class="eyebrow cyan">The experiment that isolates the geometry</p>
+              <h3>Same features. Different ruler.</h3>
+              <p>
+                Every comparison above changes two things at once — the features
+                <em>and</em> the geometry — so none of them can tell you which one
+                did the work. The notebook runs the controlled version: identical
+                covariance matrices, identical validation, only the distance rule
+                swapped.
+              </p>
+            </div>
+            <div class="contrast-scores">
+              <div>
+                <span>Covariance + Euclidean mean</span>
+                <strong>82.4%</strong>
+                <em>± 10.4</em>
+              </div>
+              <div class="win">
+                <span>Covariance + Riemannian mean</span>
+                <strong>97.9%</strong>
+                <em>± 3.6</em>
+              </div>
+              <p class="contrast-delta">
+                <b>+15.5 points</b> from the geometry alone — and the spread
+                narrows by two thirds, which is the result that matters most for
+                a real BCI.
+              </p>
+            </div>
+          </aside>
 
           <div class="notebook-path" aria-label="Notebook learning path">
             <article>
@@ -1029,38 +1090,16 @@
       <section class="glossary-section section-shell" aria-labelledby="glossary-title">
         <div class="glossary-heading">
           <p class="eyebrow violet">Keep the language straight</p>
-          <h2 id="glossary-title">Plain idea first. Formal term second.</h2>
+          <div>
+          <h2 id="glossary-title">Every term, in plain words first.</h2>
+          <p class="glossary-lede">
+            Click any of them for the formal name, the formula where there is
+            one, and why it matters for EEG. They are in the order the guide
+            teaches them, so reading down retraces the argument.
+          </p>
+          </div>
         </div>
-        <dl class="glossary-grid">
-          <div>
-            <dt>Trial relationship summary</dt>
-            <dd><strong>Covariance matrix</strong> · a table describing channel variance and shared change.</dd>
-          </div>
-          <div>
-            <dt>Valid covariance-matrix space</dt>
-            <dd><strong>SPD manifold</strong> · the curved collection of symmetric positive-definite matrices.</dd>
-          </div>
-          <div>
-            <dt>Structure-aware distance rule</dt>
-            <dd><strong>Riemannian metric</strong> · a rule for measuring separation inside that matrix space.</dd>
-          </div>
-          <div>
-            <dt>Two ways to measure</dt>
-            <dd><strong>Affine-invariant vs. log-Euclidean</strong> · the exact curved distance, and a faster flat-map approximation of it.</dd>
-          </div>
-          <div>
-            <dt>Shortest allowed route</dt>
-            <dd><strong>Geodesic</strong> · the path whose length gives Riemannian distance.</dd>
-          </div>
-          <div>
-            <dt>Center of one labeled class</dt>
-            <dd><strong>Riemannian mean</strong> · the matrix minimizing total squared distance to its examples.</dd>
-          </div>
-          <div>
-            <dt>Local flat coordinates</dt>
-            <dd><strong>Tangent space</strong> · vectors that let standard linear models use nearby covariance patterns.</dd>
-          </div>
-        </dl>
+        <rg-glossary></rg-glossary>
       </section>
 
       <section id="references" class="references-section">

@@ -3355,3 +3355,126 @@ footer a {
     padding: 24px 22px;
   }
 }
+
+/* Third rung of the term ladder: plain idea -> interact -> the formula. Placed
+   after each widget so notation confirms an intuition rather than gating it. */
+.formula-block {
+  margin: 40px auto 0;
+  max-width: 760px;
+}
+
+.formula-label {
+  margin: 0 0 10px;
+  color: #6c4eb9;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.tangent-section .formula-label {
+  color: #ffd36b;
+}
+
+.glossary-lede {
+  margin: 14px 0 0;
+  max-width: 62ch;
+  color: #545c6e;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* The controlled contrast: same features, different ruler. This is the only
+   comparison on the page that isolates the geometry from the representation. */
+.geometry-contrast {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: 36px;
+  margin: 46px 0 0;
+  border-radius: 24px;
+  background: #0f2a2e;
+  padding: 36px 38px;
+  color: #fff;
+}
+
+.geometry-contrast h3 {
+  margin: 8px 0 12px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.75rem;
+  line-height: 1.15;
+}
+
+.geometry-contrast p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.geometry-contrast .eyebrow.cyan {
+  color: #6fd8cf;
+}
+
+.contrast-scores {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.contrast-scores > div {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+  align-items: baseline;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 15px 18px;
+}
+
+.contrast-scores > div.win {
+  background: rgba(111, 216, 207, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(111, 216, 207, 0.5);
+}
+
+.contrast-scores span {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.85rem;
+}
+
+.contrast-scores strong {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.5rem;
+}
+
+.contrast-scores em {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.76rem;
+  font-style: normal;
+}
+
+.contrast-delta {
+  margin: 4px 0 0 !important;
+  font-size: 0.88rem !important;
+}
+
+.contrast-delta b {
+  color: #ffd36b;
+}
+
+@media (max-width: 900px) {
+  .geometry-contrast {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 26px 22px;
+  }
+}
+
+.glossary-heading {
+  align-items: start;
+}
+
+.glossary-heading > div {
+  display: grid;
+  gap: 0;
+}
