@@ -49,7 +49,12 @@ The notebook explains terminology before use and includes:
 - a short source-library map connecting the demo to MDM, tangent-space kernels,
   transfer learning, signal-quality detection, P300 extensions, SPD neural
   networks, and means-field classifiers;
-- reuse guidance, common mistakes, and exercises.
+- reuse guidance and common mistakes;
+- three runnable exercises that each change one variable against the fixed
+  held-out-run protocol, with a marked knob and a folded note on what to look
+  for (fewer channels; shrinkage vs the plain sample covariance, which exposes
+  that the average reference makes it rank-deficient; and log-Euclidean vs the
+  affine-invariant metric).
 
 ## Run
 

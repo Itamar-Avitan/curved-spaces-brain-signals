@@ -1975,6 +1975,189 @@ cells = [
     ),
     markdown(
         r"""
+        ## Exercises: change one thing and re-run
+
+        These are the point of the notebook. Reading it shows you the workflow;
+        changing one variable and predicting the result is what turns it into
+        something you can use. Each exercise below runs — a knob is marked with
+        `# <- change this`, and a folded note tells you what to look for after
+        you have made your own prediction.
+
+        Keep the held-out-run validation fixed and change exactly one thing at a
+        time. That is the whole discipline of a credible BCI experiment, in
+        miniature.
+        """
+    ),
+    code(
+        """
+        # A shared evaluator, so every exercise below changes ONE thing against
+        # the same leakage-safe protocol. It is deliberately explicit: the class
+        # centers are built from the training runs only.
+        def evaluate_mdm(matrices, labels, groups, mean_fn, dist_fn):
+            fold_scores = []
+            for train, test in LeaveOneGroupOut().split(matrices, labels, groups):
+                centers = {
+                    k: mean_fn(matrices[train][labels[train] == k])
+                    for k in np.unique(labels)
+                }
+                predictions = np.array([
+                    min(centers, key=lambda k: dist_fn(centers[k], m))
+                    for m in matrices[test]
+                ])
+                recalls = [
+                    (predictions[labels[test] == k] == k).mean()
+                    for k in np.unique(labels)
+                ]
+                fold_scores.append(float(np.mean(recalls)))
+            return np.array(fold_scores)
+
+        from pyriemann.utils.mean import mean_logeuclid
+        from pyriemann.utils.distance import distance_logeuclid
+        """
+    ),
+    markdown(
+        r"""
+        ### 1. How few electrodes can you get away with?
+
+        Motor imagery is generated over the central strip — `C3`, `Cz`, `C4` sit
+        right on top of it. The notebook used seventeen channels. Before you run
+        the next cell: keeping only those three, do you expect the score to
+        collapse, drop a little, or hold?
+
+        <details><summary>What to look for.</summary>
+
+        Three channels score around **0.91** against the full seventeen at
+        **0.98**. The motor strip alone carries most of the signal — a useful
+        thing to know when you are choosing a cheaper headset — but the extra
+        electrodes still buy a real, measurable margin. "Fewer channels" is a
+        trade, not a free lunch.
+
+        </details>
+        """
+    ),
+    code(
+        """
+        motor_strip = ["C3", "Cz", "C4"]  # <- change this list
+        keep = [dataset.channel_names.index(ch) for ch in motor_strip]
+
+        subset_cov = Covariances(estimator="oas").fit_transform(
+            dataset.X[:, keep, :]
+        )
+        subset_scores = evaluate_mdm(
+            subset_cov, dataset.y, dataset.groups, mean_riemann, distance_riemann
+        )
+        full_scores = evaluate_mdm(
+            covariances, dataset.y, dataset.groups, mean_riemann, distance_riemann
+        )
+        print(f"{len(motor_strip):2d} channels : {subset_scores.mean():.3f}")
+        print(f"17 channels : {full_scores.mean():.3f}")
+        """
+    ),
+    markdown(
+        r"""
+        ### 2. Does the shrinkage actually matter?
+
+        Every covariance in this notebook used `estimator="oas"` — a regularized
+        estimate that pulls the matrix toward a scaled identity. The plain sample
+        covariance is `estimator="scm"`. With seventeen channels and a few
+        hundred samples per trial you might expect them to agree. Run the cell
+        and see.
+
+        <details><summary>What to look for.</summary>
+
+        The sample covariance **fails** — pyRiemann refuses it as not positive
+        definite. The reason is subtle and worth keeping: the notebook uses an
+        **average reference**, which subtracts the mean across channels and so
+        removes one degree of freedom. That makes every raw sample covariance
+        rank-deficient (rank 16 of 17), with a zero eigenvalue, and the
+        Riemannian mean cannot take the logarithm of a singular matrix. Shrinkage
+        is not a cosmetic default here; it is what keeps the whole pipeline
+        numerically alive.
+
+        </details>
+        """
+    ),
+    code(
+        """
+        import warnings
+
+        for estimator in ["oas", "scm"]:  # <- oas = shrinkage, scm = plain sample
+            try:
+                # The scm failure trips a "log of a non-positive matrix" warning
+                # on the way to the error; silence it so the FAILED line is the
+                # signal, not the noise.
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    cov = Covariances(estimator=estimator).fit_transform(dataset.X)
+                    scores = evaluate_mdm(
+                        cov, dataset.y, dataset.groups,
+                        mean_riemann, distance_riemann,
+                    )
+                print(f"{estimator}: {scores.mean():.3f}")
+            except Exception as error:
+                print(f"{estimator}: FAILED -- {type(error).__name__}")
+
+        one_cov = np.cov(dataset.X[0])
+        print(
+            f"\\none sample covariance: rank "
+            f"{np.linalg.matrix_rank(one_cov)} of {one_cov.shape[0]}, "
+            f"smallest eigenvalue {np.linalg.eigvalsh(one_cov).min():.2e}"
+        )
+        """
+    ),
+    markdown(
+        r"""
+        ### 3. A different curved ruler
+
+        The affine-invariant metric is not the only geometry on covariance
+        matrices. The **log-Euclidean** metric maps every matrix to its logarithm
+        once, then measures ordinary straight-line distance there. It is faster
+        and keeps the swelling fix, but it gives up full affine invariance. Swap
+        it in and see how much the accuracy actually depends on that.
+
+        <details><summary>What to look for.</summary>
+
+        The two are close — affine-invariant around **0.98**, log-Euclidean
+        around **0.96** here. On same-session data, where there is no large
+        recording shift to be invariant to, the cheaper metric costs almost
+        nothing. The gap tends to open up in exactly the transfer settings that
+        Section 5b was about, which is the honest way to choose between them:
+        match the metric to whether invariance is doing any work for your data.
+
+        </details>
+        """
+    ),
+    code(
+        """
+        for name, mean_fn, dist_fn in [
+            ("affine-invariant", mean_riemann, distance_riemann),
+            ("log-Euclidean", mean_logeuclid, distance_logeuclid),  # <- the swap
+        ]:
+            scores = evaluate_mdm(
+                covariances, dataset.y, dataset.groups, mean_fn, dist_fn
+            )
+            print(f"{name:16s}: {scores.mean():.3f} +/- {scores.std():.3f}")
+        """
+    ),
+    markdown(
+        r"""
+        ### More to try on your own
+
+        No solutions for these — they are open questions, and the two optional
+        appendices below give you a starting point for the first one.
+
+        - **Change the epoch window** (`tmin`, `tmax` when the data is loaded) and
+          justify the choice from the motor-imagery time course, not the score.
+        - **Add participants** and use participant identity as the validation
+          group. Cross-participant prediction is much harder than cross-run;
+          the appendix immediately below sets it up.
+        - **Recenter across participants**, not just runs, and see whether the
+          alignment from Section 5b earns its keep when the sessions really are
+          different people.
+        """
+    ),
+    markdown(
+        r"""
         ## Optional extension: test generalization across participants
 
         The default result is intentionally scoped to one participant. It is
@@ -2035,24 +2218,6 @@ cells = [
     ),
     markdown(
         r"""
-        ## Exercises
-
-        1. Change the channel list. What happens if only `C3`, `Cz`, and `C4`
-           are retained?
-        2. Compare OAS shrinkage with the sample covariance estimator.
-        3. Add more participants and use participant identity as the validation
-           group. How much harder is cross-participant prediction?
-        4. Change the epoch window and explain the choice physiologically.
-        5. Plot each trial's distance to both MDM class means.
-        6. Replace the affine-invariant Riemannian metric with a Log-Euclidean
-           metric where pyRiemann supports it. Which results change?
-        7. Add a simple artifact screen inspired by the Riemannian Potato Field:
-           compute distance from each trial covariance to the global clean-data
-           mean and inspect the farthest trials.
-        """
-    ),
-    markdown(
-        r"""
         ## Sources and further reading
 
         - [MNE EEGBCI dataset loader](https://mne.tools/stable/generated/mne.datasets.eegbci.load_data.html)
@@ -2108,6 +2273,10 @@ CODE_PURPOSES = [
     "Re-center each run on its own mean and test whether transfer improves.",
     "Flag artifact trials by their distance to the mean (Riemannian potato).",
     "Map covariance matrices to tangent vectors and display a 2D projection.",
+    "Exercises: define a shared metric-generic MDM evaluator.",
+    "Exercise 1: rerun with only the three central-strip electrodes.",
+    "Exercise 2: compare OAS shrinkage with the plain sample covariance.",
+    "Exercise 3: swap the affine-invariant metric for log-Euclidean.",
 ]
 
 code_cells = [cell for cell in cells if cell.cell_type == "code"]
