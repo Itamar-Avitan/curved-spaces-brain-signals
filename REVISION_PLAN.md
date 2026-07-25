@@ -56,11 +56,16 @@ Shipped so far (see git log for detail):
 | C1/C2/C5 copy pass | done — 6 boxes now state the answer, spine in the lede, hedge words gone |
 | T1.4 outcomes synced | done — includes the two-reasons question |
 | T7.3 mobile length | done — 67 → 54 phone screens, desktop unchanged |
+| T5.10 exercises | done — 3 runnable, solved, moved before the appendices |
 
-Still open: **T5.10 (part two)** — the notebook's seven exercises are still
-stranded behind two optional appendices and have no solutions; **T0.1** (write
-the thesis down as its own file rather than leaving it in this plan); and
-**C7** (two cold readers), which the author explicitly deferred.
+Still open: **C7** (two cold readers), which the author explicitly deferred.
+Everything else in this plan is shipped.
+
+One manual step is the maintainer's, not mine: the website's "Open in Colab"
+button points at a Drive-hosted copy of the notebook. The downloadable notebook
+on the site is current, but that Drive file must be replaced by hand with
+`notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb` for the Colab button to
+serve the latest version.
 
 The page is still 54 phone screens. That is the honest floor for a guide with
 ten interactive widgets; shortening it further means removing something a reader
