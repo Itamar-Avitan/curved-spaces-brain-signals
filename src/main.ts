@@ -2,6 +2,7 @@ import "./styles.css";
 import "./widgets/term";
 import "./widgets/formula";
 import "./widgets/flat-map";
+import "./widgets/case-file";
 import "./widgets/predict";
 import "./widgets/glossary-index";
 import "./widgets/covariance-explorer";
