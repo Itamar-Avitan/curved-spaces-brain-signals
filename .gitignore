@@ -19,3 +19,4 @@ manim/capstone/audio/
 
 # review screenshots: regenerable from the dev server, ~13MB
 /review-notes/screenshots/
+.superpowers/
