@@ -15,6 +15,13 @@ export interface FormulaLegendItem {
   meaning: string;
 }
 
+export interface FormulaStep {
+  /** The fragment of the expression being read, as plain text. */
+  part: string;
+  /** What that fragment does, in words a non-mathematician can follow. */
+  says: string;
+}
+
 export interface Formula {
   /** Pre-composed math markup. Authored here, never from user input. */
   html: string;
@@ -22,6 +29,16 @@ export interface Formula {
   legend: FormulaLegendItem[];
   /** How you would read the whole thing out loud. */
   reading: string;
+  /** The expression read inside-out, one fragment at a time. */
+  steps?: FormulaStep[];
+  /**
+   * The same operation with real numbers.
+   *
+   * Any value here that a reader could check is pinned by
+   * `src/glossary.worked.test.ts`, which recomputes it from `src/math/spd.ts`.
+   * Write checked values to two decimals so the assertion is exact.
+   */
+  worked?: { lines: string[] };
 }
 
 export interface GlossaryEntry {
@@ -117,6 +134,36 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       reading:
         "Move to a viewpoint where P looks like the identity, take the plain power-t step there, then move back. Halfway means multiplying by the same factor twice, not adding the same amount twice.",
+      steps: [
+        {
+          part: "P₁^(−1/2) · P₂ · P₁^(−1/2)",
+          says: "Redraw P₂ in units where P₁ is the unit circle. This is the whitening step, and it is the only reason the rest works.",
+        },
+        {
+          part: "( … )^t",
+          says: "Take t of the way there. t = 0 leaves you at P₁, t = 1 puts you at P₂.",
+        },
+        {
+          part: "P₁^(1/2) ( … ) P₁^(1/2)",
+          says: "Undo the redrawing, so the answer lands back in the original units.",
+        },
+      ],
+      worked: {
+        lines: [
+          "P₁ = [4    0   ]        P₂ = [0.25  0]",
+          "     [0    0.25]             [0     4]",
+          "",
+          "Both describe the same total strength:  det = 1.00",
+          "",
+          "Flat midpoint  ½(P₁ + P₂) = [2.125  0    ]   det = 4.52",
+          "                            [0      2.125]",
+          "",
+          "Geodesic midpoint          = [1  0]          det = 1.00",
+          "                             [0  1]",
+          "",
+          "The flat average invented 4.5× the strength that was in neither.",
+        ],
+      },
     },
     why: "Averaging two trials means finding the midpoint of this path. Take the straight-line midpoint instead and you invent variance neither trial had.",
     href: "#distance",

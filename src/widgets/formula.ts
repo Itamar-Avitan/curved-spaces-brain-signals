@@ -1,7 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import { GLOSSARY } from "../glossary";
+import { GLOSSARY, type GlossaryEntry } from "../glossary";
 
 /**
  * One boxed formula with every symbol labeled underneath and a plain-English
@@ -17,6 +17,10 @@ export class RgFormula extends LitElement {
   @property({ type: String }) key = "";
   /** Hide the symbol legend when the surrounding prose already covers it. */
   @property({ type: Boolean }) compact = false;
+  /** Render closed, behind a "Show the math" disclosure. */
+  @property({ type: Boolean }) folded = false;
+  /** Disclosure label suffix, e.g. "the path, decoded, with real numbers". */
+  @property({ type: String }) summary = "";
 
   static styles = css`
     :host {
@@ -151,19 +155,130 @@ export class RgFormula extends LitElement {
         padding: 10px 16px;
       }
     }
+
+    details {
+      border: 1px solid rgba(46, 53, 74, 0.18);
+      border-radius: 14px;
+      background: #fffdf8;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 13px 18px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #4a3585;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: "▸";
+      display: inline-block;
+      margin-right: 9px;
+      transition: transform 0.15s ease;
+    }
+
+    details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    summary em {
+      font-style: normal;
+      font-weight: 400;
+      opacity: 0.62;
+    }
+
+    summary:focus-visible {
+      outline: 3px solid #6c4eb9;
+      outline-offset: -3px;
+    }
+
+    details .box {
+      border: 0;
+      border-radius: 0;
+      border-top: 1px solid rgba(46, 53, 74, 0.12);
+    }
+
+    .steps {
+      margin: 0;
+      padding: 4px 24px 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .steps > div {
+      display: grid;
+      grid-template-columns: minmax(120px, max-content) 1fr;
+      gap: 14px;
+      align-items: baseline;
+    }
+
+    .steps dt {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 0.9rem;
+      color: #6c4eb9;
+    }
+
+    .steps dd {
+      margin: 0;
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #4a5265;
+    }
+
+    pre.worked {
+      margin: 0;
+      padding: 16px 24px 20px;
+      overflow-x: auto;
+      border-top: 1px solid rgba(46, 53, 74, 0.1);
+      background: #faf9f5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #20283a;
+    }
+
+    @media (max-width: 640px) {
+      .steps > div {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+
+      pre.worked {
+        padding: 14px 16px 16px;
+      }
+    }
   `;
 
-  render() {
-    const entry = GLOSSARY[this.key];
-    const formula = entry?.formula;
-    if (!formula) return nothing;
-
+  private renderBox(formula: NonNullable<GlossaryEntry["formula"]>) {
     return html`
       <div class="box">
         <div class="expr" role="math" aria-label=${formula.reading}>
           ${unsafeHTML(formula.html)}
         </div>
         <p class="reading">${formula.reading}</p>
+        ${formula.steps?.length
+          ? html`
+              <dl class="steps">
+                ${formula.steps.map(
+                  (step) => html`
+                    <div>
+                      <dt>${step.part}</dt>
+                      <dd>${step.says}</dd>
+                    </div>
+                  `,
+                )}
+              </dl>
+            `
+          : nothing}
+        ${formula.worked
+          ? html`<pre class="worked">${formula.worked.lines.join("\n")}</pre>`
+          : nothing}
         ${this.compact
           ? nothing
           : html`
@@ -179,6 +294,25 @@ export class RgFormula extends LitElement {
               </dl>
             `}
       </div>
+    `;
+  }
+
+  render() {
+    const entry = GLOSSARY[this.key];
+    const formula = entry?.formula;
+    if (!formula) return nothing;
+
+    if (!this.folded) return this.renderBox(formula);
+
+    return html`
+      <details>
+        <summary>
+          Show the math${this.summary
+            ? html` <em>— ${this.summary}</em>`
+            : nothing}
+        </summary>
+        ${this.renderBox(formula)}
+      </details>
     `;
   }
 }
