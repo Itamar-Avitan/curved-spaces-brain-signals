@@ -277,7 +277,7 @@ must output "left".** ~25 words per appearance.
 
 | Step | Placement | Content |
 |---|---|---|
-| 1 | end of Part 2 | The trial is now a 3×3 table. We still cannot compare two of them. |
+| 1 | end of Part 2 | The trial is now a table of which electrodes moved together. We still cannot compare two of them. |
 | 2 | end of Part 3 | Now we can measure. We still have nothing to measure *against*. |
 | 3 | end of 4.1 | Two centres. New trial → *d*₁ to "left", *d*₂ to "right" → **"left"**. |
 | 4 | end of 4.2 | Same trial, flattened to a short vector → logistic regression → **"left"**. |
@@ -287,6 +287,15 @@ Steps 3 and 4 quote live numbers, and those numbers come from the same
 computation the adjacent widget runs — never typed into prose. No placeholder
 value appears in this document for them, deliberately: this page has shipped a
 fabricated number once already.
+
+**And the verdicts are derived, not asserted.** Step 3's answer comes from
+comparing the two distances it displays, so the word and the numbers cannot
+disagree — which also makes the beat demonstrate the MDM rule rather than state
+its outcome. Step 4 shows the real tangent-space vector for the same trial and
+says plainly that the notebook is where a classifier reads it; no classifier is
+fitted in this widget, and the copy must not imply one is. A hardcoded verdict
+sitting beside live numbers is the same defect as a fabricated number, one
+indirection removed.
 
 ### `<rg-method-compare>` — §4.3
 
