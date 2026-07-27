@@ -1,6 +1,7 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { distance, riemannianMean, type Sym2 } from "../math/spd";
+import type { TemplateResult } from "lit";
+import { distance, riemannianMean, tangentVector, type Sym2 } from "../math/spd";
 
 /**
  * The page's one concrete decision, revisited five times.
@@ -9,8 +10,11 @@ import { distance, riemannianMean, type Sym2 } from "../math/spd";
  * must output "left". Everything on the page serves that single decision, and
  * this strip is what makes that visible rather than asserted.
  *
- * Steps 3 and 4 show real distances computed here, so the numbers in the strip
- * cannot drift away from the numbers in the widgets beside it.
+ * Steps 3 and 4 show live computations using the same matrices, so the numbers
+ * in the strip cannot drift away from the numbers in the widgets beside it.
+ * Beat 3 derives its verdict from the distances shown (MDM rule: nearest wins).
+ * Beat 4 shows the real tangent-space vector; the classifier that reads it
+ * is demonstrated in the notebook, not here.
  */
 
 const LEFT: Sym2[] = [
@@ -25,17 +29,26 @@ const RIGHT: Sym2[] = [
 ];
 const TRIAL: Sym2 = [2.8, 0.7, 1.1];
 
-const d = (set: Sym2[]) => distance(TRIAL, riemannianMean(set)).toFixed(2);
+const dLeft = distance(TRIAL, riemannianMean(LEFT)).toFixed(2);
+const dRight = distance(TRIAL, riemannianMean(RIGHT)).toFixed(2);
+const allTrials = [...LEFT, ...RIGHT];
+const reference = riemannianMean(allTrials);
+const tangent = tangentVector(reference, TRIAL);
+const tangentDisplay = `(${tangent[0].toFixed(4)}, ${tangent[1].toFixed(4)}, ${tangent[2].toFixed(4)})`;
+
+/** Derive verdict from distances using MDM rule: nearest centre wins. */
+const verdict = Number(dLeft) < Number(dRight) ? "left" : "right";
 
 interface Beat {
+  /** Authoring metadata: where this beat appears in the page flow. */
   where: string;
-  body: unknown;
+  body: TemplateResult;
 }
 
 const BEATS: Record<string, Beat> = {
   "1": {
     where: "after Part 2",
-    body: html`The trial is now a 3×3 table of which electrodes moved together.
+    body: html`The trial is now a table of which electrodes moved together.
       We still cannot compare two of them.`,
   },
   "2": {
@@ -46,15 +59,15 @@ const BEATS: Record<string, Beat> = {
   },
   "3": {
     where: "after Route 1",
-    body: html`Two stored centres. The new trial sits <strong>${d(LEFT)}</strong>
-      from the "left" centre and <strong>${d(RIGHT)}</strong> from the "right"
-      one. Decision: <strong>left</strong>.`,
+    body: html`Two stored centres. The new trial sits <strong>${dLeft}</strong>
+      from the "left" centre and <strong>${dRight}</strong> from the "right"
+      one. Decision: <strong>${verdict}</strong>.`,
   },
   "4": {
     where: "after Route 2",
-    body: html`Same trial, flattened onto the local map into three numbers, fed
-      to ordinary logistic regression. Decision: <strong>left</strong>. Two
-      routes, one answer, and neither is the "real" one.`,
+    body: html`Same trial, flattened onto the local map into three numbers:
+      <strong>${tangentDisplay}</strong>. The notebook feeds these to ordinary
+      logistic regression. Two routes, one answer, and neither is the "real" one.`,
   },
   "5": {
     where: "before the notebook",
