@@ -136,27 +136,27 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         "Move to a viewpoint where P looks like the identity, take the plain power-t step there, then move back. Halfway means multiplying by the same factor twice, not adding the same amount twice.",
       steps: [
         {
-          part: "P₁^(−1/2) · P₂ · P₁^(−1/2)",
-          says: "Redraw P₂ in units where P₁ is the unit circle. This is the whitening step, and it is the only reason the rest works.",
+          part: "P^(−1/2) · Q · P^(−1/2)",
+          says: "Redraw Q in units where P is the unit circle. This is the whitening step, and it is the only reason the rest works.",
         },
         {
           part: "( … )^t",
-          says: "Take t of the way there. t = 0 leaves you at P₁, t = 1 puts you at P₂.",
+          says: "Take t of the way there. t = 0 leaves you at P, t = 1 puts you at Q.",
         },
         {
-          part: "P₁^(1/2) ( … ) P₁^(1/2)",
+          part: "P^(1/2) ( … ) P^(1/2)",
           says: "Undo the redrawing, so the answer lands back in the original units.",
         },
       ],
       worked: {
         lines: [
-          "P₁ = [4    0   ]        P₂ = [0.25  0]",
-          "     [0    0.25]             [0     4]",
+          "P = [4    0   ]        Q = [0.25  0]",
+          "    [0    0.25]            [0     4]",
           "",
           "Both describe the same total strength:  det = 1.00",
           "",
-          "Flat midpoint  ½(P₁ + P₂) = [2.125  0    ]   det = 4.52",
-          "                            [0      2.125]",
+          "Flat midpoint  ½(P + Q) = [2.125  0    ]     det = 4.52",
+          "                          [0      2.125]",
           "",
           "Geodesic midpoint          = [1  0]          det = 1.00",
           "                             [0  1]",
