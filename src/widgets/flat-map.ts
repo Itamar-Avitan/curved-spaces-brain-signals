@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { distance, expMap, recenter, type Sym2 } from "../math/spd";
 
@@ -49,6 +49,24 @@ export function flatMapReadout(
 }
 
 const MAX_SEPARATION = 4;
+
+/** The reference point the widget centres on — the identity, i.e. no distortion yet. */
+const BASE_POINT: Sym2 = [1, 0, 1];
+
+/**
+ * Layout for the two-panel picture below. Both panels share one
+ * pixels-per-unit scale, chosen so the flat reading at the slider's maximum
+ * (computed here, not hand-typed, so it can't drift from the real model)
+ * exactly fills its track. The Riemannian reading, which grows far more
+ * slowly, only ever fills a fraction of its own track at the same scale —
+ * that visible mismatch *is* the picture.
+ */
+const TRACK_WIDTH = 150;
+const LEFT_ANCHOR_X = 45;
+const RIGHT_ANCHOR_X = 265;
+const POINT_Y = 112;
+const MAX_FLAT = flatMapReadout(BASE_POINT, UNIT_DIRECTION, MAX_SEPARATION).flat;
+const PX_PER_UNIT = TRACK_WIDTH / MAX_FLAT;
 
 @customElement("rg-flat-map")
 export class RgFlatMap extends LitElement {
@@ -150,14 +168,25 @@ export class RgFlatMap extends LitElement {
   `;
 
   private get readout() {
-    return flatMapReadout([1, 0, 1], UNIT_DIRECTION, this.separation);
+    return flatMapReadout(BASE_POINT, UNIT_DIRECTION, this.separation);
   }
 
   render() {
     const { riemannian, flat } = this.readout;
-    const overstated = ((flat / riemannian - 1) * 100).toFixed(0);
-    // Screen geometry only — the numbers above are the real content.
-    const x = 60 + (this.separation / MAX_SEPARATION) * 300;
+
+    // Both panels share PX_PER_UNIT, so a pixel gap in one is directly
+    // comparable to the same pixel gap in the other. The left (globe) point
+    // only ever crosses a fraction of its track; the right (map) point is
+    // scaled to exactly reach its track's edge at the slider's maximum.
+    const leftX = LEFT_ANCHOR_X + riemannian * PX_PER_UNIT;
+    // Bows the arc up as the points separate; at zero separation the two
+    // points coincide, so the control point collapses onto them too, rather
+    // than tracing a stray loop above a single dot.
+    const leftArcHeight = Math.min(22, (leftX - LEFT_ANCHOR_X) * 3);
+    const rightEdge = RIGHT_ANCHOR_X + TRACK_WIDTH;
+    const rawRightX = RIGHT_ANCHOR_X + flat * PX_PER_UNIT;
+    const overflowing = rawRightX > rightEdge + 0.01;
+    const rightX = Math.min(rawRightX, rightEdge);
 
     return html`
       <div class="box">
@@ -165,34 +194,81 @@ export class RgFlatMap extends LitElement {
           class="stage"
           viewBox="0 0 460 200"
           role="img"
-          aria-label=${`Two points on a curved surface separated by ${riemannian.toFixed(2)} measured on the surface and ${flat.toFixed(2)} measured on the flattened map.`}
+          aria-label=${`Two panels showing the same two points. On the globe, measured on the curved surface, they are ${riemannian.toFixed(2)} apart. On the flat map, the same two points flattened out are ${flat.toFixed(2)} apart${overflowing ? " — past the edge of the map" : ""}.`}
         >
-          <g stroke="rgba(46,53,74,.18)" fill="none">
-            <path d="M20 150 Q230 96 440 150" />
-            <path d="M20 122 Q230 66 440 122" />
-            <path d="M20 178 Q230 126 440 178" />
+          <line x1="230" y1="8" x2="230" y2="192" stroke="rgba(46,53,74,.14)" />
+
+          <text
+            x=${LEFT_ANCHOR_X + TRACK_WIDTH / 2}
+            y="20"
+            font-size="10.5"
+            font-weight="700"
+            letter-spacing="0.08em"
+            text-anchor="middle"
+            fill="#6a7183"
+          >
+            THE GLOBE
+          </text>
+          <g stroke="rgba(46,53,74,.16)" fill="none">
+            <path
+              d=${`M15 150 Q${LEFT_ANCHOR_X + TRACK_WIDTH / 2} 122 ${LEFT_ANCHOR_X + TRACK_WIDTH + 15} 150`}
+            />
+            <path
+              d=${`M15 128 Q${LEFT_ANCHOR_X + TRACK_WIDTH / 2} 100 ${LEFT_ANCHOR_X + TRACK_WIDTH + 15} 128`}
+            />
+            <path
+              d=${`M15 172 Q${LEFT_ANCHOR_X + TRACK_WIDTH / 2} 146 ${LEFT_ANCHOR_X + TRACK_WIDTH + 15} 172`}
+            />
           </g>
           <path
-            d=${`M60 ${138 - 0} Q${(60 + x) / 2} ${112 - this.separation * 4} ${x} ${138 - this.separation * 2}`}
+            d=${`M${LEFT_ANCHOR_X} ${POINT_Y} Q${(LEFT_ANCHOR_X + leftX) / 2} ${POINT_Y - leftArcHeight} ${leftX} ${POINT_Y}`}
             stroke="#1e5c58"
             stroke-width="3.5"
             fill="none"
             stroke-linecap="round"
           />
+          <circle cx=${LEFT_ANCHOR_X} cy=${POINT_Y} r="7" fill="#6c4eb9" />
+          <circle cx=${leftX} cy=${POINT_Y} r="7" fill="#f4a261" />
+          <text x=${LEFT_ANCHOR_X} y="182" font-size="10" text-anchor="middle" fill="#4a5265">
+            centre
+          </text>
+
+          <text
+            x=${RIGHT_ANCHOR_X + TRACK_WIDTH / 2}
+            y="20"
+            font-size="10.5"
+            font-weight="700"
+            letter-spacing="0.08em"
+            text-anchor="middle"
+            fill="#6a7183"
+          >
+            THE FLAT MAP
+          </text>
+          <g stroke="rgba(46,53,74,.12)">
+            <line x1=${RIGHT_ANCHOR_X - 15} y1="90" x2=${RIGHT_ANCHOR_X + TRACK_WIDTH + 15} y2="90" />
+            <line x1=${RIGHT_ANCHOR_X - 15} y1="112" x2=${RIGHT_ANCHOR_X + TRACK_WIDTH + 15} y2="112" />
+            <line x1=${RIGHT_ANCHOR_X - 15} y1="134" x2=${RIGHT_ANCHOR_X + TRACK_WIDTH + 15} y2="134" />
+          </g>
           <line
-            x1="60"
-            y1="138"
-            x2=${x}
-            y2=${138 - this.separation * 2}
+            x1=${RIGHT_ANCHOR_X}
+            y1=${POINT_Y}
+            x2=${rightX}
+            y2=${POINT_Y}
             stroke="#b03a2e"
-            stroke-width="2"
+            stroke-width="2.5"
             stroke-dasharray="6 5"
           />
-          <circle cx="60" cy="138" r="7" fill="#6c4eb9" />
-          <text x="20" y="176" font-size="11" text-anchor="start" fill="#4a5265">
-            where the map is centred
+          <circle cx=${RIGHT_ANCHOR_X} cy=${POINT_Y} r="7" fill="#6c4eb9" />
+          <circle cx=${rightX} cy=${POINT_Y} r="7" fill="#f4a261" />
+          <text x=${RIGHT_ANCHOR_X} y="182" font-size="10" text-anchor="middle" fill="#4a5265">
+            centre
           </text>
-          <circle cx=${x} cy=${138 - this.separation * 2} r="7" fill="#f4a261" />
+          ${overflowing
+            ? html`<path
+                d=${`M${rightEdge - 4} ${POINT_Y - 9} L${rightEdge + 8} ${POINT_Y} L${rightEdge - 4} ${POINT_Y + 9} Z`}
+                fill="#b03a2e"
+              />`
+            : nothing}
         </svg>
 
         <div class="readouts">
@@ -209,7 +285,9 @@ export class RgFlatMap extends LitElement {
         <p class="verdict" role="status">
           ${this.separation < 0.15
             ? html`Right next to the centre, the two rulers agree. <b>The flat map is exact here.</b>`
-            : html`The flat map now overstates the gap by <b>${overstated}%</b>. It was exact at the centre and has been getting worse ever since.`}
+            : html`The flat map now overstates the gap by
+                <b>${((flat / riemannian - 1) * 100).toFixed(0)}%</b>. It was exact at the centre
+                and has been getting worse ever since.`}
         </p>
 
         <label>

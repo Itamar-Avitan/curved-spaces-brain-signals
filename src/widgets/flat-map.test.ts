@@ -36,9 +36,19 @@ describe("flat-map readout", () => {
     }
   });
 
-  it("REGRESSION: without whitening the claim is false, which is why we whiten", () => {
-    // This is the bug the widget must never regress into. Measuring Frobenius
-    // on the raw entries from a non-identity base does NOT agree at t → 0.
+  it("CANARY on spd.ts: an un-whitened Frobenius ratio does not agree with the curved ruler near t → 0", () => {
+    // This test does NOT call flatMapReadout — it recomputes an un-whitened
+    // ratio directly from expMap/distance. It does not guard the widget; the
+    // two tests above ("agrees with the curved ruler at the base point" and
+    // "is identical from any base point") are what guard flatMapReadout's
+    // whitening step, and they are the ones that go red if that whitening is
+    // ever removed (confirmed by deliberately removing it — see the task
+    // report). What THIS test guards is the underlying fact from spec §3.1
+    // that makes whitening necessary in the first place: measuring Frobenius
+    // on raw entries from a non-identity base disagrees with the Riemannian
+    // distance even at zero separation. If spd.ts ever changed such that this
+    // stopped being true, the whole section's premise would be gone, and this
+    // canary would catch that independently of anything in this widget.
     const raw = (t: number) => {
       const far = expMap(OFF_BASE, [
         UNIT_DIRECTION[0] * t,
