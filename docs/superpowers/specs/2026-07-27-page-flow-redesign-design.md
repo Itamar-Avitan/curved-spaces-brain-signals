@@ -64,7 +64,7 @@ mathematics, and it stays true at every point the page uses it.
 | Page moment | What the image says | Why it is literally true |
 |---|---|---|
 | §1.1 Gauss | You cannot flatten a curved surface without distorting distances. Gauss proved it *while running the Hanover land survey*. | Theorema Egregium (1827): Gaussian curvature is intrinsic, so no distance-preserving map exists between surfaces of different curvature. A plane has K = 0. |
-| §1.2 | A flat map is exact at one point and wrong by more the further you go. | The affine-invariant metric at *P* is ⟨A,B⟩\_P = tr(P⁻¹AP⁻¹B). At *P* = I this **equals** the Frobenius (Euclidean) inner product, and they diverge as you move away from I. |
+| §1.2 | A flat map is exact at **one** point and wrong by more the further you go — and *you choose which point*. | The affine-invariant metric at *P* is ⟨A,B⟩\_P = tr(P⁻¹AP⁻¹B). At *P* = I this **equals** the Frobenius (Euclidean) inner product; away from I it does not. See §3.1 — this is exact, verified, and stricter than it first looks. |
 | §3.1 swelling | Cell-by-cell averaging *is* the flat map's arithmetic. | Same fact, applied to the midpoint. |
 | §4.2 tangent space | Draw a local map, centred where you're standing; flat tools work on it. | The log map is exactly a chart; "accurate near the base point" is exactly why it is used. |
 | §4.4 re-centring | Redraw the map with today's session at the centre. | Re-centring moves the base point to the session mean. |
@@ -73,6 +73,44 @@ mathematics, and it stays true at every point the page uses it.
 **§1.2's sentence is the highest-leverage sentence on the page.** It is stated
 once in Part 1 and cashed three times: at §4.2 (why tangent space works), at
 §4.4 (why re-centring works), and in the notebook (where it is *measured*).
+
+### 3.1 The precise form of the claim — verified, and stricter than it looks
+
+Measured against `src/math/spd.ts`, walking out along a unit-speed geodesic and
+comparing Frobenius distance on the raw entries against affine-invariant
+distance:
+
+| Base point | ratio at *t* = 0.01 | at *t* = 1 | at *t* = 4 |
+|---|---|---|---|
+| **A.** identity | **1.001** | 1.304 | 5.867 |
+| **B.** [2.4, 0.6, 1.3], raw entries | **2.225** | 3.292 | 15.614 |
+| **C.** same base, whitened by it first | **1.001** | 1.304 | 5.867 |
+
+Row B is the trap. The flat map is **not** exact at an arbitrary point — it is
+exact at the **identity**, and nowhere else. A looser phrasing ("pick any
+reference and the flat map is accurate near it") is false, and would have
+shipped as another F3-class error.
+
+Row C is the payoff, and it makes the page stronger rather than weaker:
+
+> **Whitening your data by a reference point *is* the map projection, and the
+> reference is the one place the map is exact.**
+
+C is numerically *identical* to A, to every digit. So §1.2, §4.2 and §4.4 are
+not one idea illustrated three times — they are the **same operation** applied
+three times: `recenter(reference, ·)` in `src/math/spd.ts`. The tangent-space
+route whitens by the reference before flattening for exactly this reason, and
+re-centring per session is exactly this operation with the session mean as the
+reference.
+
+**Copy requirement.** Wherever §1.2's sentence appears, it must name the point:
+*exact where you centre it.* Never "exact at one point" without saying which,
+and never implying the raw Euclidean treatment is locally fine anywhere other
+than the identity.
+
+**Implementation note.** `geodesic(p, q, t)` clamps *t* to [0, 1], so it cannot
+walk past *q*. Anything that needs to travel further out — the §1.2 widget, and
+any test sweeping distance — must use `expMap(base, scaledTangent)`.
 
 ### Where the analogy stops — §1.4, rewritten
 
@@ -201,15 +239,25 @@ block of hand-built HTML.
 
 ### `<rg-flat-map>` — §1.2
 
-Two points on a curved surface, draggable apart. Two live readouts: distance
-measured on the surface, and distance measured on the flattened map. They are
-identical when the points coincide and separate as the points move apart.
+A base point marked as *where the map is centred*, and a second point the reader
+drags away from it. Two live readouts: distance measured on the surface
+(`distance`) and distance measured on the flattened map (Frobenius on the
+entries). Identical when the points coincide; separating as they move apart.
 
-The reader is meant to *discover* the sentence, not be told it. The widget's
-two numbers must be computed from `src/math/spd.ts` (affine-invariant vs
-Frobenius on the same pair), not from a decorative parametrisation — this is
-the one place where a fabricated-looking number would undo the section's whole
-point.
+The reader is meant to *discover* the sentence, not be told it. Both numbers
+are computed from `src/math/spd.ts`, not from a decorative parametrisation —
+this is the one place where a fabricated-looking number would undo the
+section's whole point.
+
+**Per §3.1, the widget must whiten by the base point before taking the flat
+measurement** (`recenter(base, ·)`), or the readouts will not agree even at
+zero separation and the section will teach the opposite of its own sentence.
+Walking the dragged point outward uses `expMap`, not `geodesic` (which clamps).
+
+Reference behaviour, from the verified sweep: ratio 1.001 at separation 0.01,
+1.304 at 1, 5.867 at 4. The widget should let the reader reach separations of
+at least 3–4, because the effect is unimpressive below 0.5 and that is where a
+reader who drags timidly will stop.
 
 **Known risk, mitigated by §1.4:** a globe has positive curvature and the SPD
 cone does not. §1.4 must ship in the same change as §1.2, never later.
@@ -433,8 +481,10 @@ Then:
   the four new tags.
 - `npm run audit:terms` clean, extended to also assert that every `href` in
   `src/glossary.ts` resolves to an id that exists in `index.html`.
-- New unit tests: the worked-example anti-drift test, and `<rg-flat-map>`'s two
-  distances checked against `src/math/spd.ts`.
+- New unit tests: the worked-example anti-drift test, and a permanent version
+  of the §3.1 sweep — all three rows, including **B**, so that if anyone later
+  "simplifies" `<rg-flat-map>` by dropping the whitening step, a test fails
+  rather than the page quietly starting to teach something false.
 - The existing congruence-invariance test in `src/math/spd.test.ts` still
   passes — it is the regression test for the page's whole thesis.
 - `<rg-concept-check>`'s six questions re-worded into the new vocabulary, still
@@ -453,6 +503,7 @@ Then:
 | Risk | Mitigation |
 |---|---|
 | The globe has the wrong curvature sign for the SPD cone — the exact trap the gravity well already fell into | §1.4 ships in the same change as §1.2, never later, and states the sign difference explicitly with its consequences |
+| §1.2's sentence gets written loosely as "exact near any reference", which is false — the flat map is exact only at the identity | §3.1 states the measured form, the copy requirement names the point every time, and `<rg-flat-map>` whitens by the base so the widget cannot demonstrate the false version |
 | Seven hand-typed worked examples drift from the code | The anti-drift unit test in §7 |
 | Re-execution shifts the numbers the page quotes | §9 re-verification step before copy is finalised |
 | Prose per section triples; the page could get wordier rather than clearer | Every section's prose is checked against the C5 language rules already in `REVISION_PLAN.md`, and against the §2 spine — a paragraph that does not advance the spine is cut |
