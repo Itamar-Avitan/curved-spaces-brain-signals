@@ -389,9 +389,32 @@ git commit -m "Let a formula show its working, folded away until asked"
 All values below were computed from `src/math/spd.ts`. Do not retype them from
 memory — the test recomputes them.
 
+**Two policies, ruled on by the human during Task 1's review. Both bind every
+box in this task:**
+
+1. **Symbols follow the formula.** Each `steps` fragment and `worked` block uses
+   the symbols that formula's `html` and `legend` already render — not new ones.
+   The vocabulary across the glossary is: **C** a covariance matrix (a trial),
+   **M** a mean or reference point, **P** and **Q** the two matrices being
+   compared, **W** the congruence, **X** the raw trial, **δ** the distance.
+   A fragment that never appears in the boxed formula above it defeats the
+   entire point of the disclosure.
+2. **Every computed numeral is pinned.** Not just the headline results — the
+   intermediate matrix entries and any derived figure ("63%", "4.5×") too. If a
+   number in a `worked` block came out of a calculation, a test recomputes it.
+   Inputs the author chose (the entries of `W`, the raw samples of `X`) are not
+   computed and need no assertion.
+
 - [ ] **Step 1: Write the failing tests**
 
-Append to `src/glossary.worked.test.ts`, and extend the import from `./math/spd` to add `congruence`, `distance`, `logMap`, `recenter`, `riemannianMean`, `tangentVector`, `totalSquaredDistance`, and `type Mat2`:
+Append to `src/glossary.worked.test.ts`, and extend the import from `./math/spd` to add `arithmeticMean`, `congruence`, `distance`, `logMap`, `recenter`, `riemannianMean`, `tangentVector`, `totalSquaredDistance`, and `type Mat2`.
+
+Task 1 already defines `fmt` (2 decimals) and a one-decimal formatter. Add one
+more alongside them, for whole-number percentages:
+
+```ts
+const pct = (x: number) => (x * 100).toFixed(0);
+```
 
 ```ts
   it("covariance-matrix: the 2×2 table from a 2×5 trial", () => {
@@ -416,67 +439,96 @@ Append to `src/glossary.worked.test.ts`, and extend the import from `./math/spd`
   });
 
   it("congruence + affine-invariant: the ruler does not move, the flat one does", () => {
-    const A: Sym2 = [4, 0, 0.25];
-    const B: Sym2 = [0.25, 0, 4];
+    const P: Sym2 = [4, 0, 0.25];
+    const Q: Sym2 = [0.25, 0, 4];
     const W: Mat2 = [1.6, 0.7, 0, 0.8];
-    const frob = (p: Sym2, q: Sym2) =>
-      Math.sqrt((p[0] - q[0]) ** 2 + 2 * (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2);
+    const frob = (a: Sym2, b: Sym2) =>
+      Math.sqrt((a[0] - b[0]) ** 2 + 2 * (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2);
 
     const text = worked("affine-invariant");
-    expect(fmt(distance(A, B))).toBe(fmt(distance(congruence(W, A), congruence(W, B))));
-    expect(text).toContain(fmt(distance(A, B)));                                  // 3.92
-    expect(text).toContain(fmt(frob(A, B)));                                      // 5.30
-    expect(text).toContain(fmt(frob(congruence(W, A), congruence(W, B))));        // 8.65
+    const flatBefore = frob(P, Q);
+    const flatAfter = frob(congruence(W, P), congruence(W, Q));
+
+    // The claim itself, asserted rather than displayed.
+    expect(fmt(distance(P, Q))).toBe(fmt(distance(congruence(W, P), congruence(W, Q))));
+
+    expect(text).toContain(fmt(distance(P, Q))); // 3.92, and again after rewiring
+    expect(text).toContain(fmt(flatBefore));     // 5.30
+    expect(text).toContain(fmt(flatAfter));      // 8.65
+    // The derived figure in the closing line is pinned too.
+    expect(text).toContain(`${pct(flatAfter / flatBefore - 1)}%`);
+  });
+
+  it("geodesic: the midpoint entries the box displays are pinned too", () => {
+    // Task 1 pinned the determinants. The flat midpoint's own entries are
+    // computed and displayed, so they are pinned here.
+    const P: Sym2 = [4, 0, 0.25];
+    const Q: Sym2 = [0.25, 0, 4];
+    const mid = euclideanInterpolate(P, Q, 0.5);
+    const text = worked("geodesic");
+    expect(text).toContain(String(mid[0]));   // 2.125
+    expect(text).toContain(String(mid[2]));   // 2.125
   });
 
   it("riemannian-mean: the Riemannian centre beats the flat one on its own objective", () => {
-    const set: Sym2[] = [[4, 0, 0.25], [0.25, 0, 4], [1, 0.5, 1]];
+    const trials: Sym2[] = [[4, 0, 0.25], [0.25, 0, 4], [1, 0.5, 1]];
     const text = worked("riemannian-mean");
-    const riem = totalSquaredDistance(riemannianMean(set), set);
-    const flat = totalSquaredDistance(
-      [(4 + 0.25 + 1) / 3, (0 + 0 + 0.5) / 3, (0.25 + 4 + 1) / 3],
-      set,
-    );
-    expect(riem).toBeLessThan(flat);
-    expect(text).toContain(fmt(riem));   // 8.17
-    expect(text).toContain(fmt(flat));   // 10.37
+    const riemannian = totalSquaredDistance(riemannianMean(trials), trials);
+    const flat = totalSquaredDistance(arithmeticMean(trials), trials);
+
+    // The centre is defined as the minimiser, so it must win on this objective.
+    expect(riemannian).toBeLessThan(flat);
+    expect(text).toContain(fmt(riemannian));   // 8.17
+    expect(text).toContain(fmt(flat));         // 10.37
   });
 
   it("mdm: the two distances, and which one wins", () => {
-    const left: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
-    const right: Sym2[] = [[1.0, -0.5, 3.0], [1.2, -0.7, 2.7], [0.9, -0.4, 3.3]];
-    const trial: Sym2 = [2.8, 0.7, 1.1];
+    const leftTrials: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
+    const rightTrials: Sym2[] = [[1.0, -0.5, 3.0], [1.2, -0.7, 2.7], [0.9, -0.4, 3.3]];
+    const C: Sym2 = [2.8, 0.7, 1.1];
     const text = worked("mdm");
-    const dL = distance(trial, riemannianMean(left));
-    const dR = distance(trial, riemannianMean(right));
-    expect(dL).toBeLessThan(dR);
-    expect(text).toContain(fmt(dL));   // 0.17
-    expect(text).toContain(fmt(dR));   // 1.78
+    const toLeft = distance(C, riemannianMean(leftTrials));
+    const toRight = distance(C, riemannianMean(rightTrials));
+
+    expect(toLeft).toBeLessThan(toRight);
+    expect(text).toContain(fmt(toLeft));    // 0.17
+    expect(text).toContain(fmt(toRight));   // 1.78
   });
 
   it("log-map: the √2 makes the vector length equal the distance", () => {
-    const ref: Sym2 = [2, 0.3, 2];
-    const trial: Sym2 = [2.8, 0.7, 1.1];
+    const M: Sym2 = [2, 0.3, 2];
+    const C: Sym2 = [2.8, 0.7, 1.1];
     const text = worked("log-map");
-    const v = tangentVector(ref, trial);
-    expect(Math.hypot(...v)).toBeCloseTo(distance(ref, trial), 12);
-    expect(text).toContain(fmt(distance(ref, trial)));   // 0.84
+    const v = tangentVector(M, C);
+
+    // The √2 claim: the vector's ordinary length IS the Riemannian distance.
+    expect(Math.hypot(...v)).toBeCloseTo(distance(M, C), 12);
+    expect(text).toContain(fmt(distance(M, C))); // 0.84, shown twice
+
+    // Every intermediate matrix the box displays, to the 4 decimals it shows.
+    const d4 = (x: number) => x.toFixed(4);
+    for (const value of [...recenter(M, C), ...logMap(M, C), ...v]) {
+      expect(text).toContain(d4(value));
+    }
   });
 
   it("recentering: the reference lands on the identity and distances survive", () => {
-    const set: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
-    const mean = riemannianMean(set);
-    const trial: Sym2 = [2.8, 0.7, 1.1];
-    const moved = recenter(mean, mean);
+    const session: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
+    const M = riemannianMean(session);
+    const C: Sym2 = [2.8, 0.7, 1.1];
+    const moved = recenter(M, M);
 
+    // The reference lands exactly on the identity.
     expect(moved[0]).toBeCloseTo(1, 12);
     expect(moved[1]).toBeCloseTo(0, 12);
     expect(moved[2]).toBeCloseTo(1, 12);
-    expect(distance(trial, set[0])).toBeCloseTo(
-      distance(recenter(mean, trial), recenter(mean, set[0])),
+
+    // …and nothing inside the session was damaged.
+    expect(distance(C, session[0])).toBeCloseTo(
+      distance(recenter(M, C), recenter(M, session[0])),
       12,
     );
-    expect(worked("recentering")).toContain(fmt(distance(trial, set[0])));   // 0.18
+    expect(worked("recentering")).toContain(fmt(distance(C, session[0])));   // 0.18
   });
 ```
 
@@ -496,9 +548,9 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
       "Label a new trial by measuring it against each class centre and taking the nearest.",
     formal: "Minimum Distance to Mean",
     formula: {
-      html: `${op("label")}(${v("P")}) = ${op("argmin")}<sub>${v("k")}</sub> δ(${v("P")}, ${v("M")}<sub>${v("k")}</sub>)`,
+      html: `${op("label")}(${v("C")}) = ${op("argmin")}<sub>${v("k")}</sub> δ(${v("C")}, ${v("M")}<sub>${v("k")}</sub>)`,
       legend: [
-        { symbol: "<i>P</i>", meaning: "the new trial's covariance matrix" },
+        { symbol: "<i>C</i>", meaning: "the new trial's covariance matrix" },
         { symbol: "<i>M<sub>k</sub></i>", meaning: "the stored centre of class k, one per class" },
         { symbol: "δ", meaning: "the affine-invariant distance — the same ruler used everywhere else" },
         { symbol: "argmin", meaning: "“whichever k makes this smallest”" },
@@ -507,7 +559,7 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
         "Measure the new trial against every class centre and return the label of the nearest one.",
       steps: [
         {
-          part: "δ(P, M_k)",
+          part: "δ(C, M_k)",
           says: "One number per class: how far this trial is from that class's centre.",
         },
         {
@@ -520,11 +572,11 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
           "Three 'left' trials  →  centre M_left",
           "Three 'right' trials →  centre M_right",
           "",
-          "New trial P = [2.8  0.7]",
+          "New trial C = [2.8  0.7]",
           "              [0.7  1.1]",
           "",
-          "  δ(P, M_left )  =  0.17     ← nearest",
-          "  δ(P, M_right)  =  1.78",
+          "  δ(C, M_left )  =  0.17     ← nearest",
+          "  δ(C, M_right)  =  1.78",
           "",
           "Decision: left.",
         ],
@@ -567,8 +619,8 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
 
 ```ts
       steps: [
-        { part: "G P Gᵀ", says: "Every hardware effect looks like this: re-referencing, electrode gain, volume conduction, whitening, a spatial filter. One family, one shape." },
-        { part: "G invertible", says: "No information is destroyed — the recording is scrambled, not lost. That is exactly the case a good ruler should shrug off." },
+        { part: "W C Wᵀ", says: "Every hardware effect looks like this: re-referencing, electrode gain, volume conduction, whitening, a spatial filter. One family, one shape." },
+        { part: "W invertible", says: "No information is destroyed — the recording is scrambled, not lost. That is exactly the case a good ruler should shrug off." },
       ],
 ```
 
@@ -576,22 +628,22 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
 
 ```ts
       steps: [
-        { part: "P₁^(−1/2) P₂ P₁^(−1/2)", says: "Redraw P₂ in units where P₁ is the unit circle." },
+        { part: "P^(−1/2) Q P^(−1/2)", says: "Redraw Q in units where P is the unit circle." },
         { part: "log( … )", says: "How many doublings away from that unit circle you land." },
         { part: "‖ · ‖_F", says: "Add those doublings up, Pythagoras-style, into one number." },
       ],
       worked: {
         lines: [
-          "P₁ = [4    0   ]        P₂ = [0.25  0]",
-          "     [0    0.25]             [0     4]",
+          "P = [4    0   ]        Q = [0.25  0]",
+          "    [0    0.25]            [0     4]",
           "",
-          "  Riemannian δ  = 3.92        flat ‖P₁ − P₂‖ = 5.30",
+          "  Riemannian δ  = 3.92        flat ‖P − Q‖ = 5.30",
           "",
-          "Now rewire the amplifier — G = [1.6  0.7]",
+          "Now rewire the amplifier — W = [1.6  0.7]",
           "                               [0    0.8]",
-          "and replace each P with G P Gᵀ:",
+          "and replace each matrix with W C Wᵀ:",
           "",
-          "  Riemannian δ  = 3.92        flat ‖P₁ − P₂‖ = 8.65",
+          "  Riemannian δ  = 3.92        flat ‖P − Q‖ = 8.65",
           "      unchanged                    moved by 63%",
           "",
           "The brain did not change. Only one ruler agrees.",
@@ -603,13 +655,13 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
 
 ```ts
       steps: [
-        { part: "Σ_i δ(M, P_i)²", says: "Add up the squared distance from a candidate centre to every trial." },
+        { part: "Σᵢ δ²(M, Cᵢ)", says: "Add up the squared distance from a candidate centre to every trial." },
         { part: "argmin_M", says: "The centre is whichever M makes that total smallest. Non-positive curvature is what guarantees there is exactly one such M." },
       ],
       worked: {
         lines: [
           "Three trials:",
-          "  P₁ = [4  0  ]   P₂ = [0.25  0]   P₃ = [1    0.5]",
+          "  C₁ = [4  0  ]   C₂ = [0.25  0]   C₃ = [1    0.5]",
           "       [0  0.25]        [0     4]        [0.5  1  ]",
           "",
           "Total squared distance to each candidate centre:",
@@ -627,13 +679,13 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
 
 ```ts
       steps: [
-        { part: "R^(−1/2) P R^(−1/2)", says: "Whiten by the reference. This is the step that puts the reference at the identity — the one point where a flat map is exact." },
+        { part: "M^(−1/2) C M^(−1/2)", says: "Whiten by the reference. This is the step that puts the reference at the identity — the one point where a flat map is exact." },
         { part: "log( … )", says: "Flatten. Now you are on the map, not the surface." },
         { part: "upper triangle, off-diagonals × √2", says: "Read off the three independent numbers. The √2 is what makes the vector's ordinary length equal the Riemannian distance." },
       ],
       worked: {
         lines: [
-          "Reference R = [2    0.3]     Trial P = [2.8  0.7]",
+          "Reference M = [2    0.3]     Trial C = [2.8  0.7]",
           "              [0.3  2  ]               [0.7  1.1]",
           "",
           "  whitened     [1.3736  0.2084]",
@@ -646,7 +698,7 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
           "                          ↑ off-diagonal × √2",
           "",
           "  its length            = 0.84",
-          "  Riemannian δ(R, P)    = 0.84      identical, and that is the point:",
+          "  Riemannian δ(M, C)    = 0.84      identical, and that is the point:",
           "                                    ordinary tools now measure correctly.",
         ],
       },
@@ -656,20 +708,20 @@ In `src/glossary.ts`, immediately after the existing `mdm` entry's current defin
 
 ```ts
       steps: [
-        { part: "M^(−1/2) P M^(−1/2)", says: "Whiten every trial in the session by that session's own mean." },
+        { part: "M^(−1/2) C M^(−1/2)", says: "Whiten every trial in the session by that session's own mean." },
         { part: "the session mean itself", says: "…lands exactly on the identity. Every session now starts from the same place, and no labels were needed to do it." },
       ],
       worked: {
         lines: [
-          "One session's trials → session mean M",
+          "One session's trials C₁, C₂, C₃ → session mean M",
           "",
           "  recentre M by itself  =  [1  0]      exactly the identity",
           "                           [0  1]",
           "",
           "And nothing inside the session was damaged:",
           "",
-          "  δ(trial, first trial)              = 0.18",
-          "  δ(recentred, recentred first)      = 0.18",
+          "  δ(C, C₁)                      = 0.18",
+          "  δ(recentred C, recentred C₁)  = 0.18",
           "",
           "The sessions move. The structure inside them does not.",
         ],
