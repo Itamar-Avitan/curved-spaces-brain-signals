@@ -77,6 +77,24 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       reading:
         "Multiply the trial by its own transpose and divide by the sample count. Time disappears; what survives is the relationship between channels.",
+      steps: [
+        { part: "X Xᵀ", says: "Multiply the trial by its own transpose. Every entry becomes one channel dotted with another." },
+        { part: "1 / (n − 1)", says: "Divide by the sample count so a longer trial does not look like a stronger one." },
+      ],
+      worked: {
+        lines: [
+          "Two channels, five samples, mean already removed:",
+          "",
+          "  X = [ 2  -1   0   1  -2 ]",
+          "      [ 1  -2   1   2  -2 ]",
+          "",
+          "  X Xᵀ = [10  10]        C = X Xᵀ / 4 = [2.50  2.50]",
+          "         [10  14]                       [2.50  3.50]",
+          "",
+          "Time is gone. Two channels in, a 2×2 table out —",
+          "and it would still be 2×2 for a trial ten times longer.",
+        ],
+      },
     },
     why: "Motor imagery changes band power and how regions couple — both second-order effects. Covariance is exactly the summary that keeps those and throws away the rest.",
     href: "#eeg",
@@ -186,6 +204,28 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       reading:
         "Ask how much Q stretches or squeezes each direction relative to P, take the log of each of those factors, and combine them. Identical matrices give all ratios 1, all logs 0, distance 0.",
+      steps: [
+        { part: "P^(−1/2) Q P^(−1/2)", says: "Redraw Q in units where P is the unit circle." },
+        { part: "log( … )", says: "How many doublings away from that unit circle you land." },
+        { part: "‖ · ‖_F", says: "Add those doublings up, Pythagoras-style, into one number." },
+      ],
+      worked: {
+        lines: [
+          "P = [4    0   ]        Q = [0.25  0]",
+          "    [0    0.25]            [0     4]",
+          "",
+          "  Riemannian δ  = 3.92        flat ‖P − Q‖ = 5.30",
+          "",
+          "Now rewire the amplifier — W = [1.6  0.7]",
+          "                               [0    0.8]",
+          "and replace each matrix with W C Wᵀ:",
+          "",
+          "  Riemannian δ  = 3.92        flat ‖P − Q‖ = 8.65",
+          "      unchanged                    moved by 63%",
+          "",
+          "The brain did not change. Only one ruler agrees.",
+        ],
+      },
     },
     why: "The property in the name is the whole reason this works on EEG: volume conduction, electrode gain, and re-referencing all leave this number completely unchanged.",
     href: "#invariance",
@@ -203,6 +243,10 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         { symbol: "<i>W</i>", meaning: "any invertible matrix describing how the channels got mixed" },
       ],
       reading: "Replace C with W times C times W-transpose.",
+      steps: [
+        { part: "W C Wᵀ", says: "Every hardware effect looks like this: re-referencing, electrode gain, volume conduction, whitening, a spatial filter. One family, one shape." },
+        { part: "W invertible", says: "No information is destroyed — the recording is scrambled, not lost. That is exactly the case a good ruler should shrug off." },
+      ],
     },
     why: "Volume conduction, the lead field, electrode gain, re-referencing, whitening, spatial filtering and session drift are all this one operation. That is why a single invariance property covers all of them at once.",
     href: "#invariance",
@@ -232,6 +276,25 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       reading:
         "The mean is whatever minimizes the total squared distance to the examples — the same definition an ordinary average satisfies on a number line, with the distance swapped out.",
+      steps: [
+        { part: "Σᵢ δ²(M, Cᵢ)", says: "Add up the squared distance from a candidate centre to every trial." },
+        { part: "argmin_M", says: "The centre is whichever M makes that total smallest. Non-positive curvature is what guarantees there is exactly one such M." },
+      ],
+      worked: {
+        lines: [
+          "Three trials:",
+          "  C₁ = [4  0  ]   C₂ = [0.25  0]   C₃ = [1    0.5]",
+          "       [0  0.25]       [0     4]        [0.5  1  ]",
+          "",
+          "Total squared distance to each candidate centre:",
+          "",
+          "  Riemannian centre   8.17     ← smallest, by definition",
+          "  entry-wise average  10.37",
+          "",
+          "The flat average is not just differently placed.",
+          "It is worse at the job a centre exists to do.",
+        ],
+      },
     },
     why: "There is no formula for it; you iterate. It converges to a single answer because this space curves the helpful way — geodesics spread apart rather than reconverging, so there is exactly one minimum.",
     href: "#mean",
@@ -241,10 +304,47 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
 
   mdm: {
     term: "Minimum Distance to Mean (MDM)",
-    plain: "Label a new trial by measuring it against each class's stored center and taking the nearest one.",
-    why: "Almost nothing to tune, and it works with very little calibration data — which is why it is a sensible first decoder rather than only a teaching example.",
+    plain:
+      "Label a new trial by measuring it against each class centre and taking the nearest.",
+    formal: "Minimum Distance to Mean",
+    formula: {
+      html: `${op("label")}(${v("C")}) = ${op("argmin")}<sub>${v("k")}</sub> δ(${v("C")}, ${v("M")}<sub>${v("k")}</sub>)`,
+      legend: [
+        { symbol: "<i>C</i>", meaning: "the new trial's covariance matrix" },
+        { symbol: "<i>M<sub>k</sub></i>", meaning: "the stored centre of class k, one per class" },
+        { symbol: "δ", meaning: "the affine-invariant distance — the same ruler used everywhere else" },
+        { symbol: "argmin", meaning: "“whichever k makes this smallest”" },
+      ],
+      reading:
+        "Measure the new trial against every class centre and return the label of the nearest one.",
+      steps: [
+        {
+          part: "δ(C, M_k)",
+          says: "One number per class: how far this trial is from that class's centre.",
+        },
+        {
+          part: "argmin_k",
+          says: "Pick the class with the smallest number. That is the whole decision — there is no boundary to learn.",
+        },
+      ],
+      worked: {
+        lines: [
+          "Three 'left' trials  →  centre M_left",
+          "Three 'right' trials →  centre M_right",
+          "",
+          "New trial C = [2.8  0.7]",
+          "              [0.7  1.1]",
+          "",
+          "  δ(C, M_left )  =  0.17     ← nearest",
+          "  δ(C, M_right)  =  1.78",
+          "",
+          "Decision: left.",
+        ],
+      },
+    },
+    why: "This is the decision a Riemannian BCI actually ships. Two stored matrices per class pair, one distance each, no boundary to fit — which is why it needs so little calibration data.",
     href: "#classifier",
-    hrefLabel: "Move a trial and watch it decide",
+    hrefLabel: "Watch it decide",
     see: ["riemannian-mean", "affine-invariant"],
   },
 
@@ -269,6 +369,30 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       reading:
         "View the trial from the reference point, then take the matrix log. The result is symmetric, so keeping its upper triangle loses nothing.",
+      steps: [
+        { part: "M^(−1/2) C M^(−1/2)", says: "Whiten by the reference. This is the step that puts the reference at the identity — the one point where a flat map is exact." },
+        { part: "log( … )", says: "Flatten. Now you are on the map, not the surface." },
+        { part: "upper triangle, off-diagonals × √2", says: "Read off the three independent numbers. The √2 is what makes the vector's ordinary length equal the Riemannian distance." },
+      ],
+      worked: {
+        lines: [
+          "Reference M = [2    0.3]     Trial C = [2.8  0.7]",
+          "              [0.3  2  ]               [0.7  1.1]",
+          "",
+          "  whitened     [1.3736  0.2084]",
+          "               [0.2084  0.5139]",
+          "",
+          "  log          [ 0.2958   0.2433]",
+          "               [ 0.2433  -0.7077]",
+          "",
+          "  vector       ( 0.2958,  0.3441,  -0.7077 )",
+          "                          ↑ off-diagonal × √2",
+          "",
+          "  its length            = 0.84",
+          "  Riemannian δ(M, C)    = 0.84      identical, and that is the point:",
+          "                                    ordinary tools now measure correctly.",
+        ],
+      },
     },
     why: "Take the upper triangle and multiply the off-diagonal entries by √2, and the vector's ordinary length equals the true Riemannian distance. Without that √2 the channel-coupling features — where the signal lives — get quietly shrunk.",
     href: "#tangent",
@@ -286,6 +410,25 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         { symbol: "<i>C</i>", meaning: "each trial in the session" },
       ],
       reading: "Divide out the session's own average, in the matrix sense, so its mean lands on the identity.",
+      steps: [
+        { part: "M^(−1/2) C M^(−1/2)", says: "Whiten every trial in the session by that session's own mean." },
+        { part: "the session mean itself", says: "…lands exactly on the identity. Every session now starts from the same place, and no labels were needed to do it." },
+      ],
+      worked: {
+        lines: [
+          "One session's trials C₁, C₂, C₃ → session mean M",
+          "",
+          "  recentre M by itself  =  [1  0]      exactly the identity",
+          "                           [0  1]",
+          "",
+          "And nothing inside the session was damaged:",
+          "",
+          "  δ(C, C₁)                      = 0.18",
+          "  δ(recentred C, recentred C₁)  = 0.18",
+          "",
+          "The sessions move. The structure inside them does not.",
+        ],
+      },
     },
     why: "This is itself a congruence, so it distorts nothing inside a session — and the shift between sessions is also a congruence, so it cancels. Both halves at once is what no Euclidean method can offer.",
     href: "#tangent",
