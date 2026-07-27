@@ -361,18 +361,19 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     term: "Log map",
     plain: "The step that turns a covariance matrix into a plain vector, measured relative to a chosen reference point.",
     formula: {
-      html: `${op("Log")}<sub>${v("M")}</sub>(${v("C")}) = ${op("log")}(${v("M")}<sup>−1/2</sup> ${v("C")} ${v("M")}<sup>−1/2</sup>)`,
+      html: `${v("s")}<sub>${v("M")}</sub>(${v("C")}) = ${op("vec")}<sub>√2</sub>( ${op("log")}( ${v("M")}<sup>−1/2</sup> ${v("C")} ${v("M")}<sup>−1/2</sup> ) )`,
       legend: [
         { symbol: "<i>M</i>", meaning: "the reference point — in practice the Riemannian mean of the training set" },
         { symbol: "<i>C</i>", meaning: "the trial being converted" },
         { symbol: "log", meaning: "the MATRIX logarithm: rotate to the eigenvector frame, log each eigenvalue, rotate back — not the log of each entry" },
+        { symbol: "vec<sub>√2</sub>", meaning: "stack the upper triangle into a list, multiplying every off-diagonal entry by √2" },
       ],
       reading:
-        "View the trial from the reference point, then take the matrix log. The result is symmetric, so keeping its upper triangle loses nothing.",
+        "View the trial from the reference point, take the matrix log, then read the result's upper triangle off as a plain list — scaling the off-diagonal entry by √2 so the vector's ordinary length equals the true Riemannian distance.",
       steps: [
         { part: "M^(−1/2) C M^(−1/2)", says: "Whiten by the reference. This is the step that puts the reference at the identity — the one point where a flat map is exact." },
         { part: "log( … )", says: "Flatten. Now you are on the map, not the surface." },
-        { part: "upper triangle, off-diagonals × √2", says: "Read off the three independent numbers. The √2 is what makes the vector's ordinary length equal the Riemannian distance." },
+        { part: "vec_√2( … )", says: "Read off the upper triangle as a plain list, scaling the off-diagonal entry by √2. That scaling is what makes the vector's ordinary length equal the Riemannian distance." },
       ],
       worked: {
         lines: [
