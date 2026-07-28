@@ -1,7 +1,12 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import type { TemplateResult } from "lit";
-import { distance, riemannianMean, tangentVector, type Sym2 } from "../math/spd";
+import { distance, riemannianMean, tangentVector } from "../math/spd";
+import {
+  LEFT_TRIALS as LEFT,
+  RIGHT_TRIALS as RIGHT,
+  TRIAL,
+} from "./case-file.fixture";
 
 /**
  * The page's one concrete decision, revisited five times.
@@ -16,18 +21,6 @@ import { distance, riemannianMean, tangentVector, type Sym2 } from "../math/spd"
  * Beat 4 shows the real tangent-space vector; the classifier that reads it
  * is demonstrated in the notebook, not here.
  */
-
-const LEFT: Sym2[] = [
-  [3.0, 0.8, 1.0],
-  [2.6, 0.6, 1.2],
-  [3.4, 1.0, 0.9],
-];
-const RIGHT: Sym2[] = [
-  [1.0, -0.5, 3.0],
-  [1.2, -0.7, 2.7],
-  [0.9, -0.4, 3.3],
-];
-const TRIAL: Sym2 = [2.8, 0.7, 1.1];
 
 const dLeft = distance(TRIAL, riemannianMean(LEFT)).toFixed(2);
 const dRight = distance(TRIAL, riemannianMean(RIGHT)).toFixed(2);
@@ -67,7 +60,8 @@ const BEATS: Record<string, Beat> = {
     where: "after Route 2",
     body: html`Same trial, flattened onto the local map into three numbers:
       <strong>${tangentDisplay}</strong>. The notebook feeds these to ordinary
-      logistic regression. Two routes, one answer, and neither is the “real” one.`,
+      logistic regression, which reaches its own decision from them. Two
+      routes to the same trial, and neither is the “real” one.`,
   },
   "5": {
     where: "before the notebook",

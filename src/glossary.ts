@@ -329,8 +329,11 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       worked: {
         lines: [
-          "Three 'left' trials  →  centre M_left",
-          "Three 'right' trials →  centre M_right",
+          "Left trials    L₁ = [3.0  0.8]   L₂ = [2.6  0.6]   L₃ = [3.4  1.0]",
+          "                    [0.8  1.0]        [0.6  1.2]        [1.0  0.9]   →  centre M_left",
+          "",
+          "Right trials   R₁ = [1.0  -0.5]  R₂ = [1.2  -0.7]  R₃ = [0.9  -0.4]",
+          "                    [-0.5  3.0]       [-0.7  2.7]       [-0.4  3.3]   →  centre M_right",
           "",
           "New trial C = [2.8  0.7]",
           "              [0.7  1.1]",
@@ -417,7 +420,11 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       ],
       worked: {
         lines: [
-          "One session's trials C₁, C₂, C₃ → session mean M",
+          "Session trials  C₁ = [3.0  0.8]   C₂ = [2.6  0.6]   C₃ = [3.4  1.0]",
+          "                     [0.8  1.0]        [0.6  1.2]        [1.0  0.9]   →  session mean M",
+          "",
+          "New trial C = [2.8  0.7]",
+          "              [0.7  1.1]",
           "",
           "  recentre M by itself  =  [1  0]      exactly the identity",
           "                           [0  1]",

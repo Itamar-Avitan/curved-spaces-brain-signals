@@ -338,11 +338,12 @@ rather watch the argument built than read it. The film runs the whole chain: …
 
 `index.html:133, 1006`. Both were misspelled with one `l`. `aria-labeledby` is
 not a real ARIA attribute, so it is silently ignored: the `.learning-route` and
-`.glossary-section` landmarks had no accessible name at all. The five widget
-files that use the attribute all spelled it correctly, which is why nothing
-looked wrong on inspection — the defect was only visible at the seam between
-hand-written HTML and generated HTML. Confirmed resolved in the browser: both
-`aria-labelledby` targets now resolve to their `<h2>`.
+`.glossary-section` landmarks had no accessible name at all. This fix covered
+only `index.html` — `src/` was never checked here, and it turned out to carry
+the same misspelling in five more places (`next-steps.ts` ×4,
+`signal-covariance.ts` ×1), fixed later in the final review pass. Confirmed
+resolved in the browser: both `index.html` `aria-labelledby` targets now
+resolve to their `<h2>`.
 
 ### F4 — Redundant `.steps dd` rule deleted *(C1)*
 
@@ -621,5 +622,7 @@ Per Q1 above. Judged acceptable, recorded for visibility.
 | `npm run audit:terms` | **clean** — "No term is used before it is introduced, and every link resolves. ✓" (19 terms) |
 
 `grep -o 'rg-[a-z-]*' dist/riemannian-eeg-widgets.js | sort -u` registers 21
-tags, including all four new ones — `rg-flat-map`, `rg-case-file`,
-`rg-route-fork`, `rg-method-compare`.
+matches, but two are not custom elements — `rg-interaction` (a CSS class) and
+`rg-term-open` (an event name). The actual count of `@customElement`
+definitions is **19**, including all four new ones — `rg-flat-map`,
+`rg-case-file`, `rg-route-fork`, `rg-method-compare`.

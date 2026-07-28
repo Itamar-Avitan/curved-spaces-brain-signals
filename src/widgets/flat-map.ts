@@ -101,6 +101,14 @@ export function flatMapLayout(readout: {
     // points coincide, so the control point collapses onto them too, rather
     // than tracing a stray loop above a single dot.
     leftArcHeight: Math.min(22, (leftX - LEFT_ANCHOR_X) * 3),
+    // Deliberately unreachable by construction, kept as a guard rather than
+    // deleted: PX_PER_UNIT is derived from MAX_FLAT (the flat reading at
+    // MAX_SEPARATION), so rawRightX can never exceed rightEdge for any
+    // separation the slider allows — flat-map.test.ts asserts this stays
+    // false across the whole sweep. The +0.01 slack only absorbs floating-
+    // point rounding at that exact boundary; it is not headroom for a real
+    // overflow. If this ever fires, PX_PER_UNIT's derivation (or the
+    // slider's MAX_SEPARATION bound) has been broken, not the picture.
     overflowing: rawRightX > rightEdge + 0.01,
     rightX: Math.min(rawRightX, rightEdge),
   };
@@ -296,6 +304,13 @@ export class RgFlatMap extends LitElement {
           <text x=${RIGHT_ANCHOR_X} y="182" font-size="10" text-anchor="middle" fill="#4a5265">
             centre
           </text>
+          <!--
+            This arrow is a guard for an "overflowing" state that never
+            actually fires (see flatMapLayout's comment on the field): the
+            pixel scale is derived from the slider's own maximum, so the
+            flat reading can never run past the track's right edge. Kept in
+            case that invariant is ever broken elsewhere.
+          -->
           ${overflowing
             ? html`<path
                 d=${`M${rightEdge - 4} ${POINT_Y - 9} L${rightEdge + 8} ${POINT_Y} L${rightEdge - 4} ${POINT_Y + 9} Z`}

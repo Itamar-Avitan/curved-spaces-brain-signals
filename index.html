@@ -362,8 +362,10 @@
           well bends paths the same way, which is what gravity pulling
           things together looks like in this picture. The space of
           covariance matrices, with the ruler that Part 3 chooses, bends the
-          other way instead: nearby paths pull apart rather than reconverge,
-          and that is what non-positive curvature means here.
+          other way instead: non-positive curvature guarantees nearby paths
+          never curve back together, though how much they spread apart
+          varies from place to place, and in one direction they simply run
+          side by side.
         </p>
         <figure class="sign-compare">
           <svg
@@ -397,7 +399,11 @@
         </p>
         <ul>
           <li>Exactly one shortest path between any two points.</li>
-          <li>No cut locus.</li>
+          <li>
+            No cut locus — no point where two equally short paths from the
+            same start arrive together and “nearest” stops being well
+            defined.
+          </li>
           <li>A class centre that always exists and is always unique.</li>
           <li>An algorithm that finds that centre and always converges.</li>
         </ul>

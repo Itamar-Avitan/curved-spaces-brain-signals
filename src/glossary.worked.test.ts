@@ -15,6 +15,11 @@ import {
   type Mat2,
   type Sym2,
 } from "./math/spd";
+import {
+  LEFT_TRIALS,
+  RIGHT_TRIALS,
+  TRIAL,
+} from "./widgets/case-file.fixture";
 
 /** Every checked value is written to 2 decimals, in the glossary and here. */
 const fmt = (x: number) => x.toFixed(2);
@@ -24,6 +29,22 @@ const fmt1 = (x: number) => x.toFixed(1);
 
 /** Whole-number percentages, for derived figures like "63%". */
 const pct = (x: number) => (x * 100).toFixed(0);
+
+/**
+ * Whole-value substring match: rejects a match that is only part of a
+ * longer number in `text` — in particular, a positive needle (e.g. "0.5")
+ * must not be satisfied by a negative occurrence elsewhere (e.g. "-0.5"),
+ * and vice versa. A bare `text.includes(needle)` is sign-blind: if a
+ * source value's sign flipped, the shorter needle it produces can still be
+ * a substring of the correct, differently-signed text, so the assertion
+ * would stay green while the displayed sign was wrong. Also guards against
+ * a needle being satisfied by a longer number that merely starts with it
+ * (e.g. "1.0" inside "1.02").
+ */
+const containsExact = (text: string, needleRaw: string): boolean => {
+  const needle = needleRaw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<![-.\\d])${needle}(?!\\d)`).test(text);
+};
 
 const workedLines = (key: string): string[] => {
   const w = GLOSSARY[key]?.formula?.worked;
@@ -162,9 +183,14 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
   });
 
   it("mdm: the two distances, and which one wins", () => {
-    const leftTrials: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
-    const rightTrials: Sym2[] = [[1.0, -0.5, 3.0], [1.2, -0.7, 2.7], [0.9, -0.4, 3.3]];
-    const C: Sym2 = [2.8, 0.7, 1.1];
+    // Imported, not retyped: these are the exact matrices <rg-case-file>
+    // computes its live "left vs. right" distances from (case-file.ts). If
+    // an entry there changed, this test recomputes from the same fixture
+    // and would drift from the glossary's hardcoded 0.17 / 1.78 below —
+    // instead of only the widget noticing.
+    const leftTrials = LEFT_TRIALS;
+    const rightTrials = RIGHT_TRIALS;
+    const C = TRIAL;
     const text = worked("mdm");
     const toLeft = distance(C, riemannianMean(leftTrials));
     const toRight = distance(C, riemannianMean(rightTrials));
@@ -172,6 +198,21 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
     expect(toLeft).toBeLessThan(toRight);
     expect(text).toContain(fmt(toLeft));    // 0.17
     expect(text).toContain(fmt(toRight));   // 1.78
+
+    // The six trial matrices themselves are now displayed too (not just the
+    // two distances derived from them) — pin each entry against the same
+    // shared fixture so a changed matrix cannot drift silently into display
+    // text that was hand-typed to match it. `containsExact` (not a bare
+    // `toContain`) matters here specifically because the right trials carry
+    // negative entries.
+    for (const trial of [...leftTrials, ...rightTrials]) {
+      for (const entry of trial) {
+        expect(
+          containsExact(text, fmt1(entry)),
+          `expected the mdm worked block to display ${fmt1(entry)}`,
+        ).toBe(true);
+      }
+    }
   });
 
   it("log-map: the √2 makes the vector length equal the distance", () => {
@@ -208,20 +249,37 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
       return lines.slice(start, start + 2).join("\n");
     };
 
+    // -0.7077 is the only negative value in any worked block (it appears in
+    // both the "log" and "vector" rows here). A bare `block.toContain(d4(value))`
+    // is sign-blind: if `logMap`/`tangentVector`'s third entry flipped sign,
+    // the needle would become "0.7077" — a substring of the displayed
+    // "-0.7077" — so the assertion would stay green while the sign shown was
+    // wrong. `containsExact` requires the match not be preceded/followed by
+    // a sign, digit or dot that isn't part of the expected number, so a
+    // sign flip is forced to fail instead of quietly matching a neighbouring
+    // number.
     for (const [label, values] of [
       ["  whitened", recenter(M, C)],
       ["  log", logMap(M, C)],
       ["  vector", v],
     ] as const) {
       const block = blockAt(label);
-      for (const value of values) expect(block).toContain(d4(value));
+      for (const value of values) {
+        expect(
+          containsExact(block, d4(value)),
+          `expected the "${label.trim()}" row to show ${d4(value)} as a distinct value`,
+        ).toBe(true);
+      }
     }
   });
 
   it("recentering: the reference lands on the identity and distances survive", () => {
-    const session: Sym2[] = [[3.0, 0.8, 1.0], [2.6, 0.6, 1.2], [3.4, 1.0, 0.9]];
+    // Same shared fixture as the mdm test above (the widget's LEFT trials
+    // and TRIAL), so this test's inputs cannot drift from what the page
+    // actually renders elsewhere.
+    const session = LEFT_TRIALS;
     const M = riemannianMean(session);
-    const C: Sym2 = [2.8, 0.7, 1.1];
+    const C = TRIAL;
     const moved = recenter(M, M);
 
     // The reference lands exactly on the identity.
@@ -236,6 +294,19 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
     expect(before).toBeCloseTo(after, 12);
 
     const lines = workedLines("recentering");
+    const text = lines.join("\n");
+
+    // The session's three trials and the trial C are now displayed too —
+    // pin each entry against the same shared fixture, for the same
+    // drift-proofing reason as the mdm test above.
+    for (const trial of [...session, C]) {
+      for (const entry of trial) {
+        expect(
+          containsExact(text, fmt1(entry)),
+          `expected the recentering worked block to display ${fmt1(entry)}`,
+        ).toBe(true);
+      }
+    }
 
     // The box *displays* the identity it lands on. Without this the displayed
     // block was free to drift from the computed one: the assertions above pin

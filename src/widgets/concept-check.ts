@@ -61,7 +61,7 @@ export class ConceptCheck extends LitElement {
       correctFeedback:
         "Right — this is §1.2's rule, returning. A flat map is exact at the point you centre it on and wrong by more the further you stray. That is exactly why the reference is placed at the data's mean: it puts every trial as close as possible to the one place the flattening is exact.",
       incorrectFeedback:
-        "Not quite. Flattening cannot be accurate everywhere — curvature forbids that — and the accuracy follows the chosen reference point, not the class labels. That is why this route can be built before a single trial is labeled.",
+        "Not quite. Flattening cannot be accurate everywhere — curvature forbids that — and the accuracy follows the chosen reference point, not the class labels. That is why this route can be built before a single trial is labelled.",
     },
     {
       prompt:
@@ -113,7 +113,7 @@ export class ConceptCheck extends LitElement {
         ["nolabels", "Only that session's own trials — no labels."],
         [
           "somelabels",
-          "A handful of labeled Tuesday trials to anchor the re-centring.",
+          "A handful of labelled Tuesday trials to anchor the re-centring.",
         ],
         ["mondaylabels", "Monday's labels, carried over and reapplied to Tuesday."],
       ],
