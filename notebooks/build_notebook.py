@@ -1153,7 +1153,7 @@ cells = [
         not the identity: `TangentSpace` uses the **Riemannian mean of the data
         it was fitted on**, which is why it must be fitted inside the training
         fold like everything else. That reference is also exactly the quantity
-        re-centering manipulates in Section 6b.
+        re-centering manipulates in Section 6.4.
 
         **What the map is.** For a reference $\bar{C}$,
 
@@ -1878,15 +1878,21 @@ cells = [
     ),
     markdown(
         r"""
-        ### 6.4 A session shift, injected on purpose — and repaired
+        ### 6.4 A session shift, injected on purpose — and what re-centring recovers
 
         6.2 changed the recording for *everything*. Real life is crueller: you train on
         Monday and the headset sits differently on Tuesday, so the change hits only the
         data you have no labels for.
 
         Here that is simulated exactly — the held-out run, and only the held-out run,
-        gets the same kind of congruence 6.2 used. Then re-centring: whiten each run by
-        its own Riemannian mean, so every run starts from the identity.
+        gets the same kind of congruence 6.2 used (this cell reuses 6.2's `MIXING`, so
+        6.2's cell must already have run). Then re-centring: whiten each run by its own
+        Riemannian mean,
+
+        $$ C \;\mapsto\; M_{\text{run}}^{-1/2}\, C\, M_{\text{run}}^{-1/2} $$
+
+        so every run starts from the identity — applied one run at a time on the
+        training side, and to the held-out run on the test side.
 
         Re-centring uses **no labels from the held-out run**. It only needs the trials,
         which you have the moment the session starts.
@@ -1924,7 +1930,23 @@ cells = [
                         "ij,njk,lk->nil", MIXING, test_covariances, MIXING
                     )
                 if recentre:
-                    train_covariances = whiten_to_identity(train_covariances)
+                    # Re-centre per run, not pooled -- one shared reference across
+                    # the two training runs would not be the published method, and
+                    # would not match 6.4b's run-by-run recenter_by_run. Whiten in
+                    # place so row order (and its alignment with dataset.y[train])
+                    # is never touched.
+                    train_rows = train_covariances.shape[0]
+                    train_groups = dataset.groups[train]
+                    for run in np.unique(train_groups):
+                        run_mask = train_groups == run
+                        train_covariances[run_mask] = whiten_to_identity(
+                            train_covariances[run_mask]
+                        )
+                    assert train_covariances.shape[0] == train_rows, (
+                        "re-centring must not add, drop, or reorder training rows"
+                    )
+                    # The held-out fold is exactly one run, so this call is
+                    # already per-run.
                     test_covariances = whiten_to_identity(test_covariances)
 
                 classifier = MDM(metric="riemann").fit(train_covariances, dataset.y[train])
@@ -1965,15 +1987,17 @@ cells = [
         r"""
         ### 6.4b …and the same move on data that had no shift to remove
 
-        6.4 was a shift we injected. This is the same operation on the three real
-        recording runs, which came from a single sitting — so there was no session
-        change to cancel.
+        6.4 was a shift we injected. This is the same per-run whitening — each run
+        centred on its own Riemannian mean, no labels used — applied instead to the
+        three real recording runs, which came from a single sitting, so there was
+        no session change to cancel.
 
-        Re-centring does what it says: we redrew the map centred on each run; the
-        runs were already in the same place, so nothing moved. The accuracy does
-        not improve, and it should not. Alignment is a hypothesis about your data,
-        not a free upgrade. It pays when what separates your recordings really is
-        a change of hardware. Measure it; do not assume it.
+        Re-centring does what it says: we redrew the map centred on each run and
+        the run means collapsed onto each other — but the runs were already close,
+        so nothing of substance moved. The accuracy does not improve, and it
+        should not. Alignment is a hypothesis about your data, not a free upgrade.
+        It pays when what separates your recordings really is a change of
+        hardware. Measure it; do not assume it.
         """
     ),
     code(
@@ -2366,7 +2390,7 @@ cells = [
         around **0.96** here. On same-session data, where there is no large
         recording shift to be invariant to, the cheaper metric costs almost
         nothing. The gap tends to open up in exactly the transfer settings that
-        Section 6b was about, which is the honest way to choose between them:
+        Section 6.4 was about, which is the honest way to choose between them:
         match the metric to whether invariance is doing any work for your data.
 
         </details>
@@ -2397,7 +2421,7 @@ cells = [
           group. Cross-participant prediction is much harder than cross-run;
           the appendix immediately below sets it up.
         - **Recenter across participants**, not just runs, and see whether the
-          alignment from Section 6b earns its keep when the sessions really are
+          alignment from Section 6.4b earns its keep when the sessions really are
           different people.
         """
     ),
