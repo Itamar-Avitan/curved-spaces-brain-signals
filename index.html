@@ -601,248 +601,179 @@
         <rg-case-file step="2"></rg-case-file>
       </section>
 
-      <section id="mean" class="mean-section">
-        <div class="section-shell">
-          <div class="lesson-heading">
-            <div>
-              <p class="eyebrow coral">Move 2 · build a class center</p>
-              <h2>How can many EEG trials become one representative pattern?</h2>
-            </div>
-            <div>
-              <p>
-                Repeated trials from the same BCI class are similar but never
-                identical. We need one center that summarizes them using the
-                same distance rule that will later judge a new trial.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: the center by curved-space distance</span>
-                <strong>Mathematical name: <rg-term key="riemannian-mean">Riemannian mean</rg-term></strong>
-              </div>
-            </div>
-          </div>
-          <div class="lesson-purpose mean-purpose">
-            <span>The sentence to leave with</span>
-            <strong>
-              A class center is whatever sits at the smallest total distance
-              from its examples.
-            </strong>
-            <p>
-              Each ellipse is already a covariance summary of one trial. The
-              chosen center becomes the stored prototype for that class.
-            </p>
-          </div>
-          <rg-mean-explorer></rg-mean-explorer>
-
-          <div class="formula-block">
-            <p class="formula-label">What “the center” actually means</p>
-            <rg-formula key="riemannian-mean"></rg-formula>
-          </div>
-          <aside class="model-scope-note">
-            <strong>Why the examples use ellipses</strong>
-            <p>
-              Two-channel diagonal covariance matrices can be drawn as simple
-              ellipses, so every calculation remains visible. Real EEG uses
-              larger, full covariance matrices; the same geometric definitions
-              extend to those higher-dimensional objects.
-            </p>
-          </aside>
-        </div>
+      <section id="part-routes" class="part-divider use section-shell" aria-label="Part 4: Two ways to build a decoder">
+        <span class="part-kicker">Part 4 of 5</span>
+        <h2>Two ways to build a decoder</h2>
+        <p>
+          One representation, one ruler — and from here the field splits in
+          two. Both routes are in real use, both are in the notebook, and
+          neither is the "real" one.
+        </p>
       </section>
 
-      <section id="classifier" class="classifier-section">
-        <div class="section-shell">
-          <div class="lesson-heading">
-            <div>
-              <p class="eyebrow violet">Move 3 · make the prediction</p>
-              <h2>From an EEG trial to a BCI decision.</h2>
-            </div>
-            <div>
-              <p>
-                We now have a structured summary for every trial, a meaningful
-                class average, and a distance rule. That is enough to build a
-                complete classifier.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: choose the nearest learned class center</span>
-                <strong>Mathematical name: <rg-term key="mdm">Minimum Distance to Mean (MDM)</rg-term></strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="lesson-purpose classifier-purpose">
-            <span>The sentence to leave with</span>
-            <strong>
-              To label a new trial, measure it against each class center and
-              take the nearest one.
-            </strong>
-            <p>
-              This is the decision the BCI actually ships: measure a new trial’s
-              distance to every class prototype and return the nearest label.
-            </p>
-          </div>
-
-          <rg-mdm-playground></rg-mdm-playground>
-        </div>
+      <section id="routes" class="lesson-section section-shell">
+        <p class="section-index">4.0</p>
+        <h2>Same covariance matrix, two ways out.</h2>
+        <p>
+          Route 1 never leaves the curved surface: it stores one centre per
+          class and asks which is nearest. Route 2 flattens the neighbourhood
+          into a local map first, and then any ordinary classifier can read it.
+          Route 1 asks less of your data; Route 2 asks less of your geometry.
+        </p>
+        <rg-route-fork></rg-route-fork>
       </section>
 
-      <section id="tangent" class="tangent-section">
-        <div class="section-shell">
-          <div class="lesson-heading tangent-heading">
-            <div>
-              <p class="eyebrow lemon">The other route · geometry meets machine learning</p>
-              <h2>A curved surface looks flat when you stay nearby.</h2>
-            </div>
-            <div>
-              <p>
-                MDM decides by comparing a trial to class centers. The other
-                common route flattens the curved space first: near one reference
-                point it behaves like ordinary flat space, and standard linear
-                classifiers can read the patterns there.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: flatten the neighborhood around a reference</span>
-                <strong>Mathematical name: <rg-term key="tangent-space">tangent space</rg-term>, reached by the <rg-term key="log-map">log map</rg-term></strong>
-              </div>
-            </div>
-          </div>
-          <div class="lesson-purpose tangent-purpose">
-            <span>The sentence to leave with</span>
-            <strong>
-              Flatten around one reference point and every trial becomes a plain
-              list of numbers that ordinary machine learning can read.
-            </strong>
-            <p>
-              The log map turns each nearby covariance matrix into one vector, so
-              tools like LDA, logistic regression, or an SVM can take over from
-              here. The same <rg-term key="recentering">re-centering</rg-term> on a reference also makes two recordings
-              line up — which is how a decoder transfers to a new session or person
-              with little recalibration, the geometry’s quiet superpower.
-            </p>
-          </div>
-          <rg-tangent-explorer></rg-tangent-explorer>
-
-          <div class="formula-block">
-            <p class="formula-label">The step that makes a trial into a vector</p>
-            <rg-formula key="log-map"></rg-formula>
-          </div>
-        </div>
-      </section>
-
-      <section id="transfer" class="transfer-section">
-        <div class="section-shell">
-          <div class="lesson-heading">
-            <div>
-              <p class="eyebrow cyan">The payoff · why any of this was worth it</p>
-              <h2>A decoder that survives tomorrow.</h2>
-            </div>
-            <div>
-              <p>
-                Everything so far has been about one recording. The reason the
-                field cares about this geometry is what happens across two —
-                because in practice a BCI is unusable if every session starts
-                with twenty minutes of recalibration.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: slide each session onto the same starting point</span>
-                <strong>Mathematical name: re-centering (Riemannian alignment)</strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="lesson-purpose transfer-purpose">
-            <span>The sentence to leave with</span>
-            <strong>
-              Re-centering each session on its own average cancels the
-              difference between sessions without damaging what is inside them.
-            </strong>
-            <p>
-              Drag the drift up to break the decoder, then re-center and watch it
-              come back — without a single label from the new session.
-            </p>
-          </div>
-
-          <rg-predict key="transfer"></rg-predict>
-          <rg-transfer-explorer></rg-transfer-explorer>
-
-          <div class="formula-block">
-            <p class="formula-label">One line, and it needs no labels</p>
-            <rg-formula key="recentering"></rg-formula>
-          </div>
-
-          <aside class="transfer-caveat">
-            <strong>And when it doesn’t help</strong>
-            <p>
-              The demo above is synthetic, and its numbers were chosen to show
-              the mechanism. The companion notebook runs the same move on real
-              recordings and gets a <em>negative</em> result: the run centers
-              collapse together exactly as they should, and the accuracy does
-              not improve. The three runs there came from one sitting, so there
-              was no session shift to remove — and re-centering threw away the
-              small real differences along with the nuisance that wasn’t there.
-              Alignment is a hypothesis about your data, not a free upgrade. It
-              pays when what separates your recordings really is a change of
-              hardware. Measure it; don’t assume it.
-            </p>
-          </aside>
-        </div>
-      </section>
-
-      <section class="method-guide section-shell" aria-labeledby="method-guide-title">
-        <div class="method-guide-heading">
-          <div>
-            <p class="eyebrow cyan">In practice · choose the tool for the job</p>
-            <h2 id="method-guide-title">Geometry is a family of workflows, not one classifier.</h2>
-          </div>
+      <section id="mean" class="lesson-section section-shell">
+        <p class="section-index">4.1a</p>
+        <rg-route-fork compact active="1"></rg-route-fork>
+        <h2>A class centre is whatever sits at the smallest total distance from its examples.</h2>
+        <p>
+          Repeated trials from the same class are similar but never
+          identical, so no single trial can stand in for the whole class —
+          Route 1 needs one representative point built from all of them, and
+          that point has to be built with the same ruler that will later
+          judge a new trial.
+        </p>
+        <p>
+          That point is the <rg-term key="riemannian-mean">Riemannian
+          mean</rg-term>: the one covariance matrix that sits at the smallest
+          total distance — measured with Part 3's ruler — from every training
+          trial in the class. And there is exactly one such matrix, not a
+          family of equally good candidates, for the same reason §1.4 gave:
+          the non-positive curvature of this space guarantees a unique
+          centre, and an algorithm that is guaranteed to find it.
+        </p>
+        <rg-mean-explorer></rg-mean-explorer>
+        <rg-formula key="riemannian-mean" folded summary="what 'the centre' actually minimises"></rg-formula>
+        <aside class="model-scope-note">
+          <strong>Why the examples use ellipses</strong>
           <p>
-            These methods share covariance representations but use them
-            differently. A credible BCI study compares them with a strong
-            task-specific baseline.
+            Two-channel diagonal covariance matrices can be drawn as simple
+            ellipses, so every calculation remains visible. Real EEG uses
+            larger, full covariance matrices; the same geometric definitions
+            extend to those higher-dimensional objects.
           </p>
-        </div>
-        <div class="lesson-purpose method-purpose">
-          <span>The sentence to leave with</span>
-          <strong>
-            These methods share a representation and differ in what they learn
-            from it — so the right one depends on how much calibration data you
-            can ask for.
-          </strong>
-          <p>
-            MDM, tangent-space models, and CSP + LDA trade interpretability,
-            flexibility, and calibration cost differently — match the method to
-            the data you have.
-          </p>
-        </div>
-        <div class="method-table" role="table" aria-label="Comparison of EEG decoding methods" data-collapse-mobile="the comparison table">
-          <div class="method-row method-header" role="row">
-            <span role="columnheader">Method</span>
-            <span role="columnheader">What it learns</span>
-            <span role="columnheader">Useful when</span>
-            <span role="columnheader">Watch for</span>
-          </div>
-          <div class="method-row" role="row">
-            <strong role="cell">Riemannian MDM</strong>
-            <span role="cell">One covariance center per class</span>
-            <span role="cell">Calibration is limited and interpretability matters</span>
-            <span role="cell">A simple center may miss complex class boundaries</span>
-          </div>
-          <div class="method-row" role="row">
-            <strong role="cell">Tangent-space model</strong>
-            <span role="cell">A linear boundary in geometry-aware features</span>
-            <span role="cell">Classes need a more flexible separator</span>
-            <span role="cell">Reference points and preprocessing must stay inside each training fold</span>
-          </div>
-          <div class="method-row" role="row">
-            <strong role="cell"><rg-term key="csp">CSP + LDA</rg-term></strong>
-            <span role="cell">Spatial filters with class-separating variance</span>
-            <span role="cell">Motor imagery has two classes and enough calibration data</span>
-            <span role="cell">CSP can overfit with few trials and must be fitted inside validation</span>
-          </div>
-        </div>
+        </aside>
       </section>
 
-      <section class="limits-section">
+      <section id="classifier" class="lesson-section section-shell">
+        <p class="section-index">4.1b</p>
+        <h2>To label a new trial, measure it against each centre and take the nearest.</h2>
+        <p>
+          That is the entire decision: compute the new trial's distance to
+          every stored class centre, with the same ruler that built them, and
+          return the nearest one's label. No boundary is fitted anywhere in
+          between — nothing is learned beyond the centres themselves — which
+          is why this route needs so little calibration data before it starts
+          working. The name for it is
+          <rg-term key="mdm">Minimum Distance to Mean</rg-term>.
+        </p>
+        <rg-mdm-playground></rg-mdm-playground>
+        <rg-formula key="mdm" folded summary="the decision, and the two distances it compares"></rg-formula>
+        <rg-case-file step="3"></rg-case-file>
+      </section>
+
+      <section id="tangent" class="lesson-section section-shell">
+        <p class="section-index">4.2</p>
+        <rg-route-fork compact active="2"></rg-route-fork>
+        <h2>Flatten a local map first, and any ordinary classifier can read it.</h2>
+        <p>
+          Route 2 does not stay on the curved surface. It builds §1.2's flat
+          map here, laid over one neighbourhood of covariance matrices — and
+          the reference point is simply wherever you choose to centre that
+          map.
+        </p>
+        <p>
+          Building it is three steps: whiten every trial by the reference,
+          take the matrix logarithm, and read the result off as a plain list
+          of numbers. That whole operation is the
+          <rg-term key="log-map">log map</rg-term>, and the flat coordinates
+          it lands in are the <rg-term key="tangent-space">tangent
+          space</rg-term>.
+        </p>
+        <p>
+          Once a trial is a short vector instead of a matrix, any ordinary
+          classifier can take over from there — linear discriminant analysis,
+          logistic regression, an SVM.
+        </p>
+        <rg-predict key="tangent"></rg-predict>
+        <rg-tangent-explorer></rg-tangent-explorer>
+        <p>
+          So why put the reference at the mean of the data rather than
+          anywhere else? Because §1.2 already told us: a flat map is exact
+          only at the point you centre it, and wrong by more the further you
+          stray. Put the reference at the mean and every trial sits as close
+          as possible to the one place the flattening is exact — which is
+          what you just watched the widget confirm.
+        </p>
+        <rg-formula key="log-map" folded summary="the step that turns a trial into a vector"></rg-formula>
+        <rg-case-file step="4"></rg-case-file>
+      </section>
+
+      <section id="which" class="lesson-section section-shell">
+        <p class="section-index">4.3</p>
+        <h2>Which route? It depends on how much calibration you can ask for.</h2>
+        <p>
+          Route 1 stores a centre and compares. Route 2 fits a boundary in
+          flattened coordinates. The first needs less from the user before it
+          starts working; the second has more room to grow once data arrives.
+          A credible study reports both against a strong task-specific
+          baseline, which for motor imagery means
+          <rg-term key="csp">CSP + LDA</rg-term>.
+        </p>
+        <rg-method-compare></rg-method-compare>
+      </section>
+
+      <section id="transfer" class="lesson-section section-shell">
+        <p class="section-index">4.4</p>
+        <h2>Tomorrow's session breaks both — until you redraw the map around it.</h2>
+        <p>
+          Everything so far has been about one recording. Tomorrow's session
+          shifts the headset, the impedances, the reference — and both routes
+          inherit that shift, because both were built on today's geometry. A
+          BCI that needs twenty minutes of recalibration every time someone
+          sits down is not a BCI anyone actually uses.
+        </p>
+        <p>
+          The fix is §1.2's move again, run per session instead of once:
+          re-centre each session on its own mean, so every session's
+          reference lands at exactly the same place — the identity. That is
+          not merely similar to the log map's first whitening step or to Part
+          1's flat-map widget; it is the same
+          <rg-term key="recentering">re-centering</rg-term> operation, put to
+          a second job.
+        </p>
+        <p>
+          And it needs no labels from the new session — only that session's
+          own trials go into computing its mean, which is why it works before
+          a single trial has been classified.
+        </p>
+        <rg-predict key="transfer"></rg-predict>
+        <rg-transfer-explorer></rg-transfer-explorer>
+        <rg-formula key="recentering" folded summary="one line, and it needs no labels"></rg-formula>
+        <!-- PROVISIONAL: rewritten by 2026-07-27-notebook-realignment.md Task 6,
+             once E2/E3 have executed and produced real numbers. -->
+        <aside class="transfer-caveat">
+          <strong>And when it doesn’t help</strong>
+          <p>
+            The demo above is synthetic, and its numbers were chosen to show
+            the mechanism. The companion notebook runs the same move on real
+            recordings and gets a <em>negative</em> result: the run centers
+            collapse together exactly as they should, and the accuracy does
+            not improve. The three runs there came from one sitting, so there
+            was no session shift to remove — and re-centering threw away the
+            small real differences along with the nuisance that wasn’t there.
+            Alignment is a hypothesis about your data, not a free upgrade. It
+            pays when what separates your recordings really is a change of
+            hardware. Measure it; don’t assume it.
+          </p>
+        </aside>
+      </section>
+
+      <section id="limits" class="limits-section">
         <div class="section-shell limits-grid">
           <div>
+            <p class="section-index">4.5</p>
             <p class="eyebrow lemon">What geometry does not solve</p>
             <h2>A better ruler cannot repair a bad measurement.</h2>
           </div>

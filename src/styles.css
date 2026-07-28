@@ -1703,57 +1703,6 @@ footer a:focus-visible {
   font-size: 1.03rem;
 }
 
-.lesson-purpose {
-  display: grid;
-  grid-template-columns: auto 0.8fr 1fr;
-  gap: 24px;
-  align-items: center;
-  margin: -20px 0 42px;
-  border-radius: 18px;
-  background: #d7f0ec;
-  padding: 20px 24px;
-}
-
-.lesson-purpose span {
-  border-radius: 99px;
-  background: var(--cyan);
-  padding: 8px 11px;
-  color: #fff;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-}
-
-.lesson-purpose strong {
-  font-size: 0.9rem;
-  line-height: 1.45;
-}
-
-.lesson-purpose p {
-  margin: 0;
-  color: #456761;
-  font-size: 0.8rem;
-  line-height: 1.5;
-}
-
-.method-purpose {
-  margin-top: 36px;
-}
-
-.mean-purpose {
-  margin-top: -18px;
-  background: #fff0dd;
-}
-
-.mean-purpose span {
-  background: var(--coral);
-}
-
-.mean-purpose p {
-  color: #715d53;
-}
-
 .lesson-video {
   max-width: 980px;
   margin: 0 auto 54px;
@@ -1766,79 +1715,6 @@ footer a:focus-visible {
 
 .lesson-video figcaption {
   padding-inline: 6px;
-}
-
-.mean-section,
-.classifier-section {
-  padding: 140px 0;
-}
-
-.mean-section {
-  background: #fffaf1;
-}
-
-.tangent-section {
-  background: #30364e;
-  padding: 140px 0;
-}
-
-.classifier-section {
-  background: #f2ecff;
-}
-
-.lesson-heading {
-  display: grid;
-  grid-template-columns: 1fr 0.72fr;
-  gap: 70px;
-  align-items: end;
-  margin-bottom: 60px;
-}
-
-.lesson-heading h2 {
-  font-size: clamp(2.8rem, 5vw, 5.2rem);
-}
-
-.lesson-heading p {
-  margin: 0;
-  font-size: 1.02rem;
-}
-
-.term-ladder {
-  display: grid;
-  gap: 5px;
-  margin-top: 20px;
-  border-left: 4px solid var(--lemon);
-  padding: 4px 0 4px 16px;
-}
-
-.term-ladder span {
-  color: #747b8d;
-  font-size: 0.77rem;
-}
-
-.term-ladder strong {
-  color: var(--ink);
-  font-size: 0.88rem;
-}
-
-.tangent-heading h2 {
-  color: #fffaf1;
-}
-
-.tangent-heading p {
-  color: #c9cbd6;
-}
-
-.tangent-heading strong {
-  color: var(--lemon);
-}
-
-.tangent-heading .term-ladder span {
-  color: #aeb2c2;
-}
-
-.tangent-purpose {
-  margin-top: -18px;
 }
 
 .classifier-video {
@@ -1867,72 +1743,6 @@ footer a:focus-visible {
   color: #715d53;
   font-size: 0.82rem;
   line-height: 1.5;
-}
-
-.method-guide {
-  padding: 140px 0;
-}
-
-.method-guide-heading {
-  display: grid;
-  grid-template-columns: 1fr 0.65fr;
-  gap: 80px;
-  align-items: end;
-}
-
-.method-guide-heading h2 {
-  font-size: clamp(2.7rem, 4.7vw, 4.8rem);
-}
-
-.method-guide-heading > p {
-  margin: 0;
-}
-
-.method-table {
-  margin-top: 58px;
-  overflow: hidden;
-  border: 1px solid rgba(32, 40, 58, 0.11);
-  border-radius: 22px;
-  background: var(--paper);
-}
-
-.method-row {
-  display: grid;
-  grid-template-columns: 0.72fr 1fr 1.1fr 1.1fr;
-}
-
-.method-row + .method-row {
-  border-top: 1px solid rgba(32, 40, 58, 0.1);
-}
-
-.method-row > * {
-  padding: 21px 22px;
-  font-size: 0.82rem;
-  line-height: 1.5;
-}
-
-.method-row > * + * {
-  border-left: 1px solid rgba(32, 40, 58, 0.08);
-}
-
-.method-row strong {
-  color: var(--ink);
-}
-
-.method-row span {
-  color: var(--muted);
-}
-
-.method-header {
-  background: var(--night);
-}
-
-.method-header span {
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .limits-section {
@@ -2594,18 +2404,6 @@ footer a {
   color: #08716c;
 }
 
-.term-ladder span {
-  color: #555d6d;
-}
-
-.lesson-purpose span {
-  background: #08716c;
-}
-
-.mean-purpose span {
-  background: #a93a31;
-}
-
 .purpose-flow article:nth-child(3) .purpose-question,
 .purpose-flow article:nth-child(4) .purpose-question {
   color: #fffaf1;
@@ -2654,7 +2452,6 @@ footer a {
   .explorer-intro,
   .references-inner,
   .purpose-heading,
-  .lesson-heading,
   .notebook-heading,
   .notebook-grid {
     grid-template-columns: 1fr;
@@ -2682,34 +2479,11 @@ footer a {
     border-top: 1px solid rgba(32, 40, 58, 0.1);
   }
 
-  .lesson-purpose {
-    grid-template-columns: auto 1fr;
-  }
-
-  .lesson-purpose p {
-    grid-column: 1 / -1;
-  }
-
-  .method-guide-heading,
   .limits-grid,
   .potato-note,
   .glossary-heading {
     grid-template-columns: 1fr;
     gap: 40px;
-  }
-
-  .method-row {
-    grid-template-columns: 0.7fr 1fr 1fr;
-  }
-
-  .method-row > *:last-child {
-    grid-column: 1 / -1;
-    border-top: 1px solid rgba(32, 40, 58, 0.08);
-    border-left: 0;
-  }
-
-  .method-header > *:last-child {
-    display: none;
   }
 
   .glossary-grid {
@@ -2922,38 +2696,7 @@ footer a {
     padding: 24px;
   }
 
-  .lesson-purpose {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .lesson-purpose p {
-    grid-column: auto;
-  }
-
-  .method-row,
-  .method-header {
-    grid-template-columns: 1fr;
-  }
-
-  .method-row > *,
-  .method-row > * + *,
-  .method-row > *:last-child {
-    grid-column: auto;
-    border-top: 1px solid rgba(32, 40, 58, 0.07);
-    border-left: 0;
-  }
-
-  .method-row > *:first-child {
-    border-top: 0;
-  }
-
-  .method-header {
-    display: none;
-  }
-
   .limits-section,
-  .method-guide,
   .glossary-section {
     padding: 100px 0;
   }
@@ -3025,27 +2768,6 @@ footer a {
   .skip-link {
     transition: none;
   }
-}
-
-/* Third rung of the term ladder: plain idea -> interact -> the formula. Placed
-   after each widget so notation confirms an intuition rather than gating it. */
-.formula-block {
-  margin: 40px auto 0;
-  max-width: 760px;
-}
-
-.formula-label {
-  margin: 0 0 10px;
-  color: #6c4eb9;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.tangent-section .formula-label {
-  color: #ffd36b;
 }
 
 .glossary-lede {
@@ -3209,22 +2931,6 @@ footer a {
   }
 }
 
-/* Part 3's payoff: what the geometry buys across sessions. */
-.transfer-section {
-  background: #fdf6ee;
-  padding: 120px 0;
-}
-
-.lesson-purpose.transfer-purpose {
-  background: #d7f0ec;
-}
-
-@media (max-width: 900px) {
-  .transfer-section {
-    padding: 78px 0;
-  }
-}
-
 /* The transfer widget is synthetic; the notebook's real-data run is a null
    result. Saying so is the same discipline the limits section already models. */
 .transfer-caveat {
@@ -3316,8 +3022,7 @@ main [id] {
   outline-offset: 3px;
 }
 
-.limits-section .collapse-toggle,
-.tangent-section .collapse-toggle {
+.limits-section .collapse-toggle {
   border-color: rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.08);
   color: #fffaf1;

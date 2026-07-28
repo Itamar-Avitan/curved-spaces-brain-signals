@@ -419,8 +419,8 @@ export class TangentExplorer extends LitElement {
             matrices grow noticeably longer than the straight-line distances in
             the flat tangent space, so the flat coordinates start to distort the
             real relationships. Picking a reference close to your trials keeps
-            that distortion small, which is why the log map is taken around a
-            class or session mean rather than an arbitrary point.
+            that distortion small, which is why the log map is taken around the
+            Riemannian mean of the data rather than an arbitrary point.
           </p>
         </details>
       </div>
