@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 
 /**
  * §4.0 — same covariance matrix, two ways out.
@@ -109,7 +110,7 @@ export class RgRouteFork extends LitElement {
       line-height: 1.3;
     }
 
-    .branch p {
+    .branch .detail {
       margin: 0;
       font-size: 0.88rem;
       line-height: 1.6;
@@ -118,7 +119,7 @@ export class RgRouteFork extends LitElement {
 
     :host([compact]) .source,
     :host([compact]) .stem,
-    :host([compact]) .branch p {
+    :host([compact]) .branch .detail {
       display: none;
     }
 
@@ -133,26 +134,31 @@ export class RgRouteFork extends LitElement {
   `;
 
   render() {
-    const dim = (which: string) =>
-      this.active && this.active !== which ? "dim" : "";
-
     return html`
       <div class="wrap">
         <p class="source">One trial's covariance matrix</p>
         <span class="stem" aria-hidden="true"></span>
         <div class="branches">
-          <div class=${`branch one ${dim("1")}`}>
+          <div class=${classMap({
+            branch: true,
+            one: true,
+            dim: this.active && this.active !== "1",
+          })}>
             <p class="kicker">Route 1</p>
             <p class="headline">Measure on the surface</p>
-            <p>
+            <p class="detail">
               Keep one centre per class. Label a new trial by whichever centre
               is nearest. Nothing is flattened and nothing is fitted.
             </p>
           </div>
-          <div class=${`branch two ${dim("2")}`}>
+          <div class=${classMap({
+            branch: true,
+            two: true,
+            dim: this.active && this.active !== "2",
+          })}>
             <p class="kicker">Route 2</p>
             <p class="headline">Draw a local map first</p>
-            <p>
+            <p class="detail">
               Flatten around a reference point so each trial becomes a short
               list of numbers, then hand it to any ordinary classifier.
             </p>
