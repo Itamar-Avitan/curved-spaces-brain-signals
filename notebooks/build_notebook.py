@@ -1878,80 +1878,102 @@ cells = [
     ),
     markdown(
         r"""
-        ### 6.5 The same distance, used as a quality gate
+        ### 6.4 A session shift, injected on purpose — and repaired
 
-        A trial whose covariance sits unusually far from the others is usually
-        not an unusual thought -- it is a blink, a jaw clench, or an electrode
-        that came loose. Because we already have a distance and a mean, an
-        artifact detector costs about five lines. This is the **Riemannian
-        potato**: score each trial by its distance to the overall mean, and flag
-        the ones far out in the tail.
+        6.2 changed the recording for *everything*. Real life is crueller: you train on
+        Monday and the headset sits differently on Tuesday, so the change hits only the
+        data you have no labels for.
 
-        Note the z-score is taken on the **logarithm** of the distance. Distances
-        are positive and skewed, so z-scoring them raw would flag the wrong
-        trials.
+        Here that is simulated exactly — the held-out run, and only the held-out run,
+        gets the same kind of congruence 6.2 used. Then re-centring: whiten each run by
+        its own Riemannian mean, so every run starts from the identity.
+
+        Re-centring uses **no labels from the held-out run**. It only needs the trials,
+        which you have the moment the session starts.
+
+        **Predict first.** Three numbers below: no shift, shifted, shifted then
+        re-centred. Where does the middle one land, and how much of it does the third
+        recover?
         """
     ),
     code(
         """
-        global_mean = mean_riemann(covariances)
-        potato_distance = np.array(
-            [distance_riemann(global_mean, c) for c in covariances]
+        from pyriemann.classification import MDM
+        from sklearn.model_selection import LeaveOneGroupOut
+        from sklearn.metrics import balanced_accuracy_score
+        from pyriemann.utils.base import invsqrtm
+        from pyriemann.utils.mean import mean_riemann
+
+
+        def whiten_to_identity(matrices):
+            \"\"\"Re-centre a set of covariance matrices on their own Riemannian mean.\"\"\"
+            reference = invsqrtm(mean_riemann(matrices))
+            return reference @ matrices @ reference
+
+
+        def run_condition(*, shift: bool, recentre: bool) -> float:
+            \"\"\"Mean balanced accuracy of Riemannian MDM under one condition.\"\"\"
+            splitter = LeaveOneGroupOut()
+            fold_scores = []
+            for train, test in splitter.split(covariances, dataset.y, dataset.groups):
+                train_covariances = covariances[train]
+                test_covariances = covariances[test]
+
+                if shift:
+                    test_covariances = np.einsum(
+                        "ij,njk,lk->nil", MIXING, test_covariances, MIXING
+                    )
+                if recentre:
+                    train_covariances = whiten_to_identity(train_covariances)
+                    test_covariances = whiten_to_identity(test_covariances)
+
+                classifier = MDM(metric="riemann").fit(train_covariances, dataset.y[train])
+                fold_scores.append(
+                    balanced_accuracy_score(
+                        dataset.y[test], classifier.predict(test_covariances)
+                    )
+                )
+            return float(np.mean(fold_scores))
+
+
+        shift_results = pd.DataFrame(
+            [
+                {"condition": "no shift", "balanced_accuracy": run_condition(shift=False, recentre=False)},
+                {"condition": "shifted", "balanced_accuracy": run_condition(shift=True, recentre=False)},
+                {"condition": "shifted, then re-centred", "balanced_accuracy": run_condition(shift=True, recentre=True)},
+            ]
         )
-        log_distance = np.log(potato_distance)
-        z_score = (log_distance - log_distance.mean()) / log_distance.std()
-
-        THRESHOLD = 2.0
-        flagged = np.where(np.abs(z_score) > THRESHOLD)[0]
-
-        fig, axis = plt.subplots(figsize=(8, 3.6))
-        axis.scatter(np.arange(len(z_score)), z_score, s=26, label="trial")
-        if len(flagged):
-            axis.scatter(
-                flagged, z_score[flagged], s=90, facecolors="none",
-                edgecolors="crimson", linewidths=2, label="flagged",
-            )
-        axis.axhline(THRESHOLD, ls="--", lw=1, color="crimson")
-        axis.axhline(-THRESHOLD, ls="--", lw=1, color="crimson")
-        axis.set(
-            xlabel="trial index", ylabel="z-score of log distance to the mean",
-            title=f"Riemannian potato: {len(flagged)} of {len(z_score)} trials flagged",
-        )
-        axis.legend(frameon=False)
-        fig.tight_layout()
-        plt.show()
-
-        display(Markdown(
-            "> **Quality takeaway:** one representation, two jobs. The same "
-            "covariance matrix that carries the decision also tells you when "
-            "not to trust it, so a real-time BCI can decline to act instead of "
-            "guessing on a blink."
-        ))
+        print(shift_results.round(4).to_string(index=False))
         """
     ),
     markdown(
         r"""
-        ## 6b. Re-centering: the transfer result the theory promises
+        TASK-5-WRITES-THIS — do not fill this cell in until the notebook has been
+        executed and `shift_results` above holds real printed numbers.
 
-        Everything so far has been inside one recording session. The claim the
-        Riemannian BCI literature makes loudest is about *across* sessions: a
-        session shift acts on your covariance matrices as a congruence, and you
-        can cancel it by whitening each session with its own Riemannian mean,
+        Replace this entire cell with prose that states all three of:
 
-        $$ C \;\longmapsto\; M_{\text{session}}^{-1/2}\, C \,M_{\text{session}}^{-1/2} $$
+        - what the shift cost (the drop from "no shift" to "shifted"),
+        - how much re-centring recovered (how far "shifted, then re-centred"
+          closes the gap back toward "no shift"),
+        - and that this is a **simulated** shift, chosen because it is exactly
+          the transform re-referencing and gain change apply — not a claim
+          about how large real session shifts are.
+        """
+    ),
+    markdown(
+        r"""
+        ### 6.4b …and the same move on data that had no shift to remove
 
-        This costs nothing and needs **no labels** from the new session, which is
-        what would make a calibration-free BCI possible. It is also the one claim
-        this notebook had been citing rather than testing, so here it is tested.
+        6.4 was a shift we injected. This is the same operation on the three real
+        recording runs, which came from a single sitting — so there was no session
+        change to cancel.
 
-        Two honest warnings before the numbers. First, the three runs here come
-        from a single session of a single participant, so they are far more alike
-        than Monday and Tuesday would be. **The result below is negative** — the
-        alignment works perfectly as a transformation and does not help the
-        accuracy — and it is left in for that reason. A tutorial that only ever
-        shows its method winning teaches you nothing about when to reach for it.
-        Second, re-centering is fitted on each run *separately and without labels*,
-        so it does not leak anything the held-out run would not know about itself.
+        Re-centring does what it says: we redrew the map centred on each run; the
+        runs were already in the same place, so nothing moved. The accuracy does
+        not improve, and it should not. Alignment is a hypothesis about your data,
+        not a free upgrade. It pays when what separates your recordings really is
+        a change of hardware. Measure it; do not assume it.
         """
     ),
     code(
@@ -2060,6 +2082,59 @@ cells = [
         for run in np.unique(dataset.groups):
             centerd = _mean_riemann(recenterd[dataset.groups == run])
             assert np.allclose(centerd, np.eye(centerd.shape[0]), atol=1e-6)
+        """
+    ),
+    markdown(
+        r"""
+        ### 6.5 The same distance, used as a quality gate
+
+        A trial whose covariance sits unusually far from the others is usually
+        not an unusual thought -- it is a blink, a jaw clench, or an electrode
+        that came loose. Because we already have a distance and a mean, an
+        artifact detector costs about five lines. This is the **Riemannian
+        potato**: score each trial by its distance to the overall mean, and flag
+        the ones far out in the tail.
+
+        Note the z-score is taken on the **logarithm** of the distance. Distances
+        are positive and skewed, so z-scoring them raw would flag the wrong
+        trials.
+        """
+    ),
+    code(
+        """
+        global_mean = mean_riemann(covariances)
+        potato_distance = np.array(
+            [distance_riemann(global_mean, c) for c in covariances]
+        )
+        log_distance = np.log(potato_distance)
+        z_score = (log_distance - log_distance.mean()) / log_distance.std()
+
+        THRESHOLD = 2.0
+        flagged = np.where(np.abs(z_score) > THRESHOLD)[0]
+
+        fig, axis = plt.subplots(figsize=(8, 3.6))
+        axis.scatter(np.arange(len(z_score)), z_score, s=26, label="trial")
+        if len(flagged):
+            axis.scatter(
+                flagged, z_score[flagged], s=90, facecolors="none",
+                edgecolors="crimson", linewidths=2, label="flagged",
+            )
+        axis.axhline(THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.axhline(-THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.set(
+            xlabel="trial index", ylabel="z-score of log distance to the mean",
+            title=f"Riemannian potato: {len(flagged)} of {len(z_score)} trials flagged",
+        )
+        axis.legend(frameon=False)
+        fig.tight_layout()
+        plt.show()
+
+        display(Markdown(
+            "> **Quality takeaway:** one representation, two jobs. The same "
+            "covariance matrix that carries the decision also tells you when "
+            "not to trust it, so a real-time BCI can decline to act instead of "
+            "guessing on a blink."
+        ))
         """
     ),
     markdown(
@@ -2442,8 +2517,9 @@ CODE_PURPOSES = [
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
     "Repeat the geometry contrast in the low-calibration regime.",
-    "Flag artifact trials by their distance to the mean (Riemannian potato).",
+    "Shift only the held-out run with a congruence, then repair it by re-centring.",
     "Re-center each run on its own mean and test whether transfer improves.",
+    "Flag artifact trials by their distance to the mean (Riemannian potato).",
     "Exercises: define a shared metric-generic MDM evaluator.",
     "Exercise 1: rerun with only the three central-strip electrodes.",
     "Exercise 2: compare OAS shrinkage with the plain sample covariance.",
