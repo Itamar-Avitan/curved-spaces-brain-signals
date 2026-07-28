@@ -436,112 +436,82 @@
         </p>
       </section>
 
-      <section id="part-eeg" class="part-divider eeg section-shell" aria-label="Part 2: How it connects to EEG">
-        <span class="part-kicker">Part 2 of 4</span>
-        <h2>How it connects to EEG</h2>
+      <section id="part-eeg" class="part-divider eeg section-shell" aria-label="Part 2: An EEG trial is a shape">
+        <span class="part-kicker">Part 2 of 5</span>
+        <h2>An EEG trial is a shape, not a squiggle</h2>
         <p>
-          Now point that geometry at the brain. A few seconds of signal, many
-          electrodes at once — and all of it folds into a single, structured
-          object. Between 2014 and 2016, pipelines built on this representation
-          took first place in five international neural-decoding competitions,
-          against fields of 260 to 688 teams. Here is the representation that
-          makes them work.
+          Point that geometry at the brain. A few seconds of signal across many
+          electrodes folds into one structured object — and that object, not
+          the waveform, is what a modern decoder actually works with. Between
+          2014 and 2016 pipelines built on it took first place in five
+          international neural-decoding competitions, against fields of 260 to
+          688 teams.
         </p>
       </section>
 
-      <section id="eeg" class="eeg-reveal">
-        <div class="section-shell">
-          <div class="reveal-heading">
-            <p class="eyebrow violet">The reveal</p>
-            <h2>Each EEG trial can become one point in a curved data space.</h2>
-            <p>
-              Instead of comparing thousands of voltage samples one by one, we
-              summarize how every pair of electrodes changes together. This
-              summary is called a <rg-term key="covariance-matrix"><strong>covariance matrix</strong></rg-term>.
-              It is mirrored across its diagonal and represents a valid amount
-              of variation in every direction. Matrices with these properties
-              are called <rg-term key="spd"><strong>symmetric positive-definite (SPD)</strong></rg-term>.
-              Their collection is the <rg-term key="spd-manifold"><strong>SPD manifold</strong></rg-term> — and once we
-              pick a rule for measuring distance inside it, that space behaves as
-              a curved one.
-            </p>
-          </div>
+      <section id="eeg" class="lesson-section section-shell">
+        <p class="section-index">2.1</p>
+        <h2>One trial becomes a table of which electrodes moved together.</h2>
+        <p>
+          A single trial is thousands of voltage samples across dozens of
+          electrodes — far too much to compare, trial to trial, by eye.
+          Instead of keeping every sample, summarise how every <em>pair</em>
+          of electrodes changes together over the trial. That summary is a
+          <rg-term key="covariance-matrix">covariance matrix</rg-term>: not a
+          recording of the signal, but a table built from it.
+        </p>
+        <p>
+          The diagonal of that table is how much each channel varies on its
+          own. The <rg-term key="off-diagonal">off-diagonal</rg-term> is how
+          much two channels vary <em>together</em> — and that is where the
+          motor signal actually lives. Imagining a left-hand squeeze changes
+          how motor-cortex electrodes move together, not merely how loudly
+          any one of them fires alone.
+        </p>
+        <p>
+          Turn up the channel relationship in the widget below and watch the
+          ellipse tilt. That tilt is not standing in for the off-diagonal
+          number — it <em>is</em> the off-diagonal number, drawn.
+        </p>
+        <p>
+          Every one of these tables is symmetric, and every one reports a
+          real amount of variation in whichever direction you look — never
+          zero, never negative. Tables with both properties have a name:
+          <rg-term key="spd">symmetric positive-definite</rg-term>.
+        </p>
+        <rg-covariance-explorer></rg-covariance-explorer>
+        <rg-signal-covariance></rg-signal-covariance>
+        <rg-formula key="covariance-matrix" folded summary="the table, built from five samples by hand"></rg-formula>
+      </section>
 
-          <div class="lesson-purpose covariance-purpose">
-            <span>Take one apart</span>
-            <strong>
-              The diagonal is how much each channel varies. The off-diagonal is
-              how much they vary <em>together</em> — and that is where the motor
-              signal lives.
-            </strong>
-            <p>
-              Turn up the channel relationship and watch the ellipse tilt. That
-              tilt is the off-diagonal number, and a BCI is largely a machine for
-              noticing when it changes.
-            </p>
-          </div>
-          <rg-covariance-explorer></rg-covariance-explorer>
-
-          <rg-cone-explorer></rg-cone-explorer>
-          <div class="pipeline" aria-label="EEG to Riemannian classification pipeline" data-collapse-mobile="the four-step overview">
-            <article>
-              <span class="pipeline-number">1</span>
-              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
-                <path class="trace cyan" d="M8 30 q 12 -13 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
-                <path class="trace coral" d="M8 54 q 12 11 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
-                <path class="trace violet" d="M8 78 q 12 -10 24 0 t 24 0 t 24 0 t 24 0 t 8 0" />
-              </svg>
-              <h3>EEG epoch</h3>
-              <p>Many channels changing over time.</p>
-            </article>
-            <span class="pipeline-arrow" aria-hidden="true">→</span>
-            <article>
-              <span class="pipeline-number">2</span>
-              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
-                <path class="bracket" d="M26 20 L18 20 L18 80 L26 80" />
-                <path class="bracket" d="M94 20 L102 20 L102 80 L94 80" />
-                <rect class="diag" x="30" y="24" width="26" height="26" rx="5" />
-                <rect class="off" x="62" y="24" width="26" height="26" rx="5" />
-                <rect class="off" x="30" y="52" width="26" height="26" rx="5" />
-                <rect class="diag" x="62" y="52" width="26" height="26" rx="5" />
-              </svg>
-              <h3>Relationship summary</h3>
-              <p>A covariance matrix: each channel’s variance, and every pair’s shared change.</p>
-            </article>
-            <span class="pipeline-arrow" aria-hidden="true">→</span>
-            <article>
-              <span class="pipeline-number">3</span>
-              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
-                <path class="cone-body" d="M60 92 L22 30 L98 30 Z" />
-                <ellipse class="cone-rim" cx="60" cy="30" rx="38" ry="10" />
-                <circle class="pt cyan" cx="49" cy="46" r="3.4" />
-                <circle class="pt coral" cx="71" cy="42" r="3.4" />
-                <circle class="pt lemon" cx="60" cy="62" r="4" />
-              </svg>
-              <h3>A curved cone of matrices</h3>
-              <p>Positivity confines every valid matrix to a cone — so each trial lands somewhere inside.</p>
-            </article>
-            <span class="pipeline-arrow" aria-hidden="true">→</span>
-            <article>
-              <span class="pipeline-number">4</span>
-              <svg class="pipe-icon" viewBox="0 0 120 100" aria-hidden="true">
-                <line class="link solid" x1="60" y1="46" x2="28" y2="38" />
-                <line class="link dashed" x1="60" y1="46" x2="96" y2="62" />
-                <circle class="pt cyan big" cx="28" cy="38" r="9" />
-                <circle class="pt coral big" cx="96" cy="62" r="9" />
-                <circle class="pt lemon" cx="60" cy="46" r="6" />
-              </svg>
-              <h3>BCI decision</h3>
-              <p>Choose the brain-state center at the smallest meaningful distance.</p>
-            </article>
-          </div>
-          <rg-signal-covariance></rg-signal-covariance>
-
-          <div class="formula-block">
-            <p class="formula-label">Now the same thing in symbols</p>
-            <rg-formula key="covariance-matrix"></rg-formula>
-          </div>
-        </div>
+      <section id="cone" class="lesson-section section-shell">
+        <p class="section-index">2.2</p>
+        <h2>Not every table is possible, so they fill a curved cone.</h2>
+        <p>
+          Positivity is a real constraint, not paperwork. Push one
+          off-diagonal entry far enough relative to the diagonal and one of
+          the matrix’s eigenvalues crosses zero and turns negative — and at
+          that instant the table stops describing any variation a real
+          recording could produce, in any direction. It has stopped being a
+          covariance matrix at all.
+        </p>
+        <p>
+          The tables that survive this constraint do not fill all of space.
+          They fill one specific region of it — the
+          <rg-term key="spd-manifold">SPD manifold</rg-term> — shaped like a
+          cone, with every valid covariance matrix sitting at exactly one
+          point inside it. Choose a rule for measuring distance across that
+          region, and the region itself starts behaving like a curved space
+          rather than a flat one.
+        </p>
+        <rg-cone-explorer></rg-cone-explorer>
+        <p class="section-takeaway">
+          That cone, not a sphere or a metaphor, is the actual object the
+          rest of this guide works inside: every EEG trial is one point in
+          it, and Part 3 picks the rule for how far apart two of those
+          points are allowed to be.
+        </p>
+        <rg-case-file step="1"></rg-case-file>
       </section>
 
       <section id="part-use" class="part-divider use section-shell" aria-label="Part 3: Using it, the decoder">
