@@ -675,6 +675,23 @@ PY
 Correct any page number that moved. If one moved materially, say so in the
 commit message — it is a finding, not a chore.
 
+**E2's measured result, recorded by Task 3 Step 5 from executed output.** Mean
+balanced accuracy over the leave-one-group-out folds, before and after applying
+one fixed non-diagonal congruence to every covariance matrix:
+
+| model | before | after | change |
+|---|---|---|---|
+| Riemannian MDM | 0.9792 | 0.9792 | **0.0000** |
+| Euclidean covariance mean | 0.8244 | 0.8452 | +0.0208 |
+
+The assertion that MDM's predicted labels are bit-identical before and after
+passed: `Riemannian MDM: every prediction identical after rewiring. ✓`
+
+When quoting this on the page, remember §9.3: the contrast is against the naive
+Euclidean treatment, **not** against CSP + LDA, which is congruence-invariant
+too. The Euclidean row moved — that is the whole point — but "moved by 2 points"
+is a smaller headline than "did not move at all", so lead with the exact zero.
+
 - [ ] **Step 2: Replace the provisional transfer caveat**
 
 Find the block marked `<!-- PROVISIONAL: … -->` in `index.html` and replace the
