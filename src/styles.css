@@ -835,7 +835,7 @@ footer a:focus-visible {
   background: var(--violet);
 }
 
-.part-divider.do .part-kicker {
+.part-divider.routes .part-kicker {
   background: var(--coral);
 }
 

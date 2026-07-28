@@ -224,13 +224,6 @@ export class RgFormula extends LitElement {
       color: #6c4eb9;
     }
 
-    .steps dd {
-      margin: 0;
-      font-size: 0.85rem;
-      line-height: 1.55;
-      color: #4a5265;
-    }
-
     pre.worked {
       margin: 0;
       padding: 16px 24px 20px;

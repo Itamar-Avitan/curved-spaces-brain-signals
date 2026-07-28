@@ -48,10 +48,10 @@ export function flatMapReadout(
   };
 }
 
-const MAX_SEPARATION = 4;
+export const MAX_SEPARATION = 4;
 
 /** The reference point the widget centres on — the identity, i.e. no distortion yet. */
-const BASE_POINT: Sym2 = [1, 0, 1];
+export const BASE_POINT: Sym2 = [1, 0, 1];
 
 /**
  * Layout for the two-panel picture below. Both panels share one
@@ -61,12 +61,50 @@ const BASE_POINT: Sym2 = [1, 0, 1];
  * slowly, only ever fills a fraction of its own track at the same scale —
  * that visible mismatch *is* the picture.
  */
-const TRACK_WIDTH = 150;
-const LEFT_ANCHOR_X = 45;
-const RIGHT_ANCHOR_X = 265;
+export const TRACK_WIDTH = 150;
+export const LEFT_ANCHOR_X = 45;
+export const RIGHT_ANCHOR_X = 265;
 const POINT_Y = 112;
 const MAX_FLAT = flatMapReadout(BASE_POINT, UNIT_DIRECTION, MAX_SEPARATION).flat;
 const PX_PER_UNIT = TRACK_WIDTH / MAX_FLAT;
+
+export interface FlatMapLayout {
+  /** Screen x of the moving point on the globe panel. */
+  leftX: number;
+  /** Screen x of the moving point on the flat-map panel, clamped to its track. */
+  rightX: number;
+  /** How high the geodesic arc bows; 0 when the two points coincide. */
+  leftArcHeight: number;
+  /** True when the flat reading has run off the edge of its own track. */
+  overflowing: boolean;
+}
+
+/**
+ * Turn a readout into screen coordinates.
+ *
+ * Extracted from `render()` so `flat-map.test.ts` can pin the invariant the
+ * whole picture rests on: **both panels are drawn at the same
+ * pixels-per-unit**, so the visibly longer gap is the numerically larger one.
+ * Get that wrong and the widget draws the opposite of the numbers printed
+ * directly beneath it — a defect this file has shipped once already.
+ */
+export function flatMapLayout(readout: {
+  riemannian: number;
+  flat: number;
+}): FlatMapLayout {
+  const leftX = LEFT_ANCHOR_X + readout.riemannian * PX_PER_UNIT;
+  const rightEdge = RIGHT_ANCHOR_X + TRACK_WIDTH;
+  const rawRightX = RIGHT_ANCHOR_X + readout.flat * PX_PER_UNIT;
+  return {
+    leftX,
+    // Bows the arc up as the points separate; at zero separation the two
+    // points coincide, so the control point collapses onto them too, rather
+    // than tracing a stray loop above a single dot.
+    leftArcHeight: Math.min(22, (leftX - LEFT_ANCHOR_X) * 3),
+    overflowing: rawRightX > rightEdge + 0.01,
+    rightX: Math.min(rawRightX, rightEdge),
+  };
+}
 
 @customElement("rg-flat-map")
 export class RgFlatMap extends LitElement {
@@ -178,15 +216,10 @@ export class RgFlatMap extends LitElement {
     // comparable to the same pixel gap in the other. The left (globe) point
     // only ever crosses a fraction of its track; the right (map) point is
     // scaled to exactly reach its track's edge at the slider's maximum.
-    const leftX = LEFT_ANCHOR_X + riemannian * PX_PER_UNIT;
-    // Bows the arc up as the points separate; at zero separation the two
-    // points coincide, so the control point collapses onto them too, rather
-    // than tracing a stray loop above a single dot.
-    const leftArcHeight = Math.min(22, (leftX - LEFT_ANCHOR_X) * 3);
+    const { leftX, leftArcHeight, rightX, overflowing } = flatMapLayout(
+      this.readout,
+    );
     const rightEdge = RIGHT_ANCHOR_X + TRACK_WIDTH;
-    const rawRightX = RIGHT_ANCHOR_X + flat * PX_PER_UNIT;
-    const overflowing = rawRightX > rightEdge + 0.01;
-    const rightX = Math.min(rawRightX, rightEdge);
 
     return html`
       <div class="box">

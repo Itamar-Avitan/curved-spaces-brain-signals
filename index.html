@@ -63,9 +63,10 @@
               ></span>?
             </h1>
             <p class="hero-lede">
-              A recording is not a waveform, but a shape — and the same
-              geometry that measures shapes is the one that survives a
-              change of hardware.
+              Which electrodes moved together, not what any one of them did.
+              Shapes like that live on a curved surface, where flat arithmetic
+              gives wrong answers — and the geometry that measures them is the
+              one thing that survives a change of hardware.
             </p>
             <div class="hero-cta">
               <a class="primary-button" href="#story">
@@ -129,7 +130,7 @@
         <div class="chapter-progress" aria-hidden="true"><span></span></div>
       </nav>
 
-      <section class="learning-route section-shell" aria-labeledby="route-title">
+      <section class="learning-route section-shell" aria-labelledby="route-title">
         <div class="route-heading">
           <p class="eyebrow cyan">How to read this guide</p>
           <h2 id="route-title">From the math of curves to your own BCI.</h2>
@@ -146,7 +147,7 @@
               <li>Say exactly where a flat map is right, and why it goes wrong the further you stray from there.</li>
               <li>Say what a <rg-term key="covariance-matrix">covariance matrix</rg-term> is, and why one EEG trial becomes one.</li>
               <li>Name the two routes to a decoder, and say which one needs less calibration data.</li>
-              <li>Say what re-centring does, and why it needs no labels from the new session.</li>
+              <li>Say what <rg-term key="recentering">re-centring</rg-term> does, and why it needs no labels from the new session.</li>
             </ul>
           </div>
           <dl class="route-facts">
@@ -510,7 +511,7 @@
         <h2>The straight average invents strength that was in neither trial.</h2>
         <p>
           A decoder never compares trials one at a time. It builds a class
-          center by averaging many trials from one class, and that center
+          centre by averaging many trials from one class, and that centre
           becomes the thing every future trial is measured against. Get the
           average wrong and every downstream prediction inherits the error —
           which is why the first decision, before anything else, is how to
@@ -526,7 +527,7 @@
         </p>
         <p>
           This is §1.2’s flat map, arriving on schedule. A flat map is exact
-          only at the point you center it and wrong by more the further you
+          only at the point you centre it and wrong by more the further you
           stray — and averaging covariance tables entry by entry is that same
           flat arithmetic, applied to EEG. Swelling is what “wrong by more”
           looks like when the thing being flattened is a covariance matrix.
@@ -573,7 +574,8 @@
           does not move.
         </p>
         <p>
-          Try each preset below and see which of the two numbers moves.
+          Pick a preset below, then push the slider up — the recording changes,
+          the brain does not. Watch which of the two numbers moves.
         </p>
         <rg-predict key="invariance"></rg-predict>
         <rg-invariance-explorer></rg-invariance-explorer>
@@ -581,13 +583,13 @@
         <rg-case-file step="2"></rg-case-file>
       </section>
 
-      <section id="part-routes" class="part-divider use section-shell" aria-label="Part 4: Two ways to build a decoder">
+      <section id="part-routes" class="part-divider routes section-shell" aria-label="Part 4: Two ways to build a decoder">
         <span class="part-kicker">Part 4 of 5</span>
         <h2>Two ways to build a decoder</h2>
         <p>
           One representation, one ruler — and from here the field splits in
           two. Both routes are in real use, both are in the notebook, and
-          neither is the "real" one.
+          neither is the “real” one.
         </p>
       </section>
 
@@ -606,7 +608,7 @@
       <section id="mean" class="lesson-section section-shell">
         <p class="section-index">4.1a</p>
         <rg-route-fork compact active="1"></rg-route-fork>
-        <h2>A class centre is whatever sits at the smallest total distance from its examples.</h2>
+        <h2>Route 1: a class centre is whatever sits at the smallest total distance from its examples.</h2>
         <p>
           Repeated trials from the same class are similar but never
           identical, so no single trial can stand in for the whole class —
@@ -617,7 +619,7 @@
         <p>
           That point is the <rg-term key="riemannian-mean">Riemannian
           mean</rg-term>: the one covariance matrix that sits at the smallest
-          total <em>squared</em> distance — measured with Part 3's ruler — from
+          total <em>squared</em> distance — measured with Part 3’s ruler — from
           every training trial in the class. And there is exactly one such matrix, not a
           family of equally good candidates, for the same reason §1.4 gave:
           the non-positive curvature of this space guarantees a unique
@@ -640,9 +642,9 @@
         <p class="section-index">4.1b</p>
         <h2>To label a new trial, measure it against each centre and take the nearest.</h2>
         <p>
-          That is the entire decision: compute the new trial's distance to
+          That is the entire decision: compute the new trial’s distance to
           every stored class centre, with the same ruler that built them, and
-          return the nearest one's label. No boundary is fitted anywhere in
+          return the nearest one’s label. No boundary is fitted anywhere in
           between — nothing is learned beyond the centres themselves — which
           is why this route needs so little calibration data before it starts
           working. The name for it is
@@ -656,9 +658,9 @@
       <section id="tangent" class="lesson-section section-shell">
         <p class="section-index">4.2</p>
         <rg-route-fork compact active="2"></rg-route-fork>
-        <h2>Flatten a local map first, and any ordinary classifier can read it.</h2>
+        <h2>Route 2: flatten a local map first, and any ordinary classifier can read it.</h2>
         <p>
-          Route 2 does not stay on the curved surface. It builds §1.2's flat
+          Route 2 does not stay on the curved surface. It builds §1.2’s flat
           map here, laid over one neighbourhood of covariance matrices — and
           the reference point is simply wherever you choose to centre that
           map.
@@ -706,25 +708,25 @@
 
       <section id="transfer" class="lesson-section section-shell">
         <p class="section-index">4.4</p>
-        <h2>Tomorrow's session breaks both — until you redraw the map around it.</h2>
+        <h2>Tomorrow’s session breaks both — until you redraw the map around it.</h2>
         <p>
-          Everything so far has been about one recording. Tomorrow's session
+          Everything so far has been about one recording. Tomorrow’s session
           shifts the headset, the impedances, the reference — and both routes
-          inherit that shift, because both were built on today's geometry. A
+          inherit that shift, because both were built on today’s geometry. A
           BCI that needs twenty minutes of recalibration every time someone
           sits down is not a BCI anyone actually uses.
         </p>
         <p>
-          The fix is §1.2's move again, run per session instead of once:
-          re-centre each session on its own mean, so every session's
+          The fix is §1.2’s move again, run per session instead of once:
+          re-centre each session on its own mean, so every session’s
           reference lands at exactly the same place — the identity. That is
-          not merely similar to the log map's first whitening step or to Part
-          1's flat-map widget; it is the same
-          <rg-term key="recentering">re-centering</rg-term> operation, put to
+          not merely similar to the log map’s first whitening step or to Part
+          1’s flat-map widget; it is the same
+          <rg-term key="recentering">re-centring</rg-term> operation, put to
           a second job.
         </p>
         <p>
-          And it needs no labels from the new session — only that session's
+          And it needs no labels from the new session — only that session’s
           own trials go into computing its mean, which is why it works before
           a single trial has been classified.
         </p>
@@ -770,7 +772,7 @@
               <div>
                 <h3>Changing distributions</h3>
                 <p>EEG shifts across time, sessions, devices, and participants;
-                  <rg-term key="recentering">re-centering</rg-term> may help, but it has to be tested rather than assumed.</p>
+                  <rg-term key="recentering">re-centring</rg-term> may help, but it has to be tested rather than assumed.</p>
               </div>
             </article>
             <article>
@@ -808,15 +810,14 @@
         <div class="section-shell">
           <div class="capstone-intro">
             <p class="eyebrow cyan">Optional deep dive · watch it derived</p>
-            <h2>Want to see the whole idea get built?</h2>
+            <h2>Everything above, derived on screen in five minutes.</h2>
             <p class="capstone-lead">
-              A five-minute film for anyone who would rather watch the argument
-              built than read it. It derives the whole chain on screen: the
-              covariance matrix, the cone it lives in, why the straight ruler
-              swells, the distance that shrugs off the recording, and the
-              nearest center that reads the thought. Nothing is asserted.
-              Entirely optional — skip it, or take the scenic route and then go
-              run the notebook.
+              For anyone who would rather watch the argument built than read
+              it. The film runs the whole chain: the covariance matrix, the
+              cone it lives in, why the straight ruler swells, the distance
+              that shrugs off the recording, and the nearest centre that reads
+              the thought. Nothing is asserted. Entirely optional — skip it, or
+              take the scenic route and then go run the notebook.
             </p>
           </div>
           <figure class="capstone-player">
@@ -836,7 +837,7 @@
             <h2>You have the whole pipeline. Now run it on real brains.</h2>
             <p class="notebook-lead">
               Each trial becomes a covariance matrix, the right distance gives it
-              a class center, and the nearest center makes the call. The guided
+              a class centre, and the nearest centre makes the call. The guided
               notebook is that exact pipeline, end to end, on a real motor-imagery
               recording — runnable in your browser with nothing to install.
             </p>
@@ -988,7 +989,7 @@
               <span>03</span>
               <h3>Test the BCI</h3>
               <p>
-                Continues Part 4's decision rule: hold out complete recording
+                Continues Part 4’s decision rule: hold out complete recording
                 runs, compare credible baselines, and repeat the test with
                 deliberately limited calibration.
               </p>
@@ -1002,7 +1003,7 @@
 
       <div data-collapse-mobile="where to go next"><rg-next-steps></rg-next-steps></div>
 
-      <section class="glossary-section section-shell" aria-labeledby="glossary-title">
+      <section class="glossary-section section-shell" aria-labelledby="glossary-title">
         <div class="glossary-heading">
           <p class="eyebrow violet">Keep the language straight</p>
           <div>

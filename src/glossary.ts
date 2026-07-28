@@ -257,7 +257,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   swelling: {
     term: "Swelling",
     plain: "The trap where averaging two patterns entry by entry produces something stronger than either one was.",
-    why: "A class center built that way is exaggerated, and the class center decides every prediction. It is the first of the two reasons not to use a straight-line ruler.",
+    why: "A class centre built that way is exaggerated, and the class centre decides every prediction. It is the first of the two reasons not to use a straight-line ruler.",
     href: "#distance",
     hrefLabel: "Watch it inflate",
     see: ["geodesic", "riemannian-mean"],
@@ -298,7 +298,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     },
     why: "There is no formula for it; you iterate. It converges to a single answer because this space curves the helpful way — geodesics spread apart rather than reconverging, so there is exactly one minimum.",
     href: "#mean",
-    hrefLabel: "Compare two candidate centers",
+    hrefLabel: "Compare two candidate centres",
     see: ["swelling", "mdm", "curvature"],
   },
 
@@ -402,7 +402,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   },
 
   recentering: {
-    term: "Re-centering",
+    term: "Re-centring",
     plain: "Whitening every trial in a session by that session's own average, so each session starts from the same place.",
     formula: {
       html: `${v("C")} ⟼ ${v("M")}<sup>−1/2</sup> ${v("C")} ${v("M")}<sup>−1/2</sup>`,
@@ -440,7 +440,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
   curvature: {
     term: "Curvature",
     plain: "How much a space departs from being flat — and in which direction.",
-    why: "Here it is non-positive and varies from place to place. That sign is the good one: geodesics spread apart rather than reconverging, so any two points are joined by exactly one shortest path and a class center is always unique. A sphere curves the other way and has neither property.",
+    why: "Here it is non-positive and varies from place to place. That sign is the good one: geodesics spread apart rather than reconverging, so any two points are joined by exactly one shortest path and a class centre is always unique. A sphere curves the other way and has neither property.",
     href: "#flat-map",
     hrefLabel: "Watch a flat map stop being accurate",
     see: ["geodesic", "riemannian-mean"],

@@ -60,14 +60,14 @@ const BEATS: Record<string, Beat> = {
   "3": {
     where: "after Route 1",
     body: html`Two stored centres. The new trial sits <strong>${dLeft}</strong>
-      from the "left" centre and <strong>${dRight}</strong> from the "right"
+      from the “left” centre and <strong>${dRight}</strong> from the “right”
       one. Decision: <strong>${verdict}</strong>.`,
   },
   "4": {
     where: "after Route 2",
     body: html`Same trial, flattened onto the local map into three numbers:
       <strong>${tangentDisplay}</strong>. The notebook feeds these to ordinary
-      logistic regression. Two routes, one answer, and neither is the "real" one.`,
+      logistic regression. Two routes, one answer, and neither is the “real” one.`,
   },
   "5": {
     where: "before the notebook",

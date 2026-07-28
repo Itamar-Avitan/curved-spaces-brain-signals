@@ -406,7 +406,7 @@ export class TransferExplorer extends LitElement {
       trials.map((c) => congruence(mixing, c)),
     );
 
-    // Re-centering whitens each session by its OWN mean, so it needs no labels
+    // Re-centring whitens each session by its OWN mean, so it needs no labels
     // and no data from the other session.
     const prep = (session: Sym2[][]): Sym2[][] => {
       if (!this.aligned) return session;
@@ -482,7 +482,7 @@ export class TransferExplorer extends LitElement {
               this.aligned = !this.aligned;
             }}
           >
-            ${this.aligned ? "✓ Re-centerd" : "Re-center each session"}
+            ${this.aligned ? "✓ Re-centred" : "Re-centre each session"}
           </button>
         </div>
 
@@ -524,7 +524,7 @@ export class TransferExplorer extends LitElement {
               <strong>${pct(shown)}</strong>
               <em>
                 ${this.aligned
-                  ? `up from ${pct(naive)} without re-centering`
+                  ? `up from ${pct(naive)} without re-centring`
                   : "no alignment applied"}
               </em>
             </div>
@@ -536,7 +536,7 @@ export class TransferExplorer extends LitElement {
             <p class="note">
               ${this.aligned
                 ? "Each session is whitened by its own Riemannian mean. That needs no labels from Tuesday — only its own trials — which is why it works for a brand-new user."
-                : "Tuesday's trials land somewhere else entirely, so Monday's class centers point at the wrong regions."}
+                : "Tuesday's trials land somewhere else entirely, so Monday's class centres point at the wrong regions."}
             </p>
           </div>
         </div>
@@ -544,7 +544,7 @@ export class TransferExplorer extends LitElement {
         <div class="verdict">
           <b>Why it is free</b>
           <p>
-            Re-centering is itself a congruence, so it leaves every distance
+            Re-centring is itself a congruence, so it leaves every distance
             <em>inside</em> a session exactly as it was — nothing is distorted or
             thrown away. And the difference between sessions is also a congruence,
             so it cancels. One move, both halves. No Euclidean method can claim
@@ -556,11 +556,11 @@ export class TransferExplorer extends LitElement {
           <summary>Check your understanding: why doesn't this just erase the signal?</summary>
           <p>
             Because it only removes what the two sessions share — the common
-            center. The class structure lives in how trials sit
-            <em>relative</em> to that center, and congruence preserves every one
-            of those relative distances exactly. What is left after re-centering is
+            centre. The class structure lives in how trials sit
+            <em>relative</em> to that centre, and congruence preserves every one
+            of those relative distances exactly. What is left after re-centring is
             a residual rotation, which is why more advanced alignment methods add
-            a rotation step on top. Re-centering alone does most of the work, for
+            a rotation step on top. Re-centring alone does most of the work, for
             free, with no labels.
           </p>
         </details>

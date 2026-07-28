@@ -34,14 +34,14 @@ export class ConceptCheck extends LitElement {
         ["weaker", "The result describes less activity than either trial had."],
         [
           "nothing",
-          "Nothing — an entry-wise average is exactly what a class center should be.",
+          "Nothing — an entry-wise average is exactly what a class centre should be.",
         ],
       ],
       correct: "stronger",
       correctFeedback:
         "Correct — that is swelling. Entry-wise averaging invents a scale that was in neither trial, because it is flat arithmetic applied to a space that is not flat.",
       incorrectFeedback:
-        "Not quite. Entry-wise averaging inflates the result rather than shrinking it or leaving it unchanged — a swollen center is not a trustworthy stand-in for the class, which is exactly why the ruler has to respect the geometry instead.",
+        "Not quite. Entry-wise averaging inflates the result rather than shrinking it or leaving it unchanged — a swollen centre is not a trustworthy stand-in for the class, which is exactly why the ruler has to respect the geometry instead.",
     },
     {
       prompt:
@@ -119,7 +119,7 @@ export class ConceptCheck extends LitElement {
       ],
       correct: "nolabels",
       correctFeedback:
-        "Correct. Re-centring only needs that session's own trials to compute its mean — no labels at all — which is why it can run before a single Tuesday trial has been classified. It is the same re-centering operation as the tangent space's first whitening step, put to a second job.",
+        "Correct. Re-centring only needs that session's own trials to compute its mean — no labels at all — which is why it can run before a single Tuesday trial has been classified. It is the same re-centring operation as the tangent space's first whitening step, put to a second job.",
       incorrectFeedback:
         "Not quite. Re-centring needs no labels from the new session — only its own trials, to compute where its mean sits. That is what makes it usable before anything has been classified yet.",
     },

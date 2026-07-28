@@ -951,11 +951,11 @@ export class DistanceExplorer extends LitElement {
           </div>
           <div>
             <span>Geometry</span>
-            <strong>The distance rule decides where their center lies.</strong>
+            <strong>The distance rule decides where their centre lies.</strong>
           </div>
           <div>
             <span>Prediction</span>
-            <strong>A shifted center changes which class looks nearest.</strong>
+            <strong>A shifted centre changes which class looks nearest.</strong>
           </div>
         </div>
 

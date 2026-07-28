@@ -547,8 +547,8 @@ export class MeanExplorer extends LitElement {
           <p>
             EEG changes from trial to trial. Minimum Distance to Mean does not
             store every example as a separate rule. It summarizes the
-            covariance matrices from one class with a center, then compares a
-            new trial with that center.
+            covariance matrices from one class with a centre, then compares a
+            new trial with that centre.
           </p>
         </section>
 
@@ -578,7 +578,7 @@ export class MeanExplorer extends LitElement {
               type="button"
               @click=${() => this.setPhase(2)}
             >
-              2 · compare centers
+              2 · compare centres
             </button>
             <button
               class=${this.phase === 3 ? "active" : ""}
@@ -595,7 +595,7 @@ export class MeanExplorer extends LitElement {
             <h4>Step 1 · training trials from one class</h4>
             <p class="hint">
               The ellipses differ because repeated EEG trials are never
-              identical. Move trial 3 to see both candidate centers update.
+              identical. Move trial 3 to see both candidate centres update.
             </p>
             <label class="trial-control">
               Trial 3 shape
@@ -642,7 +642,7 @@ export class MeanExplorer extends LitElement {
           </section>
 
           <section class="means phase ${this.phase >= 2 ? "visible" : ""}">
-            <h4>Step 2 · which candidate is the center?</h4>
+            <h4>Step 2 · which candidate is the centre?</h4>
             <p class="hint">
               Because classification will use Riemannian distance, evaluate
               each candidate with that same distance rule. Lower total squared
@@ -675,7 +675,7 @@ export class MeanExplorer extends LitElement {
                 </div>
                 <div>
                   <span>Minimize curved-space distance</span>
-                  <strong>Riemannian center</strong>
+                  <strong>Riemannian centre</strong>
                   <small>
                     Relative area ${Math.sqrt(determinant(geometry)).toFixed(2)}×
                   </small>
@@ -697,7 +697,7 @@ export class MeanExplorer extends LitElement {
         <div class="prototype phase ${this.phase >= 3 ? "visible" : ""}">
           <span class="prototype-number">3</span>
           <div>
-            <strong>Store the Riemannian center as this class’s prototype.</strong>
+            <strong>Store the Riemannian centre as this class’s prototype.</strong>
             <span>
               Repeat the same construction for every BCI class—for example,
               hands imagery and feet imagery.
@@ -709,20 +709,20 @@ export class MeanExplorer extends LitElement {
         <div class="bci-chain" aria-label="How a class mean is used by an MDM classifier">
           <div>
             <span>Learn</span>
-            <strong>One center summarizes each labeled class.</strong>
+            <strong>One centre summarises each labelled class.</strong>
           </div>
           <div>
             <span>Compare</span>
-            <strong>A new covariance matrix is measured against all centers.</strong>
+            <strong>A new covariance matrix is measured against all centres.</strong>
           </div>
           <div>
             <span>Predict</span>
-            <strong>The nearest center supplies the class label.</strong>
+            <strong>The nearest centre supplies the class label.</strong>
           </div>
         </div>
 
         <details>
-          <summary>Check your understanding: why not keep the arithmetic center?</summary>
+          <summary>Check your understanding: why not keep the arithmetic centre?</summary>
           <p>
             You could, but it optimizes ordinary entry-wise squared error, not
             the Riemannian distance used by this decoder. If prediction uses

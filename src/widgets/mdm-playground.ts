@@ -310,7 +310,7 @@ export class MdmPlayground extends LitElement {
 
         <div class="content">
           <section class="map">
-            <h3>Training trials and their class centers</h3>
+            <h3>Training trials and their class centres</h3>
             <p class="hint">
               Large circles are the Riemannian means. The yellow point is the
               new trial.

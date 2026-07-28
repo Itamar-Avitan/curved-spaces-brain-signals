@@ -178,7 +178,6 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
     const M: Sym2 = [2, 0.3, 2];
     const C: Sym2 = [2.8, 0.7, 1.1];
     const lines = workedLines("log-map");
-    const text = lines.join("\n");
     const v = tangentVector(M, C);
 
     // The √2 claim: the vector's ordinary length IS the Riemannian distance.
@@ -196,9 +195,26 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
     expect(distanceLine).toContain(fmt(distance(M, C)));
 
     // Every intermediate matrix the box displays, to the 4 decimals it shows.
+    //
+    // Scoped to the block that displays each one. `logMap(M, C)` and
+    // `tangentVector(M, C)` share their first and third entries by
+    // construction (only the off-diagonal is scaled by √2), so an unscoped
+    // `text.toContain` would let a wrong "vector" line pass on the strength of
+    // the correct "log" line two rows above it.
     const d4 = (x: number) => x.toFixed(4);
-    for (const value of [...recenter(M, C), ...logMap(M, C), ...v]) {
-      expect(text).toContain(d4(value));
+    const blockAt = (label: string): string => {
+      const start = lines.findIndex((line) => line.startsWith(label));
+      if (start === -1) throw new Error(`No "${label}" row in the log-map box`);
+      return lines.slice(start, start + 2).join("\n");
+    };
+
+    for (const [label, values] of [
+      ["  whitened", recenter(M, C)],
+      ["  log", logMap(M, C)],
+      ["  vector", v],
+    ] as const) {
+      const block = blockAt(label);
+      for (const value of values) expect(block).toContain(d4(value));
     }
   });
 
@@ -219,10 +235,26 @@ describe("worked examples do not drift from src/math/spd.ts", () => {
     // …and nothing inside the session was damaged.
     expect(before).toBeCloseTo(after, 12);
 
+    const lines = workedLines("recentering");
+
+    // The box *displays* the identity it lands on. Without this the displayed
+    // block was free to drift from the computed one: the assertions above pin
+    // `recenter(M, M)`, but nothing tied that to the "[1  0] / [0  1]" the
+    // reader is actually shown.
+    const shown = (x: number) => String(Math.round(x));
+    const identityStart = lines.findIndex((line) =>
+      line.startsWith("  recentre M by itself"),
+    );
+    expect(identityStart).toBeGreaterThan(-1);
+    const identityBlock = lines
+      .slice(identityStart, identityStart + 2)
+      .join("\n");
+    expect(identityBlock).toContain(`[${shown(moved[0])}  ${shown(moved[1])}]`);
+    expect(identityBlock).toContain(`[${shown(moved[1])}  ${shown(moved[2])}]`);
+
     // δ = 0.18 before and after re-centring — the equality IS the claim,
     // so scope each occurrence to its own line rather than a single
     // `toContain` that either line could satisfy on its own.
-    const lines = workedLines("recentering");
     const beforeLine = lines.find((line) => line.startsWith("  δ(C, C₁)"));
     const afterLine = lines.find((line) =>
       line.startsWith("  δ(recentred C"),
