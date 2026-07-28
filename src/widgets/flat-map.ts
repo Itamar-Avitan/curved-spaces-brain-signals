@@ -70,7 +70,7 @@ const PX_PER_UNIT = TRACK_WIDTH / MAX_FLAT;
 
 @customElement("rg-flat-map")
 export class RgFlatMap extends LitElement {
-  @state() private separation = 0.4;
+  @state() private separation = 0;
 
   static styles = css`
     :host {
@@ -283,11 +283,15 @@ export class RgFlatMap extends LitElement {
         </div>
 
         <p class="verdict" role="status">
-          ${this.separation < 0.15
-            ? html`Right next to the centre, the two rulers agree. <b>The flat map is exact here.</b>`
-            : html`The flat map now overstates the gap by
-                <b>${((flat / riemannian - 1) * 100).toFixed(0)}%</b>. It was exact at the centre
-                and has been getting worse ever since.`}
+          ${this.separation === 0
+            ? html`At the centre exactly, the two rulers agree. <b>The flat map is exact here.</b>`
+            : this.separation < 0.15
+              ? html`A hair off the centre, the two rulers already disagree by
+                  <b>${((flat / riemannian - 1) * 100).toFixed(1)}%</b> — too small to see
+                  above, but no longer exact.`
+              : html`The flat map now overstates the gap by
+                  <b>${((flat / riemannian - 1) * 100).toFixed(0)}%</b>. It was exact at the
+                  centre and has been getting worse ever since.`}
         </p>
 
         <label>

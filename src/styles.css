@@ -1085,41 +1085,29 @@ footer a:focus-visible {
   font-size: 0.85rem;
 }
 
-.relativity-section {
-  position: relative;
-  overflow: hidden;
-  background: var(--night);
-  color: white;
-}
-
-.relativity-backdrop {
-  position: absolute;
-  inset: 0;
-  opacity: 0.45;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(circle at 72% 50%, black, transparent 62%);
-}
-
-.relativity-content {
-  position: relative;
-  display: grid;
-  grid-template-columns: 0.75fr 1fr;
-  gap: 90px;
+/* §1.3's dark card: the ONLY dark-background element left in Part 1. It
+   exists solely because .metric-card and .spacetime-demo (both mandated
+   verbatim) are styled light-on-dark; the section's index/heading/prose sit
+   on the ordinary light .lesson-section template like their siblings. */
+.relativity-panel {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  padding: 145px 0;
+  gap: 36px;
+  margin-top: 32px;
+  border-radius: 26px;
+  background: var(--night);
+  padding: 40px;
 }
 
-.relativity-copy h2 {
-  color: #fffaf1;
-  font-size: clamp(2.8rem, 5vw, 5.4rem);
+.relativity-panel .metric-card {
+  flex: 0 1 320px;
+  margin-top: 0;
 }
 
-.relativity-copy > p:not(.eyebrow) {
-  color: #c9cad6;
-  font-size: 1.08rem;
+.relativity-panel .spacetime-demo {
+  flex: 1 1 320px;
+  min-width: 260px;
 }
 
 .metric-card {
@@ -1127,7 +1115,6 @@ footer a:focus-visible {
   align-items: center;
   gap: 16px;
   max-width: 410px;
-  margin-top: 30px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.06);
@@ -1215,19 +1202,31 @@ footer a:focus-visible {
   text-align: center;
 }
 
-/* Shared template for Part 1's numbered teaching sections (§1.1/1.2/1.4;
-   §1.3 reuses it only for the "n.n" index label, since it keeps its own dark
-   relativity-section background). */
+/* Shared template for Part 1's numbered teaching sections: §1.1, §1.2,
+   §1.3 (index/heading/prose only — see .relativity-panel above for the
+   dark card carrying its verbatim-mandated pieces), and §1.4. */
 .lesson-section {
   padding-block: clamp(48px, 6vw, 88px);
 }
 
 .section-index {
-  margin: 0 0 10px;
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   font-weight: 700;
   color: rgba(46, 53, 74, 0.42);
+}
+
+/* .section-index's margin lives here, not on the bare class, because both
+   `.story-section > p` and `.lesson-section > p` already set margin at
+   (0,1,1) — higher than a bare `.section-index` (0,1,0) — and would win
+   regardless of source order, leaving every "n.n" label's bottom margin
+   at whatever that container's paragraph margin happens to be instead of
+   the 10px this class asks for. Matching each container's specificity
+   with an extra class (0,2,1) fixes it unconditionally, not by luck of
+   declaration order. */
+.story-section > p.section-index,
+.lesson-section > p.section-index {
+  margin: 0 0 10px;
 }
 
 .lesson-section > h2 {
@@ -1248,7 +1247,12 @@ footer a:focus-visible {
   line-height: 1.75;
 }
 
-.section-takeaway {
+/* Scoped to `.lesson-section > p.section-takeaway` (0,2,1), not the bare
+   class (0,1,0): `.lesson-section > p` above already sets `margin: 0 0
+   16px` at (0,1,1), which would win over a bare `.section-takeaway` and
+   zero out its intended top margin regardless of source order — the
+   plan's own CSS shipped this defect. */
+.lesson-section > p.section-takeaway {
   max-width: 62ch;
   margin-top: 26px;
   padding-top: 14px;
@@ -1256,14 +1260,54 @@ footer a:focus-visible {
   font-weight: 600;
 }
 
-/* §1.3 keeps the dark relativity background so the kept .metric-card and
-   .spacetime-demo SVG (both styled for light-on-dark) stay legible; the
-   reused .section-index label needs its own light-on-dark color here, since
-   the base rule above assumes a light page background. Selector specificity
-   matches .relativity-copy > p:not(.eyebrow) (0,2,1) so source order — this
-   rule is declared later — decides it. */
-.relativity-copy p.section-index {
-  color: rgba(255, 255, 255, 0.4);
+.sign-compare {
+  max-width: 62ch;
+  margin: 8px 0 4px;
+}
+
+.sign-compare-stage {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sc-path {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.sc-converge .sc-path {
+  stroke: var(--violet);
+}
+
+.sc-diverge .sc-path {
+  stroke: var(--cyan);
+}
+
+.sc-converge .sc-dot {
+  fill: var(--violet);
+}
+
+.sc-diverge .sc-dot {
+  fill: var(--cyan);
+}
+
+.sc-label {
+  fill: var(--ink);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-anchor: middle;
+}
+
+.sc-caption {
+  fill: var(--muted);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 12.5px;
+  text-anchor: middle;
 }
 
 .space-transform {
@@ -2794,7 +2838,6 @@ footer a {
 
   .route-heading,
   .route-brief,
-  .relativity-content,
   .reveal-heading,
   .explorer-intro,
   .distance-intro,
@@ -3076,8 +3119,9 @@ footer a {
     gap: 4px;
   }
 
-  .relativity-content {
-    padding: 100px 0;
+  .relativity-panel {
+    gap: 24px;
+    padding: 24px;
   }
 
   .lesson-purpose {
