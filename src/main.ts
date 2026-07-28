@@ -16,6 +16,7 @@ import "./widgets/invariance-explorer";
 import "./widgets/transfer-explorer";
 import "./widgets/concept-check";
 import "./widgets/next-steps";
+import "./widgets/route-fork";
 import "./chapter-progress";
 import "./mobile-collapse";
 import "./review-build";
