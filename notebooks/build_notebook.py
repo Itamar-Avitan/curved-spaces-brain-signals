@@ -1116,24 +1116,27 @@ cells = [
         ### The page's central claim, measured
 
         The webpage's Part 1 says a flattened map is exact at the point you centre it
-        on and wrong by more the further you travel. That is checkable, and here is the
-        check on real trials.
+        on and wrong by more the further you travel. That is checkable — but checking
+        it takes two steps, because the real trials can only do half the job.
 
         Take the Riemannian mean of every trial as the reference. Whiten each trial by
         it — which is exactly what the tangent-space route does — then compare, for
         each trial, the Riemannian distance to the reference against the plain
         Frobenius distance in whitened coordinates.
 
-        Close to the reference the two agree. Far from it they do not, and the gap
-        grows with distance. That is the whole reason the reference is chosen to be the
-        mean: it puts as many trials as possible into the part of the map that is
-        accurate.
+        That shows you where the map is wrong. What it cannot show you is where the map
+        is *right*, because not one real trial sits anywhere near the reference. So the
+        cell then does a second thing: it takes every trial and slides it along its own
+        geodesic toward the reference, re-measuring as it goes. That second table is
+        the one that actually tests "exact at the centre".
         """
     ),
     code(
         """
         from pyriemann.utils.base import invsqrtm
         from pyriemann.utils.distance import distance_riemann
+        from pyriemann.utils.geodesic import geodesic_riemann
+        from scipy.stats import spearmanr
 
         reference_point = mean_riemann(covariances)
         whitening = invsqrtm(reference_point)
@@ -1144,14 +1147,26 @@ cells = [
             [distance_riemann(reference_point, c) for c in covariances]
         )
         flat_gap = np.linalg.norm(whitened - identity, axis=(-2, -1))
+        ratio = flat_gap / riemannian_gap
 
-        order = np.argsort(riemannian_gap)
+        # One point per trial, against the line where the two rulers agree.
+        # A scatter, not a sorted line: a line drawn through trials ordered by
+        # distance would imply a trend the numbers below do not support.
         figure, axis = plt.subplots(figsize=(7, 4.5))
-        axis.plot(riemannian_gap[order], riemannian_gap[order], label="measured on the surface")
-        axis.plot(riemannian_gap[order], flat_gap[order], label="measured on the flat map")
+        low = min(riemannian_gap.min(), flat_gap.min())
+        high = max(riemannian_gap.max(), flat_gap.max())
+        pad = 0.05 * (high - low)
+        axis.plot(
+            [low - pad, high + pad], [low - pad, high + pad],
+            color="#6b7280", linestyle="--", label="the two rulers agree",
+        )
+        axis.scatter(
+            riemannian_gap, flat_gap, s=55, alpha=0.85,
+            color="#5b47f5", label="one trial",
+        )
         axis.set_xlabel("Riemannian distance from the reference")
-        axis.set_ylabel("reported distance")
-        axis.set_title("A flat map is exact where you centre it")
+        axis.set_ylabel("flat distance in whitened coordinates")
+        axis.set_title("On real trials the flat map misses in both directions")
         axis.legend()
         figure.tight_layout()
         plt.show()
@@ -1161,34 +1176,83 @@ cells = [
         # How far out do the trials actually sit? The ratios below are only
         # readable next to the range they were measured over.
         print(f"Riemannian distance to the reference spans {riemannian_gap.min():.2f} to {riemannian_gap.max():.2f}")
-        print(f"closest 10% of trials  — flat/curved ratio {np.mean(flat_gap[near] / riemannian_gap[near]):.3f}")
-        print(f"furthest 10% of trials — flat/curved ratio {np.mean(flat_gap[far] / riemannian_gap[far]):.3f}")
+        print(f"flat/curved ratio spans {ratio.min():.3f} to {ratio.max():.3f} — above 1 AND below it")
+        print(f"closest 10% of trials  — mean flat/curved ratio {ratio[near].mean():.3f}")
+        print(f"furthest 10% of trials — mean flat/curved ratio {ratio[far].mean():.3f}")
+        # Does the ratio actually track distance across trials? Print the test
+        # rather than reading a trend off two decile means.
+        rho, p_value = spearmanr(riemannian_gap, ratio)
+        print(f"ratio vs distance across all {len(covariances)} trials: Spearman rho {rho:.3f}, p {p_value:.3f}")
+
+        # The real trials cannot test the centre of the map, because not one of
+        # them is near it. So walk them there instead: geodesic_riemann(ref, C, t)
+        # is the trial pulled a fraction t of the way along the curve toward the
+        # reference. t = 1 is the trial itself; t -> 0 approaches the centre.
+        print("\\npulling every trial along its geodesic toward the reference:")
+        print(f"{'t':>5}  {'mean d_R':>9}  {'mean ratio':>11}  {'min ratio':>10}  {'max ratio':>10}")
+        for t in (1.0, 0.5, 0.25, 0.1, 0.02):
+            shrunk = np.array(
+                [geodesic_riemann(reference_point, c, t) for c in covariances]
+            )
+            shrunk_curved = np.array(
+                [distance_riemann(reference_point, c) for c in shrunk]
+            )
+            shrunk_flat = np.linalg.norm(
+                whitening @ shrunk @ whitening - identity, axis=(-2, -1)
+            )
+            shrunk_ratio = shrunk_flat / shrunk_curved
+            print(
+                f"{t:>5.2f}  {shrunk_curved.mean():>9.4f}  {shrunk_ratio.mean():>11.4f}"
+                f"  {shrunk_ratio.min():>10.3f}  {shrunk_ratio.max():>10.3f}"
+            )
         """
     ),
     markdown(
         r"""
-        The far decile is overstated more than the near one — 1.438 against 1.202 —
-        which is the direction the claim predicts. The flat map reports bigger
-        numbers than the surface does, and it does so more badly the further out
-        you look.
+        **The error runs both ways.** The flat/curved ratio spans 0.696 to 1.967,
+        and the figure says the same thing: trials sit above *and* below the line
+        where the two rulers agree. The flat map does not simply inflate distances.
 
-        Now read the first number again. If the flat map were *exact* near the
-        reference, that ratio would be 1.000, and it is not. The reason is printed
-        on the line above it: the closest trial sits 1.58 from the reference and
-        the furthest 2.61. "Near" here means *least far*. Forty-five trials in
-        seventeen dimensions do not crowd around their own mean, so there is no
-        trial close enough for the two rulers to actually agree. Exactness at the
-        centre is a statement about the limit — $\log\lambda \to \lambda - 1$ as
-        $\lambda \to 1$ — and real EEG never gets there.
+        The mechanism is exact. Whitening turns a trial into a matrix with
+        eigenvalues $\lambda_i$; the curved ruler sums $(\log\lambda_i)^2$ and the
+        flat one sums $(\lambda_i - 1)^2$. Wherever $\lambda > 1$ we have
+        $|\lambda - 1| > |\log\lambda|$ and the flat map overstates; wherever
+        $\lambda < 1$ it reverses and the flat map understates. So the sign of a
+        trial's error is set by the **skew of its whitened spectrum** — whether its
+        eigenvalues sit mostly above or mostly below one — which is a different
+        property from how far that trial is from the reference.
 
-        So the thing the page's Part 1 buys you on real data is weaker than
-        "exact", and more useful: **the flat map's error is smallest where the
-        trials are, and grows as you leave them.** Centring on the Riemannian mean
-        does not make the map exact for anyone. It makes the error as small as it
-        can be for as many trials as possible. That is the whole argument for
-        taking the tangent space at the mean rather than somewhere convenient, and
-        it is also the reason the next two sections keep checking whether the
-        reference still sits where the data does.
+        **Which is why comparing trials to each other settles nothing here.** The
+        nearest decile averages 1.202 and the furthest 1.438, which looks like the
+        predicted trend. It is not one. Across all 45 trials the Spearman
+        correlation between distance and ratio is 0.216 at $p = 0.154$. The trials
+        are packed between 1.58 and 2.61 from their own mean, five per decile, each
+        one's error signed by its spectrum rather than its position — this design
+        cannot resolve the effect even if it is there. **If you rerun this on your
+        own recordings and the far decile comes out below the near one, nothing is
+        broken.** You are looking at the width of the noise.
+
+        **The geodesic table is the measurement that works,** because it stops
+        comparing different trials and starts moving the same ones. At $t = 1.00$
+        those are the real trials: mean ratio 1.2377, spread 0.696 to 1.967. A
+        quarter of the way in, the mean is 1.0237 and the entire spread has closed
+        to 0.899–1.155. At $t = 0.02$ the mean is 1.0011 and all 45 trials lie
+        between 0.991 and 1.011.
+
+        Both tails converge on 1 together — the overstating trials and the
+        understating ones stop being wrong at the same place, which is what
+        "exact at the centre" has to mean once the error has a sign. That is the
+        page's claim, stated properly: **the flat map becomes exact as you approach
+        the point you centre it on, and its error grows with distance from that
+        point — along a path, not across a population.**
+
+        So the reference is not chosen to be the mean because that makes the map
+        exact for anybody. Even the nearest tenth of trials average 1.202. It is
+        chosen because it minimises how far the map has to reach to cover the
+        trials you actually have — and every one of them is somewhere on the curve
+        this table walks. That is the argument for taking the tangent space at the
+        mean rather than somewhere convenient, and it is why the next two sections
+        keep checking whether the reference still sits where the data does.
         """
     ),
     markdown(
@@ -2056,6 +2120,33 @@ cells = [
             ]
         )
         print(shift_results.round(4).to_string(index=False))
+
+        # Say the arithmetic out loud rather than leaving it to the reader, and
+        # say it next to the size of one trial -- with 7 hands and 8 feet per run
+        # over three folds, a single flipped trial moves these means by ~0.024,
+        # which is the same order as the residual being decomposed.
+        baseline, shifted, repaired, control = shift_results["balanced_accuracy"]
+        print(f"\\nthe shift cost                       {baseline - shifted:.4f}")
+        print(f"re-centring recovered                {repaired - shifted:.4f}"
+              f"  ({(repaired - shifted) / (baseline - shifted):.0%} of the loss)")
+        print(f"...of a ceiling the operation allows {control - shifted:.4f}"
+              f"  ({(repaired - shifted) / (control - shifted):.0%} of that)")
+        print(f"still short of the no-shift baseline {baseline - repaired:.4f}")
+        print(f"  of which re-centring's own cost is {baseline - control:.4f}")
+        print(f"  and the shift's true residue is    {control - repaired:.4f}")
+        # Balanced accuracy averages the two per-class recalls, so flipping one
+        # trial of a class with n members moves one fold by 1/n/2, and the
+        # three-fold mean by a third of that.
+        n_folds = len(np.unique(dataset.groups))
+        one_trial = [
+            1 / np.sum((dataset.groups == run) & (dataset.y == label)) / 2 / n_folds
+            for run in np.unique(dataset.groups)
+            for label in np.unique(dataset.y)
+        ]
+        print(
+            f"\\nfor scale: flipping ONE held-out trial moves these means by "
+            f"{min(one_trial):.4f} to {max(one_trial):.4f}"
+        )
         """
     ),
     markdown(
@@ -2069,27 +2160,38 @@ cells = [
         the Riemannian answer was bit-identical; here it hits only the data you
         have no labels for, and affine invariance saves nothing.
 
-        **Re-centring gets most of it back: 0.929.** That is about 88% of the way
-        from 0.542 back to 0.979, and it uses no labels from the held-out run —
-        only its trials, which you have the moment the session starts.
+        **Re-centring gets most of it back: 0.929.** That is 88% of the way from
+        0.542 back to 0.979, and it uses no labels from the held-out run — only
+        its trials, which you have the moment the session starts.
 
-        **Most, not all — and the control says why.** 0.929 is 0.05 short of
-        0.979, and that shortfall is two different things stacked on top of each
-        other. Re-centring data that was never shifted lands at **0.955**, so
-        about 0.024 of the gap is simply what the operation costs: whitening each
-        run by its own mean discards the genuine differences between runs along
-        with the nuisance, which is exactly the effect 6.4b reports at greater
-        length. The remaining 0.027 is the part the shift really did leave behind.
+        **Most, not all — and the control says why.** 0.929 is 0.0506 short of
+        0.979, and that shortfall is two different things stacked on each other.
+        Re-centring data that was never shifted lands at **0.955**, so 0.0238 of
+        the gap is simply what the operation costs — whitening each run by its own
+        mean discards the genuine differences between runs along with the nuisance,
+        which is exactly the effect 6.4b reports at greater length. That leaves
+        0.0268 as the shift's true residue, and against the 0.955 ceiling the
+        operation can actually reach, re-centring recovers 94% of the shift.
 
-        That remainder also has an exact description. Whitening a run by its own
-        Riemannian mean sends that mean to the identity, which cancels the scale
-        and shape of the shift completely. What survives is an *orthogonal*
+        **Now read the last line the cell prints.** One flipped test trial moves
+        these means by 0.0208 to 0.0238. Both halves of that split are *one trial
+        each*. §5b already set the rule for this notebook — differences smaller
+        than the error bars, and certainly smaller than one trial, are not
+        resolvable with this design — and 6.4b's own table puts a standard
+        deviation of 0.063 on the re-centred condition, larger than either
+        component. **So read the direction of this decomposition, not the sizes.**
+        What is solid is that the residual has two distinct sources and that the
+        control separates them at all; what is not solid is that they are
+        0.0238 and 0.0268 rather than, say, both about a trial's worth.
+
+        The residue's *mechanism*, unlike its size, is exact. Whitening a run by
+        its own Riemannian mean sends that mean to the identity, which cancels the
+        scale and shape of the shift completely. What survives is an *orthogonal*
         rotation applied to the whole held-out run. Distances measured **within**
         the run are untouched by it — but the class means come from the training
         runs, which were never rotated, so every train-to-test distance is still
-        read across a twist that nothing corrected. Measured against the 0.955
-        the operation can actually reach, re-centring recovers about 93% of the
-        shift. A large repair, not a restoration.
+        read across a twist that nothing corrected. A large repair, not a
+        restoration.
 
         **And this was a shift we chose.** The mixing matrix is simulated. It was
         picked because $C \mapsto G C G^{\top}$ is exactly what a change of

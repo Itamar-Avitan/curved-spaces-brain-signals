@@ -34,8 +34,8 @@ The notebook follows the theory page's own order:
   with a measurement of where the flattened map is accurate and where it is not;
 - **4** — Route 1, minimum distance to mean, measured on the surface;
 - **5** — Route 2, the tangent space plus an ordinary classifier;
-- **5b** — which route? Both against CSP + LDA and a Euclidean baseline, with
-  run-wise validation and confusion matrices;
+- **5b** — which route? Both routes against CSP + LDA, with run-wise validation
+  and confusion matrices;
 - **6** — what the geometry buys you: 6.1 same features under a different
   ruler, 6.2 rewire the recording and watch which ruler notices, 6.3 how little
   calibration you can get away with, 6.4 a session shift injected on purpose,
@@ -49,9 +49,10 @@ It explains terminology before use, and includes:
 - a from-scratch Frechet-mean iteration checked against pyRiemann, so the mean,
   the log map and the tangent space are visibly one idea rather than three;
 - a direct measurement of the page's central claim (§3): whiten every trial by
-  the Riemannian mean and compare the curved distance with the flat one. The
-  flat map overstates the furthest trials more than the nearest, but the honest
-  reading is that no real trial sits close enough for the two to agree;
+  the Riemannian mean and compare the curved distance with the flat one. On real
+  trials the flat map errs in both directions and the across-trial distance
+  trend is not resolvable; sliding the same trials along their geodesics toward
+  the reference is what shows the error collapsing to zero at the centre;
 - a congruence test that uses a full invertible mixing matrix, not just
   per-channel gain, because mixing is what volume conduction and re-referencing
   actually do;
@@ -61,7 +62,9 @@ It explains terminology before use, and includes:
   drops balanced accuracy to chance, and per-run re-centering that recovers most
   but not all of it, with a no-shift control row that splits the residual into
   what the operation costs and what the shift genuinely left behind — an
-  orthogonal rotation the training class means never saw;
+  orthogonal rotation the training class means never saw. Both halves of that
+  split are the size of one flipped trial, and the cell prints that scale so the
+  direction is read rather than the magnitudes;
 - run-wise re-centering on the real unshifted runs (§6.4b), with an honest
   reading of why three runs of one session can show the mechanism but not the
   accuracy gain;
