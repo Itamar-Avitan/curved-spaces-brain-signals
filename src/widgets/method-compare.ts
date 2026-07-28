@@ -131,7 +131,7 @@ export class RgMethodCompare extends LitElement {
       display: contents;
     }
 
-    .grid > .cell:nth-last-child(-n + 4) {
+    .row:last-of-type .cell {
       border-bottom: 0;
     }
 
