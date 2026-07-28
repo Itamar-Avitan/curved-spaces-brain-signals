@@ -1540,6 +1540,102 @@ cells = [
     ),
     markdown(
         r"""
+        ### 6.2 Rewire the recording, and watch which ruler notices
+
+        Volume conduction, electrode gain, your choice of reference, whitening, a
+        spatial filter, a headset that sat differently today — every one of them does
+        the same thing to a covariance matrix:
+
+        $$C \mapsto G\,C\,G^{\top}$$
+
+        for some invertible $G$. The affine-invariant distance is *defined* to be blind
+        to that whole family. Here that stops being a definition and becomes a
+        measurement: apply one fixed, non-diagonal $G$ to every covariance matrix —
+        training and test alike — and re-run the whole evaluation.
+
+        **What to expect.** The Riemannian predictions should be *identical*, not
+        merely similar. The Euclidean treatment of the same matrices should move.
+
+        **One thing this does not show.** CSP + LDA is congruence-invariant too — the
+        generalised eigenvalues it solves for are unchanged by $C \mapsto GCG^{\top}$,
+        and so are its log-variance features. So this is not "Riemannian survives and
+        CSP does not." It is narrower and more useful: **the naive Euclidean treatment
+        of these matrices is not blind to the recording chain, and the Riemannian one
+        is.** That difference is the entire reason for the machinery.
+        """
+    ),
+    code(
+        """
+        from pyriemann.classification import MDM
+        from sklearn.pipeline import Pipeline
+
+        from riemannian_eeg_utils import EuclideanCovarianceNearestMean
+
+        # A deliberately non-diagonal, invertible mixing matrix. Per-channel gain alone
+        # would be a much weaker test: mixing is what volume conduction and
+        # re-referencing actually do.
+        rng = np.random.default_rng(0)
+        n_channels = covariances.shape[-1]
+        MIXING = np.eye(n_channels) + 0.35 * rng.standard_normal((n_channels, n_channels))
+        assert np.abs(np.linalg.det(MIXING)) > 1e-6, "mixing matrix must be invertible"
+
+        covariances_rewired = np.einsum("ij,njk,lk->nil", MIXING, covariances, MIXING)
+
+        # Pipelines that consume covariance matrices directly, so the congruence is
+        # applied to exactly the objects the theory talks about.
+        covariance_pipelines = {
+            "Riemannian MDM": Pipeline([("classifier", MDM(metric="riemann"))]),
+            "Euclidean covariance mean": Pipeline(
+                [("classifier", EuclideanCovarianceNearestMean())]
+            ),
+        }
+
+        before_scores, before_predictions = evaluate_leave_one_group_out(
+            covariance_pipelines, covariances, dataset.y, dataset.groups
+        )
+        after_scores, after_predictions = evaluate_leave_one_group_out(
+            covariance_pipelines, covariances_rewired, dataset.y, dataset.groups
+        )
+
+        invariance_scores = (
+            before_scores.groupby("model")["balanced_accuracy"].mean().rename("before")
+            .to_frame()
+            .join(after_scores.groupby("model")["balanced_accuracy"].mean().rename("after"))
+        )
+        invariance_scores["change"] = invariance_scores["after"] - invariance_scores["before"]
+        print(invariance_scores.round(4))
+
+        # The claim, asserted rather than eyeballed: MDM's predictions are unchanged.
+        mdm_before = before_predictions.query("model == 'Riemannian MDM'")["prediction"].to_numpy()
+        mdm_after = after_predictions.query("model == 'Riemannian MDM'")["prediction"].to_numpy()
+        assert np.array_equal(mdm_before, mdm_after), (
+            "Riemannian MDM changed its mind under a congruence. That should be "
+            "impossible — if this fires, the metric or the mean is not the "
+            "affine-invariant one."
+        )
+        print("\\nRiemannian MDM: every prediction identical after rewiring. ✓")
+        """
+    ),
+    markdown(
+        r"""
+        The assertion is the result. Not "close", not "within noise" — the same
+        labels, trial for trial, because the distance the classifier uses cannot see
+        the transformation at all.
+
+        The Euclidean row is the control: same matrices, same validation, same folds,
+        one ruler swapped, and now the recording chain moves the answer.
+
+        Two honest limits. First, the congruence was applied to the covariance
+        matrices, where the invariance is exact. Applying it to the raw signals and
+        re-estimating with `Covariances(estimator="oas")` breaks exactness, because
+        shrinkage toward a scaled identity is not congruence-equivariant — the
+        Riemannian result stays very stable, but it stops being bit-identical. Second,
+        this shows robustness to a change applied to *everything*. A change that hits
+        only your new session is a different and harder problem, which is 6.4.
+        """
+    ),
+    markdown(
+        r"""
         ### 6.3 How little calibration can you get away with?
 
         BCI users should not have to provide a large training set before a
@@ -2303,6 +2399,7 @@ CODE_PURPOSES = [
     "Plot fold-level full-calibration performance.",
     "Check class-specific errors with normalized confusion matrices.",
     "Compare Riemannian MDM with a flat Euclidean covariance nearest-mean baseline.",
+    "Rewire every covariance matrix with a fixed congruence and see which ruler moves.",
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
     "Repeat the geometry contrast in the low-calibration regime.",
