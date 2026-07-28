@@ -117,7 +117,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     plain:
       "A table that is mirrored across its diagonal and reports a positive amount of variation in every direction — the two rules every real covariance matrix obeys.",
     why: "The rules are what make the space interesting: you cannot move a covariance matrix in an arbitrary direction and still have a covariance matrix.",
-    href: "#eeg",
+    href: "#cone",
     hrefLabel: "See the space they fill",
     see: ["spd-manifold", "covariance-matrix"],
   },
@@ -126,7 +126,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     term: "SPD manifold",
     plain: "The collection of every valid covariance matrix, taken as a space in its own right — one trial is one point in it.",
     why: "Positivity confines that collection to a cone. The cone is the shape; how far apart two points in it are is a separate decision, and that decision is the whole subject.",
-    href: "#eeg",
+    href: "#cone",
     hrefLabel: "See the cone",
     see: ["spd", "metric", "curvature"],
   },

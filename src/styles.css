@@ -1444,36 +1444,6 @@ footer a:focus-visible {
   line-height: 1.45;
 }
 
-.eeg-reveal {
-  background: #eee8ff;
-  padding: 130px 0;
-}
-
-.reveal-heading {
-  display: grid;
-  grid-template-columns: 0.9fr 1.25fr;
-  gap: 80px;
-  align-items: end;
-}
-
-.reveal-heading .eyebrow {
-  grid-column: 1 / -1;
-  margin-bottom: -48px;
-}
-
-.reveal-heading h2 {
-  font-size: clamp(2.7rem, 5vw, 5.2rem);
-}
-
-.reveal-heading > p:last-child {
-  margin: 0;
-  font-size: 1.12rem;
-}
-
-.reveal-heading strong {
-  color: #4f3892;
-}
-
 .cone-figure {
   margin: 40px auto 8px;
 }
@@ -2646,7 +2616,6 @@ footer a {
   color: #08716c;
 }
 
-.reveal-heading > p:last-child,
 .term-ladder span {
   color: #555d6d;
 }
@@ -2704,7 +2673,6 @@ footer a {
 
   .route-heading,
   .route-brief,
-  .reveal-heading,
   .explorer-intro,
   .distance-intro,
   .references-inner,
@@ -2786,10 +2754,6 @@ footer a {
 
   .notebook-intro {
     max-width: 680px;
-  }
-
-  .reveal-heading .eyebrow {
-    margin-bottom: -22px;
   }
 
   .benefit-grid {
@@ -3083,24 +3047,6 @@ footer a {
 
   .skip-link {
     transition: none;
-  }
-}
-
-/* Purpose block inside the lavender EEG section: the default mint card is tuned
-   for the cream sections and its negative top margin collides with the heading. */
-.lesson-purpose.covariance-purpose {
-  margin: 56px 0 32px;
-  background: #fbf9ff;
-  box-shadow: inset 0 0 0 1px rgba(108, 78, 185, 0.16);
-}
-
-.lesson-purpose.covariance-purpose span {
-  background: var(--violet);
-}
-
-@media (max-width: 900px) {
-  .lesson-purpose.covariance-purpose {
-    margin: 36px 0 24px;
   }
 }
 
