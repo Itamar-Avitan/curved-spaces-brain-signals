@@ -1542,9 +1542,9 @@ cells = [
         r"""
         ### 6.2 Rewire the recording, and watch which ruler notices
 
-        Volume conduction, electrode gain, your choice of reference, whitening, a
-        spatial filter, a headset that sat differently today — every one of them does
-        the same thing to a covariance matrix:
+        Volume conduction, electrode gain, an invertible change of reference or
+        montage, full-rank whitening, a headset that sat differently today — every
+        one of them does the same thing to a covariance matrix:
 
         $$C \mapsto G\,C\,G^{\top}$$
 
@@ -1552,6 +1552,16 @@ cells = [
         to that whole family. Here that stops being a definition and becomes a
         measurement: apply one fixed, non-diagonal $G$ to every covariance matrix —
         training and test alike — and re-run the whole evaluation.
+
+        Two things that are deliberately *not* in this family. The common average
+        reference used back in §1 is $I - \frac{1}{n}\mathbf{1}\mathbf{1}^{\top}$,
+        which has rank $n-1$ and determinant zero — it leaves the covariance
+        singular rather than congruent to a full-rank matrix, and that singularity
+        is one of the real reasons this notebook needs OAS shrinkage in the first
+        place. A rank-reducing spatial filter, such as CSP's own component
+        selection in §5b, is likewise not invertible. Both change the covariance's
+        *rank*, not just its scale, so neither is a transformation this section's
+        guarantee covers.
 
         **What to expect.** The Riemannian predictions should be *identical*, not
         merely similar. The Euclidean treatment of the same matrices should move.
@@ -1577,7 +1587,11 @@ cells = [
         rng = np.random.default_rng(0)
         n_channels = covariances.shape[-1]
         MIXING = np.eye(n_channels) + 0.35 * rng.standard_normal((n_channels, n_channels))
-        assert np.abs(np.linalg.det(MIXING)) > 1e-6, "mixing matrix must be invertible"
+        # The determinant is a poor invertibility check in 17 dimensions: a matrix
+        # with every singular value 0.5 has det ~ 7.6e-6 despite being perfectly
+        # conditioned, and an ill-conditioned matrix can have a large determinant.
+        # The condition number is the check that actually matches the intent.
+        assert np.linalg.cond(MIXING) < 1e6, "mixing matrix must be well-conditioned and invertible"
 
         covariances_rewired = np.einsum("ij,njk,lk->nil", MIXING, covariances, MIXING)
 
@@ -1614,6 +1628,26 @@ cells = [
             "affine-invariant one."
         )
         print("\\nRiemannian MDM: every prediction identical after rewiring. ✓")
+
+        # The other half of the check. Without this, a future edit that shrank
+        # MIXING toward the identity would still print the line above -- the
+        # assertion would pass, but only because the rewiring had stopped doing
+        # anything. Confirm the same congruence actually moved the naive ruler.
+        euclid_before = before_predictions.query(
+            "model == 'Euclidean covariance mean'"
+        )["prediction"].to_numpy()
+        euclid_after = after_predictions.query(
+            "model == 'Euclidean covariance mean'"
+        )["prediction"].to_numpy()
+        assert not np.array_equal(euclid_before, euclid_after), (
+            "The Euclidean control's predictions did not change under the "
+            "congruence. That would mean this rewiring was too weak to be a real "
+            "stress test -- not that the flat ruler is somehow invariant too."
+        )
+        print(
+            "Euclidean covariance mean: predictions changed under the same "
+            "rewiring. ✓ (negative control holds)"
+        )
         """
     ),
     markdown(
@@ -1623,7 +1657,12 @@ cells = [
         the transformation at all.
 
         The Euclidean row is the control: same matrices, same validation, same folds,
-        one ruler swapped, and now the recording chain moves the answer.
+        one ruler swapped, and now the recording chain moves the answer. The
+        direction and size of that move are not themselves guaranteed — this
+        particular $G$ happened to raise the Euclidean number here; a different
+        mixing, or a different session, could just as easily lower it. Do not read
+        a sign into it. **The only guarantee this section makes is the exact zero
+        in the Riemannian row.**
 
         Two honest limits. First, the congruence was applied to the covariance
         matrices, where the invariance is exact. Applying it to the raw signals and
