@@ -118,6 +118,19 @@ export class RgMethodCompare extends LitElement {
       text-transform: uppercase;
     }
 
+    .cell.head.label {
+      background: #fdfaf3;
+      color: #20283a;
+      font-weight: 700;
+      font-size: 0.98rem;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .row {
+      display: contents;
+    }
+
     .grid > .cell:nth-last-child(-n + 4) {
       border-bottom: 0;
     }
@@ -187,16 +200,20 @@ export class RgMethodCompare extends LitElement {
   render() {
     return html`
       <div class="grid" role="table" aria-label="Comparison of the two routes and the CSP baseline">
-        <div class="cell head label" role="columnheader"></div>
-        ${COLUMNS.map(
-          (c) => html`<div class=${`cell head ${c.key}`} role="columnheader">${c.name}</div>`,
-        )}
+        <div class="row" role="row">
+          <div class="cell head label" role="columnheader" aria-label="Comparison dimension"></div>
+          ${COLUMNS.map(
+            (c) => html`<div class=${`cell head ${c.key}`} role="columnheader">${c.name}</div>`,
+          )}
+        </div>
         ${ROWS.map(
           (row) => html`
-            <div class="cell label" role="rowheader">${row.label}</div>
-            ${COLUMNS.map(
-              (c) => html`<div class="cell" role="cell">${c[row.field]}</div>`,
-            )}
+            <div class="row" role="row">
+              <div class="cell label" role="rowheader">${row.label}</div>
+              ${COLUMNS.map(
+                (c) => html`<div class="cell" role="cell">${c[row.field]}</div>`,
+              )}
+            </div>
           `,
         )}
       </div>
