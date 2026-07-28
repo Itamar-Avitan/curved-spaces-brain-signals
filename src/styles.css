@@ -923,52 +923,14 @@ footer a:focus-visible {
   padding: 120px 0 150px;
 }
 
-.section-kicker {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 72px;
-}
-
-.section-kicker span {
-  display: grid;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--lemon);
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.section-kicker p {
-  margin: 0;
-  color: var(--ink);
-  font-size: 0.83rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.story-grid {
-  display: grid;
-  grid-template-columns: 1.05fr 0.8fr;
-  gap: clamp(56px, 10vw, 140px);
-  align-items: end;
-}
-
-.story-heading h2 {
+.story-section > h2 {
   max-width: 720px;
+  margin: 0 0 28px;
 }
 
-.story-copy p {
+.story-section > p {
+  max-width: 680px;
   margin: 0 0 18px;
-}
-
-.story-copy .lead {
-  color: #3c4354;
-  font-size: 1.2rem;
-  font-weight: 600;
 }
 
 .manim-feature {
@@ -1253,95 +1215,55 @@ footer a:focus-visible {
   text-align: center;
 }
 
-.bci-lens {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 24px;
-  align-items: center;
-  margin-top: -68px;
-  margin-bottom: 70px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 20px 24px;
+/* Shared template for Part 1's numbered teaching sections (§1.1/1.2/1.4;
+   §1.3 reuses it only for the "n.n" index label, since it keeps its own dark
+   relativity-section background). */
+.lesson-section {
+  padding-block: clamp(48px, 6vw, 88px);
 }
 
-.bci-lens span {
-  border-radius: 99px;
-  background: var(--lemon);
-  padding: 8px 12px;
-  color: var(--ink);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.section-index {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  color: rgba(46, 53, 74, 0.42);
 }
 
-.bci-lens p {
-  margin: 0;
-  color: #d7d8e2;
-  font-size: 0.92rem;
-  line-height: 1.55;
+.lesson-section > h2 {
+  max-width: 22ch;
+  margin: 0 0 20px;
 }
 
-.analogy-boundary {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 24px;
-  align-items: center;
-  margin-top: -46px;
-  margin-bottom: 70px;
-  border-radius: 18px;
-  background: #fff0dd;
-  padding: 18px 24px;
+.lesson-section > p {
+  max-width: 62ch;
+  margin: 0 0 16px;
+  line-height: 1.75;
 }
 
-.analogy-boundary strong {
-  color: #9a4b3f;
-  white-space: nowrap;
+.lesson-section > ul {
+  max-width: 62ch;
+  margin: 0 0 16px;
+  padding-left: 22px;
+  line-height: 1.75;
 }
 
-.analogy-boundary p {
-  margin: 0;
-  color: #715d53;
-  font-size: 0.84rem;
-  line-height: 1.55;
+.section-takeaway {
+  max-width: 62ch;
+  margin-top: 26px;
+  padding-top: 14px;
+  border-top: 2px solid var(--lemon, #ffd36b);
+  font-weight: 600;
 }
 
-.bridge-section {
-  padding: 140px 0;
-  text-align: center;
-}
-
-.bridge-question {
-  margin: 0;
-  color: var(--coral);
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
-  font-weight: 800;
-}
-
-.bridge-arrow {
-  display: grid;
-  width: 46px;
-  height: 46px;
-  margin: 28px auto 52px;
-  place-items: center;
-  border: 1px solid rgba(32, 40, 58, 0.15);
-  border-radius: 50%;
-  color: var(--violet);
-}
-
-.bridge-section h2 {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.bridge-lede {
-  max-width: 760px;
-  margin: 30px auto 70px;
-  font-size: 1.15rem;
+/* §1.3 keeps the dark relativity background so the kept .metric-card and
+   .spacetime-demo SVG (both styled for light-on-dark) stay legible; the
+   reused .section-index label needs its own light-on-dark color here, since
+   the base rule above assumes a light page background. Selector specificity
+   matches .relativity-copy > p:not(.eyebrow) (0,2,1) so source order — this
+   rule is declared later — decides it. */
+.relativity-copy p.section-index {
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .space-transform {
@@ -2804,7 +2726,6 @@ footer a {
 
 .chapter-map span,
 .eyebrow.coral,
-.bridge-question,
 .plain-language-map article:nth-child(odd) span,
 .glossary-grid dt {
   color: #a93a31;
@@ -2871,7 +2792,6 @@ footer a {
     max-width: 440px;
   }
 
-  .story-grid,
   .route-heading,
   .route-brief,
   .relativity-content,
@@ -3160,19 +3080,9 @@ footer a {
     padding: 100px 0;
   }
 
-  .bci-lens {
-    grid-template-columns: 1fr;
-    margin-top: -40px;
-  }
-
-  .analogy-boundary,
   .lesson-purpose {
     grid-template-columns: 1fr;
     gap: 8px;
-  }
-
-  .analogy-boundary strong {
-    white-space: normal;
   }
 
   .lesson-purpose p {
@@ -3598,10 +3508,6 @@ footer a {
 
 .history-track {
   margin-top: 64px;
-}
-
-.bridge-section {
-  padding: 96px 0;
 }
 
 #part-math.part-divider {

@@ -198,42 +198,48 @@
         </div>
       </section>
 
-      <section id="part-math" class="part-divider math section-shell" aria-label="Part 1: The math of curves">
-        <span class="part-kicker">Part 1 of 4</span>
-        <h2>The math of curves</h2>
+      <section id="part-math" class="part-divider math section-shell" aria-label="Part 1: Curved things break flat arithmetic">
+        <span class="part-kicker">Part 1 of 5</span>
+        <h2>Curved things break flat arithmetic</h2>
         <p>
-          The idea that a space itself can bend became the language of gravity —
-          and with it, a precise way to measure what “close” means on a curved
-          surface. That measure of “close” is exactly what a brain-computer
-          interface needs.
+          Not “space can bend” — that is the famous version and it is not the
+          useful one. The useful version is what
+          <rg-term key="curvature">curvature</rg-term> does to ordinary sums
+          and averages, because in Part 2 the thing being averaged is a brain
+          recording.
         </p>
       </section>
 
       <section id="story" class="story-section section-shell">
-        <div class="section-kicker">
-          <span>01</span>
-          <p>A small idea with a very long shadow</p>
-        </div>
-        <div class="story-grid">
-          <div class="story-heading">
-            <p class="eyebrow coral">Before Einstein, there was a question</p>
-            <h2>Can geometry describe a space that bends?</h2>
-          </div>
-          <div class="story-copy">
-            <p class="lead">
-              For centuries, geometry meant Euclid: flat planes, straight
-              lines, familiar triangles. Then Gauss and Riemann asked something
-              more radical — what if the space itself has shape?
-            </p>
-            <p>
-              Riemann showed how to measure distance and direction inside a
-              smooth curved space — even when that “space” is abstract and has
-              many dimensions. This became known as
-              <strong>Riemannian geometry</strong>. Half a century later, it
-              gave Einstein the language he needed to describe gravity.
-            </p>
-          </div>
-        </div>
+        <p class="section-index">1.1</p>
+        <h2>Gauss found this problem while surveying land.</h2>
+        <p>
+          Euclid’s geometry assumes the space is flat, and for two thousand
+          years that was the only geometry there was.
+        </p>
+        <p>
+          Gauss, running the Hanover land survey in the 1820s, proved
+          something sharper than “surfaces can curve”:
+          <rg-term key="curvature">curvature</rg-term> is measurable from
+          inside the surface, without ever stepping outside it — and
+          therefore no flat map of a curved surface can keep all its
+          distances right. Every world map you have ever seen is lying about
+          something, and it has to.
+        </p>
+        <p>
+          Riemann generalised it to spaces of any dimension — and, crucially,
+          to spaces whose “points” are not places at all: geometry only needs
+          a way to say what “near,” “far,” and “between” mean, and once you
+          have that, it applies just as well to a collection of data tables
+          as it does to a landscape.
+        </p>
+        <p>
+          Einstein used it, decades later, to describe gravity — and that
+          application is what made the whole idea famous. That fame is
+          exactly why most people meet this idea in the wrong order:
+          spacetime first, brain data last, when it should be the other way
+          around.
+        </p>
 
         <div class="history-track" aria-label="A brief history of curved geometry" data-collapse-mobile="the four-step history">
           <article>
@@ -245,7 +251,7 @@
               </g>
             </svg>
             <h3>Euclid</h3>
-            <p>Geometry of flat space.</p>
+            <p>Geometry that assumes flat.</p>
           </article>
           <article>
             <span class="history-year">1827</span>
@@ -256,7 +262,7 @@
               </g>
             </svg>
             <h3>Gauss</h3>
-            <p><rg-term key="curvature">Curvature</rg-term> measured from within.</p>
+            <p><rg-term key="curvature">Curvature</rg-term> is measurable from inside — so every flat map must lie.</p>
           </article>
           <article>
             <span class="history-year">1854</span>
@@ -267,7 +273,7 @@
               <circle class="hpt" cx="80" cy="46" r="3.4" />
             </svg>
             <h3>Riemann</h3>
-            <p>Geometry for abstract spaces.</p>
+            <p>Any number of dimensions. And the “points” need not be places.</p>
           </article>
           <article>
             <span class="history-year">1915</span>
@@ -277,23 +283,45 @@
               <circle class="hmass" cx="54" cy="44" r="9" />
             </svg>
             <h3>Einstein</h3>
-            <p>Gravity becomes geometry.</p>
+            <p>The famous application — and the misleading one.</p>
           </article>
         </div>
       </section>
 
-      <section class="relativity-section">
+      <section id="flat-map" class="lesson-section section-shell">
+        <p class="section-index">1.2</p>
+        <h2>A flat map is exact where you centre it, and wrong by more the further you go.</h2>
+        <p>
+          That is the whole transferable idea, and it is worth more than the
+          picture of a bending sheet. Flattening does not fail everywhere at
+          once. It fails <em>gradually</em>, from a single point outward — and
+          you get to choose the point.
+        </p>
+        <p>
+          Drag the second point away from the centre below. At the centre the
+          two rulers return the same number. They are not approximately equal
+          there; they are equal. Then watch what happens as the gap grows.
+        </p>
+        <rg-flat-map></rg-flat-map>
+        <p class="section-takeaway">
+          Remember this one. It comes back twice: it is why one of the two BCI
+          decoders in Part 4 works at all, and why the fix for tomorrow’s
+          recording session in §4.4 is a one-line change.
+        </p>
+      </section>
+
+      <section id="relativity" class="relativity-section">
         <div class="relativity-backdrop" aria-hidden="true"></div>
         <div class="section-shell relativity-content">
           <div class="relativity-copy">
-            <p class="eyebrow lemon">A touch of general relativity</p>
-            <h2>Matter tells spacetime how to curve.</h2>
+            <p class="section-index">1.3</p>
+            <h2>Einstein’s gravity is the most famous case of choosing a distance rule.</h2>
             <p>
-              In general relativity, gravity is not treated as an invisible
-              pulling force. Matter changes the geometry of spacetime, and
-              objects follow the straightest possible paths through that curved
-              geometry. Mathematicians call such a path a
-              <rg-term key="geodesic"><strong>geodesic</strong></rg-term>.
+              Matter changes the geometry of spacetime. Objects then follow
+              the straightest path available through that curved geometry —
+              a <rg-term key="geodesic">geodesic</rg-term>. The rule that
+              says how to measure a single step at each location is the
+              <rg-term key="metric">metric</rg-term>.
             </p>
             <div class="metric-card">
               <span class="metric-symbol">g</span>
@@ -343,39 +371,38 @@
             </p>
           </div>
         </div>
-        <aside class="bci-lens section-shell">
-          <span>Why this matters here</span>
-          <p>
-            A classifier needs exactly what a geodesic needs: a rule for distance.
-            It has to decide whether a new brain-signal pattern is closer to one
-            learned state or another — and the geometry you pick changes which
-            patterns count as similar.
-          </p>
-        </aside>
-        <aside class="analogy-boundary section-shell">
-          <strong>Where the analogy stops</strong>
-          <p>
-            The shared idea is narrow: identify the objects in your space, then
-            choose a distance rule that respects their structure. Push the
-            picture further and it misleads —
-            <strong>the space we are about to build curves the opposite way</strong>
-            from the well above. A gravity well bends paths back together. The
-            space of covariance matrices bends them apart, and that is the
-            lucky direction: any two points are joined by exactly one shortest
-            route, so a class center is always unique and the algorithm that
-            finds it always converges. On a sphere neither is true.
-          </p>
-        </aside>
       </section>
 
-      <section class="bridge-section section-shell">
-        <p class="bridge-question">But what does curved spacetime have to do with EEG?</p>
-        <div class="bridge-arrow" aria-hidden="true">↓</div>
-        <h2>Riemann’s real gift was bigger than space.</h2>
-        <p class="bridge-lede">
-          Geometry can describe any collection of objects when we can define
-          meaningful notions of “near,” “far,” and “between.”
-          <strong>Even a collection of data tables.</strong>
+      <section id="boundary" class="lesson-section section-shell">
+        <p class="section-index">1.4</p>
+        <h2>Where the analogy stops: our surface bends the other way, and that is lucky.</h2>
+        <p>
+          A globe and a gravity well both have positive curvature. The space
+          of covariance matrices, with the ruler that Part 3 chooses, has
+          non-positive curvature instead — the sign flips exactly here.
+        </p>
+        <p>
+          That sign is not trivia. It buys:
+        </p>
+        <ul>
+          <li>Exactly one shortest path between any two points.</li>
+          <li>No cut locus.</li>
+          <li>A class centre that always exists and is always unique.</li>
+          <li>An algorithm that finds that centre and always converges.</li>
+        </ul>
+        <p>
+          On a sphere, none of this holds.
+        </p>
+        <p>
+          The causal order runs one way, and it is worth saying plainly:
+          <em
+            >we need invariance → that forces this metric → that metric
+            makes the space curved → the curvature is non-positive →
+            therefore means and geodesics are unique → therefore the
+            algorithms are simple.</em
+          >
+          Curvature is a cost that turns out to be a benefit.
+          <strong>It is not what makes the decoder accurate.</strong>
         </p>
       </section>
 
