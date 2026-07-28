@@ -2512,6 +2512,20 @@ Update the four `.nav-links` to the new parts: `#part-math` The idea ·
 `#part-eeg` The object · `#part-use` The ruler · `#part-routes` The decoders ·
 `#notebook` Do it.
 
+**Two anchors carried over from Task 9 that must be retargeted here.** Task 9
+split Part 2 into `#eeg` (the covariance table) and `#cone` (the curved region),
+which left two links landing on the half that no longer contains what their copy
+promises:
+
+- `index.html:41` — the top nav's "Why EEG?" entry
+- `index.html:75` — the hero's ghost CTA, "See why it matters for a BCI"
+
+Both currently point at `#eeg` and drop the reader on table construction rather
+than the curved-space payoff. Neither is a broken link, so the href check added
+in Step 5 will not catch them. The nav entry is replaced wholesale by the list
+above; point the hero CTA at whichever section actually delivers what its new
+wording promises.
+
 - [ ] **Step 2: Update the chapter map to five parts**
 
 ```html
