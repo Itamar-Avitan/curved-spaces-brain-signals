@@ -514,53 +514,91 @@
         <rg-case-file step="1"></rg-case-file>
       </section>
 
-      <section id="part-use" class="part-divider use section-shell" aria-label="Part 3: Using it, the decoder">
-        <span class="part-kicker">Part 3 of 4</span>
-        <h2>Using it: the decoder</h2>
+      <section id="part-use" class="part-divider use section-shell" aria-label="Part 3: Which ruler">
+        <span class="part-kicker">Part 3 of 5</span>
+        <h2>Which ruler, and why that one</h2>
         <p>
-          With every trial now a point, a decoder needs three moves: measure
-          distance, build a class center, predict the nearest one. Then two
-          questions that decide whether it survives contact with real hardware —
-          why <em>this</em> distance, and what happens tomorrow.
+          Every trial is now a point. Before anything can be averaged, compared
+          or classified, one decision has to be made — how far apart two of
+          these points are. The obvious answer is wrong in two separate ways,
+          and the second one is the reason this whole approach exists.
         </p>
       </section>
 
-      <section id="distance" class="distance-section">
-        <div class="section-shell">
-          <div class="distance-intro">
-            <div>
-              <p class="eyebrow cyan">Move 1 · measure distance</p>
-              <h2>What should “halfway” between two EEG patterns look like?</h2>
-            </div>
-            <p>
-              Before a decoder can average trials, compare them, or align two
-              sessions, it has to choose a rule for distance between covariance
-              matrices. The obvious rule — treat each matrix as a flat list of
-              numbers and measure the straight-line gap — quietly distorts the
-              answer. Here is exactly how it goes wrong.
-            </p>
-          </div>
-          <div class="lesson-purpose">
-            <span>The case against the straight ruler</span>
-            <strong>
-              Average two equal-strength patterns the straight (Euclidean) way and
-              the result <rg-term key="swelling">balloons</rg-term> — it invents scale that was in neither.
-            </strong>
-            <p>
-              Watch the relative area below: the entry-wise midpoint grows past
-              <em>1.00</em> while the geometry-aware one holds it. And a distorted
-              average is a distorted class center — which decides every prediction.
-              This one choice sits under the whole decoder.
-            </p>
-          </div>
-          <rg-predict key="swelling"></rg-predict>
-          <rg-distance-explorer></rg-distance-explorer>
+      <section id="distance" class="lesson-section section-shell">
+        <p class="section-index">3.1</p>
+        <h2>The straight average invents strength that was in neither trial.</h2>
+        <p>
+          A decoder never compares trials one at a time. It builds a class
+          center by averaging many trials from one class, and that center
+          becomes the thing every future trial is measured against. Get the
+          average wrong and every downstream prediction inherits the error —
+          which is why the first decision, before anything else, is how to
+          average two covariance tables at all.
+        </p>
+        <p>
+          Average the tables cell by cell instead of respecting the geometry,
+          and the result is stronger than either input. Both trials described a
+          certain amount of activity; averaged this way, the result describes
+          about four and a half times as much. That is
+          <rg-term key="swelling">swelling</rg-term>: entry-wise averaging
+          invents a scale that was in neither trial.
+        </p>
+        <p>
+          This is §1.2’s flat map, arriving on schedule. A flat map is exact
+          only at the point you center it and wrong by more the further you
+          stray — and averaging covariance tables entry by entry is that same
+          flat arithmetic, applied to EEG. Swelling is what “wrong by more”
+          looks like when the thing being flattened is a covariance matrix.
+        </p>
+        <p>
+          Watch the relative area under each ellipse below: it climbs past
+          1.00 for the entry-wise average, and holds at 1.00 for the path
+          that respects the geometry.
+        </p>
+        <rg-predict key="swelling"></rg-predict>
+        <rg-distance-explorer></rg-distance-explorer>
+        <rg-formula key="geodesic" folded summary="the path you dragged, with real numbers"></rg-formula>
+        <p class="section-takeaway">
+          This rules out the obvious ruler — the straight average invents
+          strength that was in neither trial — but it does not tell us which
+          ruler to use instead, and there is more than one curved ruler
+          available.
+        </p>
+      </section>
 
-          <div class="formula-block">
-            <p class="formula-label">The path you dragged, written down</p>
-            <rg-formula key="geodesic"></rg-formula>
-          </div>
-        </div>
+      <section id="invariance" class="lesson-section section-shell">
+        <p class="section-index">3.2</p>
+        <h2>Rewire the amplifier and the straight ruler changes its mind. This one does not.</h2>
+        <p>
+          §3.1 ruled out the straight ruler but left a question open: which
+          curved ruler, and why that one? Of the rulers available on this
+          cone, the one this page uses is picked for a single property — it
+          cannot see the recording chain.
+        </p>
+        <p>
+          Volume conduction, the lead field, electrode gain, your choice of
+          reference, whitening, spatial filtering, session drift: a different
+          cause every time, but every one of them does the same thing to a
+          covariance matrix. Each multiplies the table on both sides by the
+          same kind of invertible matrix — a
+          <rg-term key="congruence">congruence</rg-term>.
+        </p>
+        <p>
+          Because the <rg-term key="affine-invariant">affine-invariant</rg-term>
+          distance is blind to that whole family, you get much of the benefit
+          of untangling the recording from the brain signal without ever
+          having to untangle it. Re-reference, swap an electrode, come back
+          tomorrow with a drifted amplifier — the number this ruler reports
+          does not move.
+        </p>
+        <p>
+          Try each preset below and see which of the two numbers moves.
+        </p>
+        <rg-predict key="invariance"></rg-predict>
+        <rg-invariance-explorer></rg-invariance-explorer>
+        <rg-formula key="affine-invariant" folded summary="the ruler that would not move, in numbers"></rg-formula>
+        <rg-case-file step="2"></rg-case-file>
       </section>
 
       <section id="mean" class="mean-section">
@@ -644,61 +682,6 @@
           </div>
 
           <rg-mdm-playground></rg-mdm-playground>
-        </div>
-      </section>
-
-      <section id="invariance" class="invariance-section">
-        <div class="section-shell">
-          <div class="lesson-heading">
-            <div>
-              <p class="eyebrow coral">The keystone · why <em>this</em> ruler</p>
-              <h2>The measurement lies. The geometry is built to ignore the lie.</h2>
-            </div>
-            <div>
-              <p>
-                Swelling is one reason to distrust the straight ruler. Here is the
-                other, and it is the one that decides whether a decoder survives
-                contact with real hardware.
-              </p>
-              <div class="term-ladder">
-                <span>Plain idea: rewire the recording and the distance shouldn’t care</span>
-                <strong>Mathematical name: <rg-term key="affine-invariant">affine invariance</rg-term></strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="lesson-purpose invariance-purpose">
-            <span>The sentence to leave with</span>
-            <strong>
-              Rewire the amplifier and the straight-line distance changes. The
-              Riemannian one does not move at all.
-            </strong>
-            <p>
-              Volume conduction, electrode gain, and your choice of reference all
-              do the same thing to a covariance matrix. Try each one below and
-              watch which ruler notices.
-            </p>
-          </div>
-
-          <rg-predict key="invariance"></rg-predict>
-          <rg-invariance-explorer></rg-invariance-explorer>
-
-          <div class="formula-block">
-            <p class="formula-label">The ruler that would not move</p>
-            <rg-formula key="affine-invariant"></rg-formula>
-          </div>
-
-          <aside class="invariance-note">
-            <strong>One family, one fix</strong>
-            <p>
-              Volume conduction, the lead field, electrode gain, re-referencing,
-              whitening, spatial filtering, session drift — every one of them
-              multiplies your covariance matrix on both sides by the same kind of
-              invertible matrix — a <rg-term key="congruence">congruence</rg-term>. Because the affine-invariant distance is blind to
-              that whole family, you get much of the benefit of untangling the
-              signal without ever having to untangle it.
-            </p>
-          </aside>
         </div>
       </section>
 

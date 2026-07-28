@@ -1703,28 +1703,6 @@ footer a:focus-visible {
   font-size: 1.03rem;
 }
 
-.distance-section {
-  background: #e9f8f5;
-  padding: 140px 0;
-}
-
-.distance-intro {
-  display: grid;
-  grid-template-columns: 1fr 0.7fr;
-  gap: 70px;
-  align-items: end;
-  margin-bottom: 60px;
-}
-
-.distance-intro h2 {
-  font-size: clamp(2.8rem, 5vw, 5.2rem);
-}
-
-.distance-intro > p {
-  margin: 0;
-  font-size: 1.03rem;
-}
-
 .lesson-purpose {
   display: grid;
   grid-template-columns: auto 0.8fr 1fr;
@@ -2674,7 +2652,6 @@ footer a {
   .route-heading,
   .route-brief,
   .explorer-intro,
-  .distance-intro,
   .references-inner,
   .purpose-heading,
   .lesson-heading,
@@ -3047,65 +3024,6 @@ footer a {
 
   .skip-link {
     transition: none;
-  }
-}
-
-/* Part 3 keystone: why this metric and not another. Sits between the lavender
-   classifier section and the dark tangent section. */
-.invariance-section {
-  background: #fdf6ee;
-  padding: 120px 0;
-}
-
-.invariance-section .eyebrow.coral em {
-  font-style: normal;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-}
-
-.lesson-purpose.invariance-purpose {
-  background: #ffe9df;
-}
-
-.lesson-purpose.invariance-purpose span {
-  /* Darker than --coral so the white label clears AA on the tinted card. */
-  background: #a93a31;
-}
-
-.invariance-note {
-  display: grid;
-  grid-template-columns: 0.5fr 1fr;
-  gap: 28px;
-  margin-top: 44px;
-  border-radius: 22px;
-  background: #22283b;
-  padding: 30px 34px;
-  color: #fff;
-}
-
-.invariance-note strong {
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 1.3rem;
-  line-height: 1.2;
-}
-
-.invariance-note p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.97rem;
-  line-height: 1.72;
-}
-
-@media (max-width: 900px) {
-  .invariance-section {
-    padding: 78px 0;
-  }
-
-  .invariance-note {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 24px 22px;
   }
 }
 
