@@ -8,100 +8,120 @@ export class ConceptCheck extends LitElement {
 
   private readonly questions = [
     {
-      prompt:
-        "Why not treat an EEG covariance matrix as an unrestricted list of numbers?",
+      prompt: "What does an EEG trial's covariance matrix actually summarise?",
       choices: [
-        ["size", "It contains too many numbers."],
+        ["raw", "The exact voltage trace at every electrode, kept in full."],
         [
-          "geometry",
-          "Only specially structured tables are valid, so they form their own curved space.",
+          "pairs",
+          "How much every pair of electrodes moved together over the trial.",
         ],
-        ["frequency", "It only represents high-frequency EEG."],
+        ["duration", "How long the trial lasted."],
       ],
-      correct: "geometry",
+      correct: "pairs",
       correctFeedback:
-        "Exactly. The table must stay symmetric and must describe a valid amount of variation in every direction. Those constraints give the collection of valid tables its own shape.",
+        "Right. The diagonal is how much each channel varies on its own; the off-diagonal is how much pairs of channels vary together — and that off-diagonal is where the motor signal actually lives.",
       incorrectFeedback:
-        "Not quite. The important point is that not every table of numbers is a valid covariance matrix. Its built-in constraints determine how it should be compared.",
-    },
-    {
-      prompt: "Why use a Riemannian mean for one BCI class?",
-      choices: [
-        ["speed", "It always makes training instantaneous."],
-        [
-          "center",
-          "It defines the class center using distances that respect the covariance-matrix space.",
-        ],
-        ["channels", "It removes all noisy EEG channels automatically."],
-      ],
-      correct: "center",
-      correctFeedback:
-        "Correct. The Riemannian mean is the curved-space center of the class trials, making it a meaningful prototype for later distance comparisons.",
-      incorrectFeedback:
-        "Not quite. The mean summarizes a class using the chosen geometry; it does not automatically remove noise or eliminate training.",
-    },
-    {
-      prompt: "How does Minimum Distance to Mean classify a new trial?",
-      choices: [
-        ["largest", "It chooses the class with the largest covariance matrix."],
-        ["nearest", "It chooses the class whose Riemannian mean is closest."],
-        ["latest", "It chooses whichever class was trained most recently."],
-      ],
-      correct: "nearest",
-      correctFeedback:
-        "Correct. MDM measures the new covariance matrix against every learned class mean and returns the nearest one.",
-      incorrectFeedback:
-        "Not quite. MDM uses geometric distance to the learned class centers; matrix size and training order are not the decision rule.",
+        "Not quite. A covariance matrix is not the raw recording, and it says nothing about the trial's length. It is a table built from the signal, summarising how every pair of channels moved together.",
     },
     {
       prompt:
-        "Give the SECOND reason not to use plain straight-line distance here. The first is that averaging inflates the result.",
+        "Average two trials' covariance matrices cell by cell instead of respecting the geometry. What goes wrong?",
       choices: [
-        ["slow", "Straight-line distance is too slow to compute."],
         [
-          "invariance",
-          "It changes when the recording changes, even though the brain did not.",
+          "stronger",
+          "The result describes noticeably more activity than either trial actually had.",
         ],
-        ["negative", "Straight-line distance can come out negative."],
+        ["weaker", "The result describes less activity than either trial had."],
+        [
+          "nothing",
+          "Nothing — an entry-wise average is exactly what a class center should be.",
+        ],
       ],
-      correct: "invariance",
+      correct: "stronger",
       correctFeedback:
-        "That is the one that matters most in practice. Re-reference the montage or let an electrode drift and the straight-line distance moves; the affine-invariant distance does not move at all.",
+        "Correct — that is swelling. Entry-wise averaging invents a scale that was in neither trial, because it is flat arithmetic applied to a space that is not flat.",
       incorrectFeedback:
-        "Not quite. Speed is not the problem, and distances are never negative. The issue is that a straight-line distance confuses a change in the recording with a change in the brain.",
+        "Not quite. Entry-wise averaging inflates the result rather than shrinking it or leaving it unchanged — a swollen center is not a trustworthy stand-in for the class, which is exactly why the ruler has to respect the geometry instead.",
     },
     {
-      prompt: "What does “affine-invariant” actually promise?",
+      prompt:
+        "A tangent-space map flattens the space around one chosen reference point. Where is that map accurate, and why?",
+      choices: [
+        [
+          "reference",
+          "Exactly at the reference point, degrading the further a trial sits from it.",
+        ],
+        ["everywhere", "Everywhere equally, once the log map is applied."],
+        [
+          "labels",
+          "Wherever the class labels happen to sit, regardless of the reference point.",
+        ],
+      ],
+      correct: "reference",
+      correctFeedback:
+        "Right — this is §1.2's rule, returning. A flat map is exact at the point you centre it on and wrong by more the further you stray. That is exactly why the reference is placed at the data's mean: it puts every trial as close as possible to the one place the flattening is exact.",
+      incorrectFeedback:
+        "Not quite. Flattening cannot be accurate everywhere — curvature forbids that — and the accuracy follows the chosen reference point, not the class labels. That is why this route can be built before a single trial is labeled.",
+    },
+    {
+      prompt:
+        "Volume conduction, re-referencing, and a drifted amplifier all do the same thing to a covariance matrix mathematically. What is that operation, and which distance ignores it?",
       choices: [
         [
           "congruence",
-          "Mixing the channels with any invertible matrix leaves the distance unchanged.",
+          "They are all a congruence — sandwiching the matrix between an invertible matrix and its transpose — and the affine-invariant distance is blind to it.",
         ],
-        ["scale", "Every covariance matrix is rescaled to the same size first."],
-        ["linear", "The classifier that uses it must be linear."],
+        [
+          "shift",
+          "They all shift the matrix by a constant amount, and the straight-line distance ignores it.",
+        ],
+        [
+          "rescale",
+          "They all rescale the matrix, and every distance ignores it equally.",
+        ],
       ],
       correct: "congruence",
       correctFeedback:
-        "Yes. Volume conduction, electrode gain, whitening and re-referencing are all that one operation, so a single property covers the whole family of things that go wrong between recordings.",
+        "Exactly. A congruence is that one operation — sandwiching the table between an invertible matrix and its transpose — behind volume conduction, gain, referencing, and drift alike. The affine-invariant distance is built to be blind to that whole family; the straight-line distance is not.",
       incorrectFeedback:
-        "Not quite. It is a promise about a specific family of transformations: sandwiching the matrix between an invertible matrix and its transpose leaves the distance exactly as it was.",
+        "Not quite. These recording changes are not a simple shift, and the straight-line distance is exactly the ruler that moves under them. The shared operation is a congruence, and only the affine-invariant distance ignores it.",
     },
     {
       prompt:
-        "A decoder trained last week fails today. You re-center both sessions. Why does that not throw away the signal?",
+        "Route 1 (MDM) stores a class centre and compares distances to it. Route 2 flattens trials into vectors and fits an ordinary classifier. Which needs less calibration data to start working, and why?",
       choices: [
-        ["labels", "Because it uses the new session's labels to correct itself."],
         [
-          "isometry",
-          "Because re-centering preserves every distance inside a session — it only moves the sessions onto a common origin.",
+          "route1",
+          "Route 1 — nothing is fitted beyond the class centres themselves.",
         ],
-        ["average", "Because it averages the two sessions together."],
+        ["route2", "Route 2 — flattening the data always reduces how much is needed."],
+        [
+          "equal",
+          "Both need the same amount, since they start from the same covariance matrices.",
+        ],
       ],
-      correct: "isometry",
+      correct: "route1",
       correctFeedback:
-        "Exactly. Re-centering is itself one of those channel-mixing operations, so distances within a session survive untouched, while the shift between sessions — also one of them — cancels. And it needs no labels from the new session, which is what makes calibration-free use possible.",
+        "Right. MDM's whole decision is distance to the nearest stored centre — no boundary is fitted in between — so it starts working with very little calibration data. Route 2 hands the flattened vectors to a real classifier, which has more to fit and more room to improve once data arrives.",
       incorrectFeedback:
-        "Not quite. It needs no labels at all, and it does not merge the sessions. It whitens each session by its own mean, which leaves the structure inside each one exactly as it was.",
+        "Not quite. Sharing the same covariance matrices does not make the two routes equally data-hungry: Route 2 fits a genuine classifier on the flattened vectors, while Route 1 only ever compares to stored centres — which is why it needs less to get going.",
+    },
+    {
+      prompt:
+        "A decoder trained on Monday fails on Tuesday after the headset shifted. You re-centre each session on its own mean. What does that need from Tuesday's session?",
+      choices: [
+        ["nolabels", "Only that session's own trials — no labels."],
+        [
+          "somelabels",
+          "A handful of labeled Tuesday trials to anchor the re-centring.",
+        ],
+        ["mondaylabels", "Monday's labels, carried over and reapplied to Tuesday."],
+      ],
+      correct: "nolabels",
+      correctFeedback:
+        "Correct. Re-centring only needs that session's own trials to compute its mean — no labels at all — which is why it can run before a single Tuesday trial has been classified. It is the same re-centering operation as the tangent space's first whitening step, put to a second job.",
+      incorrectFeedback:
+        "Not quite. Re-centring needs no labels from the new session — only its own trials, to compute where its mean sits. That is what makes it usable before anything has been classified yet.",
     },
   ] as const;
 

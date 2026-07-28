@@ -2184,109 +2184,52 @@ footer a:focus-visible {
   line-height: 1.55;
 }
 
-.notebook-path {
+.notebook-stages {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin-top: 34px;
+  margin: 34px 0 56px;
   border: 1px solid rgba(32, 40, 58, 0.1);
   border-radius: 24px;
   background: rgba(255, 253, 248, 0.78);
 }
 
-.notebook-path article {
+.notebook-stages-lead {
+  grid-column: 1 / -1;
+  margin: 0;
+  border-bottom: 1px solid rgba(32, 40, 58, 0.1);
+  padding: 26px 34px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.notebook-stages article {
   min-height: 230px;
   padding: 34px;
 }
 
-.notebook-path article + article {
+.notebook-stages article + article {
   border-left: 1px solid rgba(32, 40, 58, 0.1);
 }
 
-.notebook-path span {
+.notebook-stages span {
   color: var(--coral);
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
 
-.notebook-path h3 {
+.notebook-stages h3 {
   margin: 42px 0 8px;
   color: var(--ink);
   font-family: "Fraunces", Georgia, serif;
   font-size: 1.55rem;
 }
 
-.notebook-path p {
+.notebook-stages article p {
   margin: 0;
   font-size: 0.86rem;
   line-height: 1.6;
-}
-
-.notebook-scope {
-  display: grid;
-  grid-template-columns: 0.35fr 1fr;
-  gap: 50px;
-  align-items: start;
-  margin: 34px 0 56px;
-  border-radius: 20px;
-  background: #e0f2ef;
-  padding: 28px 32px;
-}
-
-.notebook-scope strong {
-  color: #157c75;
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 1.25rem;
-  line-height: 1.2;
-}
-
-.notebook-scope p {
-  margin: 0;
-  color: #456761;
-  font-size: 0.9rem;
-}
-
-.concept-to-code {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin: -24px 0 56px;
-  overflow: hidden;
-  border: 1px solid rgba(32, 40, 58, 0.1);
-  border-radius: 20px;
-  background: rgba(255, 253, 248, 0.78);
-}
-
-.concept-to-code article {
-  padding: 23px;
-}
-
-.concept-to-code article + article {
-  border-left: 1px solid rgba(32, 40, 58, 0.1);
-}
-
-.concept-to-code span,
-.concept-to-code strong {
-  display: block;
-}
-
-.concept-to-code span {
-  color: var(--violet);
-  font-size: 0.66rem;
-  font-weight: 800;
-  line-height: 1.4;
-  text-transform: uppercase;
-}
-
-.concept-to-code strong {
-  margin-top: 24px;
-  font-size: 0.86rem;
-  line-height: 1.4;
-}
-
-.concept-to-code p {
-  margin: 7px 0 0;
-  font-size: 0.76rem;
-  line-height: 1.5;
 }
 
 .references-section {
@@ -2503,19 +2446,6 @@ footer a {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .concept-to-code {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .concept-to-code article:nth-child(3) {
-    border-top: 1px solid rgba(32, 40, 58, 0.1);
-    border-left: 0;
-  }
-
-  .concept-to-code article:nth-child(4) {
-    border-top: 1px solid rgba(32, 40, 58, 0.1);
-  }
-
   .notebook-intro {
     max-width: 680px;
   }
@@ -2573,8 +2503,7 @@ footer a {
 
   .route-steps,
   .starter-terms,
-  .glossary-grid,
-  .concept-to-code {
+  .glossary-grid {
     grid-template-columns: 1fr;
   }
 
@@ -2591,12 +2520,6 @@ footer a {
     grid-template-columns: 1fr;
     gap: 5px;
     padding: 17px 22px;
-  }
-
-  .concept-to-code article + article,
-  .concept-to-code article:nth-child(4) {
-    border-top: 1px solid rgba(32, 40, 58, 0.1);
-    border-left: 0;
   }
 
   .route-steps li {
@@ -2641,7 +2564,7 @@ footer a {
   .benefit-grid,
   .plain-language-map,
   .purpose-flow,
-  .notebook-path {
+  .notebook-stages {
     grid-template-columns: 1fr;
   }
 
@@ -2653,8 +2576,7 @@ footer a {
     margin-top: 48px;
   }
 
-  .notebook-result figcaption,
-  .notebook-scope {
+  .notebook-result figcaption {
     grid-template-columns: 1fr;
     gap: 8px;
   }
@@ -2667,16 +2589,16 @@ footer a {
     padding: 34px 26px 28px;
   }
 
-  .notebook-path article {
+  .notebook-stages article {
     min-height: 0;
   }
 
-  .notebook-path article + article {
+  .notebook-stages article + article {
     border-top: 1px solid rgba(32, 40, 58, 0.1);
     border-left: 0;
   }
 
-  .notebook-path h3 {
+  .notebook-stages h3 {
     margin-top: 22px;
   }
 

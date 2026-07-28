@@ -853,7 +853,7 @@
         <div class="section-shell">
           <div class="notebook-arrival">
             <p class="eyebrow violet">Part 5 of 5 · do it yourself</p>
-            <h2>You understand every step. Now run it on real brains.</h2>
+            <h2>You have the whole pipeline. Now run it on real brains.</h2>
             <p class="notebook-lead">
               Each trial becomes a covariance matrix, the right distance gives it
               a class center, and the nearest center makes the call. The guided
@@ -978,66 +978,44 @@
             </div>
           </aside>
 
-          <div class="notebook-path" aria-label="Notebook learning path" data-collapse-mobile="the three notebook stages">
+          <div class="notebook-stages" aria-label="What the notebook does, stage by stage" data-collapse-mobile="the three notebook stages">
+            <p class="notebook-stages-lead">
+              Three stages, and each one turns a geometric object from the
+              argument above into an actual BCI operation: a covariance
+              matrix becomes a trial, a class mean becomes a decision, and
+              grouped validation asks whether that decision survives a new
+              recording run.
+            </p>
             <article>
               <span>01</span>
               <h3>See the EEG</h3>
               <p>
-                Inspect electrode locations, class-average signals, and the
-                motor-band frequency content before modeling anything.
+                Continues Part 2: inspect electrode locations, class-average
+                signals, and the motor-band frequency content before
+                modeling anything.
               </p>
             </article>
             <article>
               <span>02</span>
               <h3>Build the space</h3>
               <p>
-                Turn every trial into a regularized covariance matrix, verify
-                that it is valid, then visualize class means and distances.
+                Continues Parts 2–4: turn every trial into a regularized
+                covariance matrix, verify that it is valid, then compute the
+                class means and distances both routes depend on.
               </p>
             </article>
             <article>
               <span>03</span>
               <h3>Test the BCI</h3>
               <p>
-                Hold out complete recording runs, compare credible baselines,
-                and repeat the test with deliberately limited calibration.
+                Continues Part 4's decision rule: hold out complete recording
+                runs, compare credible baselines, and repeat the test with
+                deliberately limited calibration.
               </p>
             </article>
           </div>
 
-          <div class="notebook-scope">
-            <strong>Why this improves BCI understanding</strong>
-            <p>
-              The notebook connects each geometric object to an actual BCI
-              operation: a covariance matrix represents a trial, a class mean
-              summarizes training examples, a distance produces a decision,
-              and grouped validation tests whether that decision survives a
-              new recording run.
-            </p>
-          </div>
-
-          <div class="concept-to-code" aria-label="Connections between website lessons and notebook sections" data-collapse-mobile="the page-to-notebook map">
-            <article>
-              <span>Website: halfway and distance</span>
-              <strong>Notebook: two-channel path comparison</strong>
-              <p>Reproduce the swelling effect numerically and verify both midpoint determinants.</p>
-            </article>
-            <article>
-              <span>Website: class prototype</span>
-              <strong>Notebook: Riemannian mean objective</strong>
-              <p>Compare total squared Riemannian distance for two candidate centers.</p>
-            </article>
-            <article>
-              <span>Website: tangent space</span>
-              <strong>Notebook: full feature pipeline</strong>
-              <p>Map real covariance matrices to vectors and train logistic regression inside each fold.</p>
-            </article>
-            <article>
-              <span>Website: MDM prediction</span>
-              <strong>Notebook: held-out-run validation</strong>
-              <p>Measure whether the complete decision rule generalizes to an unseen recording run.</p>
-            </article>
-          </div>
+          <rg-case-file step="5"></rg-case-file>
 
         </div>
       </section>
