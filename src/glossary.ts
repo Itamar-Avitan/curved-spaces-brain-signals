@@ -441,8 +441,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     term: "Curvature",
     plain: "How much a space departs from being flat — and in which direction.",
     why: "Here it is non-positive and varies from place to place. That sign is the good one: geodesics spread apart rather than reconverging, so any two points are joined by exactly one shortest path and a class center is always unique. A sphere curves the other way and has neither property.",
-    href: "#story",
-    hrefLabel: "Where the analogy stops",
+    href: "#flat-map",
+    hrefLabel: "Watch a flat map stop being accurate",
     see: ["geodesic", "riemannian-mean"],
   },
 

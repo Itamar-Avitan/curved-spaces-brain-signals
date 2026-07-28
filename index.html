@@ -37,10 +37,11 @@
             Curved Spaces
           </a>
           <div class="nav-links">
-            <a href="#story">The math</a>
-            <a href="#eeg">Why EEG?</a>
-            <a href="#part-use">The decoder</a>
-            <a href="#notebook">Notebook</a>
+            <a href="#part-math">The idea</a>
+            <a href="#part-eeg">The object</a>
+            <a href="#part-use">The ruler</a>
+            <a href="#part-routes">The decoders</a>
+            <a href="#notebook">Do it</a>
           </div>
         </nav>
 
@@ -55,24 +56,23 @@
           <div id="top" class="hero-copy">
             <p class="hero-eyebrow">Curved geometry for EEG · a visual introduction</p>
             <h1>
-              What if the<br />shortest path<br />is <em>not</em> a
+              What if a<br />recording is<br /><em>not</em> a waveform,<br />but a
               <span class="hero-ul"
-                >straight line<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true">
+                >shape<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true">
                   <path d="M4 13 C 80 4, 220 4, 296 11" /></svg
               ></span>?
             </h1>
             <p class="hero-lede">
-              A 19th-century idea about measuring curved space became the
-              language of gravity. It also solves a stubborn problem in
-              brain-computer interfaces: how to compare two recordings while
-              ignoring everything the equipment did to them.
+              A recording is not a waveform, but a shape — and the same
+              geometry that measures shapes is the one that survives a
+              change of hardware.
             </p>
             <div class="hero-cta">
               <a class="primary-button" href="#story">
                 Follow the curve
                 <span aria-hidden="true">↓</span>
               </a>
-              <a class="hero-ghost" href="#eeg">See why it matters for a BCI</a>
+              <a class="hero-ghost" href="#cone">See why it matters for a BCI</a>
             </div>
           </div>
 
@@ -120,10 +120,11 @@
 
       <nav class="chapter-map" aria-label="Guide parts">
         <div class="section-shell">
-          <a href="#part-math"><span>Part 1</span>The math of curves</a>
-          <a href="#part-eeg"><span>Part 2</span>How it connects to EEG</a>
-          <a href="#part-use"><span>Part 3</span>Using it: the decoder</a>
-          <a href="#notebook"><span>Part 4</span>Do it yourself</a>
+          <a href="#part-math"><span>Part 1</span>Curved things break flat arithmetic</a>
+          <a href="#part-eeg"><span>Part 2</span>A trial is a shape</a>
+          <a href="#part-use"><span>Part 3</span>Which ruler</a>
+          <a href="#part-routes"><span>Part 4</span>Two decoders</a>
+          <a href="#notebook"><span>Part 5</span>Do it yourself</a>
         </div>
         <div class="chapter-progress" aria-hidden="true"><span></span></div>
       </nav>
@@ -133,40 +134,19 @@
           <p class="eyebrow cyan">How to read this guide</p>
           <h2 id="route-title">From the math of curves to your own BCI.</h2>
           <p>
-            Four parts, in order — each one sets up the next. First the geometry,
-            then the brain data, then the working decoder, then your turn.
+            Five parts, in order — each one sets up the next. First the
+            geometry, then the object, then the ruler, then the decoders,
+            then your turn.
           </p>
         </div>
-        <ol class="guide-parts">
-          <li class="p1">
-            <span>Part 1</span>
-            <strong>The math of curves</strong>
-            <em>Why the shortest path can bend — the idea Riemann built and Einstein used.</em>
-          </li>
-          <li class="p2">
-            <span>Part 2</span>
-            <strong>How it connects to EEG</strong>
-            <em>Each trial becomes a <rg-term key="covariance-matrix">covariance matrix</rg-term>: one point in a curved space.</em>
-          </li>
-          <li class="p3">
-            <span>Part 3</span>
-            <strong>Using it: the decoder</strong>
-            <em>Distance, a class center, a prediction — then why this distance, and what happens tomorrow.</em>
-          </li>
-          <li class="p4">
-            <span>Part 4</span>
-            <strong>Do it yourself</strong>
-            <em>Run the very same pipeline on real EEG in a guided notebook.</em>
-          </li>
-        </ol>
         <div class="route-brief" aria-label="Lesson outcomes and preparation">
           <div class="route-outcomes">
             <p class="route-brief-label">By the end, you will be able to</p>
             <ul>
-              <li>Explain why one EEG trial becomes a covariance matrix.</li>
-              <li>Trace how the decoder turns a new trial into a predicted label.</li>
-              <li>Give <em>two</em> reasons not to measure distance in straight lines.</li>
-              <li>Say what breaks when you record the same person tomorrow — and what fixes it.</li>
+              <li>Say exactly where a flat map is right, and why it goes wrong the further you stray from there.</li>
+              <li>Say what a <rg-term key="covariance-matrix">covariance matrix</rg-term> is, and why one EEG trial becomes one.</li>
+              <li>Name the two routes to a decoder, and say which one needs less calibration data.</li>
+              <li>Say what re-centring does, and why it needs no labels from the new session.</li>
             </ul>
           </div>
           <dl class="route-facts">
@@ -176,7 +156,7 @@
             </div>
             <div>
               <dt>Time</dt>
-              <dd>About 50 minutes, plus 30–45 minutes for the notebook.</dd>
+              <dd>About 60 minutes, plus 30–45 minutes for the notebook.</dd>
             </div>
             <div>
               <dt>Prerequisites</dt>
