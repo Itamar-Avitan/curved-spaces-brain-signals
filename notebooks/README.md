@@ -26,17 +26,45 @@ run out at a time. A second experiment restricts training to 2, 4, 6, or 10
 trials per class to demonstrate how the methods behave when BCI calibration
 data are limited.
 
-The notebook explains terminology before use and includes:
+The notebook follows the theory page's own order:
+
+- **0** — a two-channel example small enough to draw;
+- **1–2** — load the trials and turn each one into a covariance matrix;
+- **3** — a distance and an average that stay inside the valid space, ending
+  with a measurement of where the flattened map is accurate and where it is not;
+- **4** — Route 1, minimum distance to mean, measured on the surface;
+- **5** — Route 2, the tangent space plus an ordinary classifier;
+- **5b** — which route? Both against CSP + LDA and a Euclidean baseline, with
+  run-wise validation and confusion matrices;
+- **6** — what the geometry buys you: 6.1 same features under a different
+  ruler, 6.2 rewire the recording and watch which ruler notices, 6.3 how little
+  calibration you can get away with, 6.4 a session shift injected on purpose,
+  6.4b the same move on data that had no shift to remove, 6.5 the distance used
+  as a signal-quality gate;
+- **7–8** — what the source papers add, and how to reuse the workflow;
+- then common mistakes, three runnable exercises, and two optional extensions.
+
+It explains terminology before use, and includes:
 
 - a from-scratch Frechet-mean iteration checked against pyRiemann, so the mean,
   the log map and the tangent space are visibly one idea rather than three;
+- a direct measurement of the page's central claim (§3): whiten every trial by
+  the Riemannian mean and compare the curved distance with the flat one. The
+  flat map overstates the furthest trials more than the nearest, but the honest
+  reading is that no real trial sits close enough for the two to agree;
 - a congruence test that uses a full invertible mixing matrix, not just
   per-channel gain, because mixing is what volume conduction and re-referencing
   actually do;
 - a demonstration that positive-definiteness is a real constraint: push one
   off-diagonal entry and an eigenvalue goes negative;
-- run-wise re-centering, with an honest reading of why three runs of one session
-  can show the mechanism but not much of the accuracy gain;
+- a simulated session shift applied to the held-out run alone (§6.4), which
+  drops balanced accuracy to chance, and per-run re-centering that recovers most
+  but not all of it, with a no-shift control row that splits the residual into
+  what the operation costs and what the shift genuinely left behind — an
+  orthogonal rotation the training class means never saw;
+- run-wise re-centering on the real unshifted runs (§6.4b), with an honest
+  reading of why three runs of one session can show the mechanism but not the
+  accuracy gain;
 - a working Riemannian potato (artifact flagging by distance to the mean);
 - sensor and signal figures;
 - motor-band power spectra;

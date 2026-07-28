@@ -1113,6 +1113,86 @@ cells = [
     ),
     markdown(
         r"""
+        ### The page's central claim, measured
+
+        The webpage's Part 1 says a flattened map is exact at the point you centre it
+        on and wrong by more the further you travel. That is checkable, and here is the
+        check on real trials.
+
+        Take the Riemannian mean of every trial as the reference. Whiten each trial by
+        it — which is exactly what the tangent-space route does — then compare, for
+        each trial, the Riemannian distance to the reference against the plain
+        Frobenius distance in whitened coordinates.
+
+        Close to the reference the two agree. Far from it they do not, and the gap
+        grows with distance. That is the whole reason the reference is chosen to be the
+        mean: it puts as many trials as possible into the part of the map that is
+        accurate.
+        """
+    ),
+    code(
+        """
+        from pyriemann.utils.base import invsqrtm
+        from pyriemann.utils.distance import distance_riemann
+
+        reference_point = mean_riemann(covariances)
+        whitening = invsqrtm(reference_point)
+        whitened = whitening @ covariances @ whitening
+        identity = np.eye(covariances.shape[-1])
+
+        riemannian_gap = np.array(
+            [distance_riemann(reference_point, c) for c in covariances]
+        )
+        flat_gap = np.linalg.norm(whitened - identity, axis=(-2, -1))
+
+        order = np.argsort(riemannian_gap)
+        figure, axis = plt.subplots(figsize=(7, 4.5))
+        axis.plot(riemannian_gap[order], riemannian_gap[order], label="measured on the surface")
+        axis.plot(riemannian_gap[order], flat_gap[order], label="measured on the flat map")
+        axis.set_xlabel("Riemannian distance from the reference")
+        axis.set_ylabel("reported distance")
+        axis.set_title("A flat map is exact where you centre it")
+        axis.legend()
+        figure.tight_layout()
+        plt.show()
+
+        near = riemannian_gap < np.quantile(riemannian_gap, 0.1)
+        far = riemannian_gap > np.quantile(riemannian_gap, 0.9)
+        # How far out do the trials actually sit? The ratios below are only
+        # readable next to the range they were measured over.
+        print(f"Riemannian distance to the reference spans {riemannian_gap.min():.2f} to {riemannian_gap.max():.2f}")
+        print(f"closest 10% of trials  — flat/curved ratio {np.mean(flat_gap[near] / riemannian_gap[near]):.3f}")
+        print(f"furthest 10% of trials — flat/curved ratio {np.mean(flat_gap[far] / riemannian_gap[far]):.3f}")
+        """
+    ),
+    markdown(
+        r"""
+        The far decile is overstated more than the near one — 1.438 against 1.202 —
+        which is the direction the claim predicts. The flat map reports bigger
+        numbers than the surface does, and it does so more badly the further out
+        you look.
+
+        Now read the first number again. If the flat map were *exact* near the
+        reference, that ratio would be 1.000, and it is not. The reason is printed
+        on the line above it: the closest trial sits 1.58 from the reference and
+        the furthest 2.61. "Near" here means *least far*. Forty-five trials in
+        seventeen dimensions do not crowd around their own mean, so there is no
+        trial close enough for the two rulers to actually agree. Exactness at the
+        centre is a statement about the limit — $\log\lambda \to \lambda - 1$ as
+        $\lambda \to 1$ — and real EEG never gets there.
+
+        So the thing the page's Part 1 buys you on real data is weaker than
+        "exact", and more useful: **the flat map's error is smallest where the
+        trials are, and grows as you leave them.** Centring on the Riemannian mean
+        does not make the map exact for anyone. It makes the error as small as it
+        can be for as many trials as possible. That is the whole argument for
+        taking the tangent space at the mean rather than somewhere convenient, and
+        it is also the reason the next two sections keep checking whether the
+        reference still sits where the data does.
+        """
+    ),
+    markdown(
+        r"""
         ## 4. Route 1 — measure on the surface
 
         The page's Route 1. Nothing is flattened and no boundary is fitted: store one
@@ -1897,9 +1977,16 @@ cells = [
         Re-centring uses **no labels from the held-out run**. It only needs the trials,
         which you have the moment the session starts.
 
-        **Predict first.** Three numbers below: no shift, shifted, shifted then
-        re-centred. Where does the middle one land, and how much of it does the third
-        recover?
+        **Predict first.** Four numbers below. The first three are the story: no
+        shift, shifted, shifted then re-centred. Where does the middle one land, and
+        how much of it does the third recover?
+
+        The fourth is a control, and it is there to stop an easy mistake. If
+        re-centring does not fully restore the accuracy, there are two possible
+        culprits — something the shift left behind, or the re-centring itself
+        costing you something. So the last row re-centres data that was never
+        shifted. Whatever it loses relative to the first row is the price of the
+        operation, not the residue of the shift.
         """
     ),
     code(
@@ -1963,6 +2050,9 @@ cells = [
                 {"condition": "no shift", "balanced_accuracy": run_condition(shift=False, recentre=False)},
                 {"condition": "shifted", "balanced_accuracy": run_condition(shift=True, recentre=False)},
                 {"condition": "shifted, then re-centred", "balanced_accuracy": run_condition(shift=True, recentre=True)},
+                # Control: what does re-centring cost when there was no shift?
+                # Without this row the gap between rows 1 and 3 is unattributable.
+                {"condition": "no shift, re-centred (control)", "balanced_accuracy": run_condition(shift=False, recentre=True)},
             ]
         )
         print(shift_results.round(4).to_string(index=False))
@@ -1970,17 +2060,45 @@ cells = [
     ),
     markdown(
         r"""
-        TASK-5-WRITES-THIS — do not fill this cell in until the notebook has been
-        executed and `shift_results` above holds real printed numbers.
+        **The shift costs almost everything.** Balanced accuracy falls from
+        **0.979** to **0.542** — from very nearly perfect to a coin flip. Nothing
+        about the brain changed. One invertible mixing matrix was applied to the
+        held-out run, and the class means learned on the other two runs no longer
+        sit anywhere useful relative to it. This is the failure 6.2's guarantee
+        does *not* cover: there, the congruence hit training and test alike and
+        the Riemannian answer was bit-identical; here it hits only the data you
+        have no labels for, and affine invariance saves nothing.
 
-        Replace this entire cell with prose that states all three of:
+        **Re-centring gets most of it back: 0.929.** That is about 88% of the way
+        from 0.542 back to 0.979, and it uses no labels from the held-out run —
+        only its trials, which you have the moment the session starts.
 
-        - what the shift cost (the drop from "no shift" to "shifted"),
-        - how much re-centring recovered (how far "shifted, then re-centred"
-          closes the gap back toward "no shift"),
-        - and that this is a **simulated** shift, chosen because it is exactly
-          the transform re-referencing and gain change apply — not a claim
-          about how large real session shifts are.
+        **Most, not all — and the control says why.** 0.929 is 0.05 short of
+        0.979, and that shortfall is two different things stacked on top of each
+        other. Re-centring data that was never shifted lands at **0.955**, so
+        about 0.024 of the gap is simply what the operation costs: whitening each
+        run by its own mean discards the genuine differences between runs along
+        with the nuisance, which is exactly the effect 6.4b reports at greater
+        length. The remaining 0.027 is the part the shift really did leave behind.
+
+        That remainder also has an exact description. Whitening a run by its own
+        Riemannian mean sends that mean to the identity, which cancels the scale
+        and shape of the shift completely. What survives is an *orthogonal*
+        rotation applied to the whole held-out run. Distances measured **within**
+        the run are untouched by it — but the class means come from the training
+        runs, which were never rotated, so every train-to-test distance is still
+        read across a twist that nothing corrected. Measured against the 0.955
+        the operation can actually reach, re-centring recovers about 93% of the
+        shift. A large repair, not a restoration.
+
+        **And this was a shift we chose.** The mixing matrix is simulated. It was
+        picked because $C \mapsto G C G^{\top}$ is exactly what a change of
+        reference, a change of electrode gain, or a headset sitting differently
+        does to a covariance matrix — not because a real Monday-to-Tuesday shift
+        is this large. Nothing here says how much a real session change costs, or
+        how much of it re-centring returns. That is a measurement you make on your
+        own recordings, and 6.4b makes it on these three: same move, real data,
+        no injected shift, and the answer is that it buys nothing at all.
         """
     ),
     markdown(
@@ -2530,6 +2648,7 @@ CODE_PURPOSES = [
     "Inspect two trial-level channel-relationship patterns.",
     "Build the two Riemannian class prototypes and compare them.",
     "Visualize MDM decisions as distances to the class means.",
+    "Measure where the flat map is exact and where it stops being exact.",
     "Map covariance matrices to tangent vectors and display a 2D projection.",
     "Build a tangent vector by hand and verify the sqrt(2) isometry.",
     "Print the real validation code instead of asking you to trust it.",
