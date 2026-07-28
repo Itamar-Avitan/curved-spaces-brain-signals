@@ -68,6 +68,30 @@ export const PREDICTIONS: Record<string, Prediction> = {
     ],
   },
 
+  tangent: {
+    question:
+      "You flatten every trial onto one local map and hand the result to plain logistic regression. Where is that map most accurate?",
+    hint: "The map is built around one chosen reference point.",
+    options: [
+      {
+        label: "Near the reference point",
+        response:
+          "Right — and that is the whole design. The map is exact at the reference and drifts further out, which is why the reference is chosen to be the mean of your data: it puts every trial as close to the accurate part as possible.",
+        correct: true,
+      },
+      {
+        label: "Everywhere equally",
+        response:
+          "That would be lovely and it is exactly what curvature forbids. Flattening always distorts; the only choice you get is where the distortion is zero. Part 1's slider is the same fact.",
+      },
+      {
+        label: "Near the class centres",
+        response:
+          "Only if a class centre happens to be the reference. The accuracy follows the reference point, not the labels — which is why this route works even before you know any labels.",
+      },
+    ],
+  },
+
   transfer: {
     question:
       "A decoder trained on Monday, used on Tuesday after the headset shifted. Two classes. What does it score?",
