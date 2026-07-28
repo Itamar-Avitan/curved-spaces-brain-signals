@@ -2296,19 +2296,40 @@ Required heading:
 <h2>Flatten a local map first, and any ordinary classifier can read it.</h2>
 ```
 
-Prose must:
+**Ordering constraint — do not violate it.** `<rg-predict key="tangent">` asks
+the reader where the flattened map is most accurate. The answer is *near the
+reference point*. So **no prose above that prompt may state where the map is
+accurate, or why the reference is chosen to be the mean.** A predict-first
+prompt whose answer is printed immediately above it is worse than no prompt: it
+trains the reader to skip them.
+
+Prose **before** the prompt says only what the operation *is*:
 
 - Connect explicitly to §1.2: this is the flat map from Part 1, and the reference point is where you centre it.
 - Say the operation: whiten by the reference, take the log, read off the numbers — the `<rg-term key="log-map">log map</rg-term>` into the `<rg-term key="tangent-space">tangent space</rg-term>`.
-- Say why the reference is chosen to be the mean of the data: it puts every trial as close as possible to the one place the map is exact.
 - Say what it buys: each trial becomes a short vector, so LDA, logistic regression or an SVM can take over.
 
 ```html
 <rg-predict key="tangent"></rg-predict>
 <rg-tangent-explorer></rg-tangent-explorer>
+```
+
+Prose **after** the explorer delivers the payoff the prompt set up:
+
+- Why the reference is chosen to be the mean of the data: it puts every trial as close as possible to the one place the map is exact. This is §1.2's sentence being cashed, and it lands harder once the reader has committed to an answer and dragged the widget.
+
+```html
 <rg-formula key="log-map" folded summary="the step that turns a trial into a vector"></rg-formula>
 <rg-case-file step="4"></rg-case-file>
 ```
+
+**Also reconcile a pre-existing inconsistency while you are here.**
+`src/widgets/tangent-explorer.ts:422-423` currently says the log map is taken
+"around a class or session mean". The prediction's response says the accuracy
+follows the reference, not the class labels — and Task 4 established the
+reference as the Riemannian mean of *all* trials, not a class centre. Reword the
+widget's line so the page does not send mixed signals about what the reference
+is.
 
 - [ ] **Step 4: Add §4.3 and delete the method-guide section**
 
