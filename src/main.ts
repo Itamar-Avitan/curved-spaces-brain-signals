@@ -17,6 +17,7 @@ import "./widgets/transfer-explorer";
 import "./widgets/concept-check";
 import "./widgets/next-steps";
 import "./widgets/route-fork";
+import "./widgets/method-compare";
 import "./chapter-progress";
 import "./mobile-collapse";
 import "./review-build";
