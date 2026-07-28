@@ -41,19 +41,21 @@ cells = [
         read and run it. You can execute each section in order; every code cell
         starts with its purpose, and every figure ends with one takeaway.
 
-        We will compare three complete ways to classify a short EEG trial:
+        Every trial becomes one covariance matrix, compared with one
+        curved-space ruler — the Riemannian distance. From that single
+        representation, two routes follow:
 
-        1. **CSP + LDA** — a strong, classical motor-imagery baseline.
-        2. **Riemannian MDM** — compare each covariance matrix with the average
-           matrix of each class.
-        3. **Tangent space + logistic regression** — temporarily map the curved
-           covariance space to ordinary coordinates, then use a standard
-           classifier.
+        - **Route 1** — store one covariance centre per class, and label a
+          new trial by whichever centre is nearest.
+        - **Route 2** — flatten the neighbourhood into a local map first,
+          then hand the result to an ordinary classifier.
 
-        We will also add one deliberately plain diagnostic baseline: a
-        **Euclidean covariance nearest-mean** classifier. It uses covariance
-        matrices, but it ignores the curved SPD geometry. That contrast makes
-        the advantage of the Riemannian distance visible rather than rhetorical.
+        Both routes are measured against a strong, task-specific baseline that
+        owes nothing to this geometry — **CSP + LDA** — and against one
+        deliberately plain diagnostic baseline: a **Euclidean covariance
+        nearest-mean** classifier. It uses covariance matrices, but it ignores
+        the curved SPD geometry. That contrast makes the advantage of the
+        Riemannian distance visible rather than rhetorical.
 
         The goal is not to prove that one method always wins. The goal is to
         understand what the geometric representation adds, when it helps, and
@@ -1273,6 +1275,14 @@ cells = [
     ),
     markdown(
         r"""
+        ## 5b. Which route? Measure both against a classical baseline
+
+        Route 1 stores a centre and compares. Route 2 fits a boundary in
+        flattened coordinates. Neither claim is worth anything until both are
+        measured — against each other, and against a strong, task-specific
+        baseline that owes nothing to this geometry. For motor imagery that
+        baseline is CSP + LDA.
+
         ### CSP + LDA
 
         **Common spatial patterns (CSP)** learns weighted channel combinations
