@@ -512,28 +512,72 @@ hardware."
 This answers the headline with the actual object and states spec §2's spine
 sentence in the first paragraph of the page, which it previously did not.
 
+### F14 — Part 2's competition claim is now checkable *(closes R1, fix round 1)*
+
+`index.html:427`. Added in fix round 1, after the coordinator supplied the
+source I had not found: `review-notes/riemannian_eeg_reference.md` §4.3, which
+carries the full table fetched from Barachant's own competition page.
+
+**The sentence was verified against the table before anything was changed, and
+every element of it holds.** The table lists six first places; the page says
+five, and the excluded one is exactly the one that should be excluded:
+
+| Competition | Year | Place | Teams | In the claim? |
+|---|---|---|---|---|
+| DecMeg2014 — Decoding the Human Brain | 2014 | 1st | 267 | ✓ |
+| BCI Challenge @ NER 2015 (Kaggle/Inria) | 2015 | 1st | 260 | ✓ (the floor) |
+| Grasp-and-Lift EEG Detection (Kaggle) | 2015 | 1st | 379 | ✓ |
+| Microsoft Decoding Brain Signals | 2016 | 1st | 688 | ✓ (the ceiling) |
+| Melbourne Univ. AES/MathWorks/NIH Seizure Prediction | 2016 | 1st | 478 | ✓ |
+| Biomag 2016 — Competition 3 | 2016 | 1st | **6** | ✗ correctly excluded |
+
+- **"five", not six** — the reference file says explicitly of the Biomag entry,
+  "do not cherry-pick it". Excluding it is what makes "260 to 688 teams" true.
+- **"260 to 688"** — the exact min and max of the five included fields.
+- **"between 2014 and 2016"** — the exact span.
+- **"neural-decoding", not "BCI"** — the reference file flags that the seizure
+  -prediction win is not a BCI task and warns against "five BCI competitions".
+  The page already says neural-decoding.
+
+So the wording was already the defensible form and was **not** softened, per
+instruction. Only the citation was missing.
+
+Two changes, because the page had no in-prose citation pattern to follow —
+before this, `index.html` contained zero prose links outside the nav and the
+references list itself:
+
+1. **A tenth reference entry**, placed fifth so it sits with the four
+   Riemannian papers rather than among the tooling links, and
+   `data-collapse-mobile` updated from "the nine sources" to "the ten sources".
+2. **The claim itself now links to the source**, wrapping the phrase "five
+   international neural-decoding competitions". Linking the phrase rather than
+   the whole sentence puts the reader one click from the actual table.
+
+`.part-divider > p a` is a new rule and is deliberately quiet: it inherits the
+paragraph colour, borrows `text-underline-offset: 4px` from
+`.references-inner a`, and introduces no new colour — the global constraint is
+"no visual redesign". `:focus-visible` was added to the existing shared
+page-CTA focus rule rather than given its own.
+
+Verified in Chromium: exactly one in-prose citation, link text is the intended
+phrase, the sentence is byte-identical to before (the reflow did not eat a
+space), the link computes to the same colour as its paragraph
+(`rgb(101, 108, 124)`), the focus ring is the page's shared 3px cyan, ten
+references render in the intended order, and no console errors.
+
 ---
 
 ## Raised, not fixed
 
 Each of these is a decision or a scope call rather than a fix, and is recorded
-here rather than guessed at.
+here rather than guessed at. R1 was in this list after the first pass and has
+since been closed — see F14.
 
-### R1 — Part 2's competition claim has no source on the page
+### R1 — Part 2's competition claim was uncheckable — **resolved, see F14**
 
-`index.html:427`: "Between 2014 and 2016 pipelines built on it took first place
-in five international neural-decoding competitions, against fields of 260 to
-688 teams."
-
-This is the only specific, checkable, load-bearing number on the page that is
-neither computed by a widget from `src/math/spd.ts` nor pinned by a test nor
-cited in the references list — which carries nine sources, none of which is a
-competition result. It is the claim doing the most persuasive work in the Part 2
-divider, and a reader who wants to verify it cannot.
-
-Not fixed because the fix is a decision I should not guess: either add the
-citation (which competitions, and which source), or soften the claim. Both
-change what the page asserts.
+Raised in the first pass, closed in fix round 1. The finding was right about the
+gap and wrong about the remedy: the claim is not unsourced, only uncited. It
+needed a citation, not a decision. Moved to "What was fixed" as F14.
 
 ### R2 — Widget disclosure behaviour is browser-verified but not test-guarded
 

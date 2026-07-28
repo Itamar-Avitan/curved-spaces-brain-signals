@@ -347,6 +347,7 @@ h2 {
 .notebook-download:focus-visible,
 .source-feature:focus-visible,
 .references-section a:focus-visible,
+.part-divider > p a:focus-visible,
 footer a:focus-visible {
   outline: 3px solid var(--cyan);
   outline-offset: 3px;
@@ -847,6 +848,21 @@ footer a:focus-visible {
   max-width: 640px;
   margin: 22px auto 0;
   font-size: 1.06rem;
+}
+
+/* The page keeps its sources in #references rather than citing inline, so this
+   is the one in-prose citation: Part 2's competition claim, which a reader
+   would otherwise have no way to check. Deliberately quiet — it borrows the
+   underline treatment from .references-inner a and introduces no new colour. */
+.part-divider > p a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration-color: rgba(46, 53, 74, 0.35);
+  text-underline-offset: 4px;
+}
+
+.part-divider > p a:hover {
+  text-decoration-color: currentColor;
 }
 
 .story-section {
