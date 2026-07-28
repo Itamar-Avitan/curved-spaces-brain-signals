@@ -2175,7 +2175,7 @@ cells = [
 
         **Now read the last line the cell prints.** One flipped test trial moves
         these means by 0.0208 to 0.0238. Both halves of that split are *one trial
-        each*. §5b already set the rule for this notebook — differences smaller
+        each*. §6.3 already set the rule for this notebook — differences smaller
         than the error bars, and certainly smaller than one trial, are not
         resolvable with this design — and 6.4b's own table puts a standard
         deviation of 0.063 on the re-centred condition, larger than either
@@ -2794,14 +2794,18 @@ notebook = nbf.v4.new_notebook(
         },
     },
 )
-nbf.write(notebook, OUTPUT_PATH)
-print(f"Wrote {OUTPUT_PATH}")
-
 colab_notebook = deepcopy(notebook)
 colab_notebook.metadata["kernelspec"] = {
     "display_name": "Python 3",
     "language": "python",
     "name": "python3",
 }
-nbf.write(colab_notebook, COLAB_OUTPUT_PATH)
-print(f"Wrote {COLAB_OUTPUT_PATH}")
+
+# Guarded: importing this module for introspection must not overwrite the
+# executed notebooks. A rebuild strips every stored output, so an accidental
+# `import build_notebook` would silently discard a full execution.
+if __name__ == "__main__":
+    nbf.write(notebook, OUTPUT_PATH)
+    print(f"Wrote {OUTPUT_PATH}")
+    nbf.write(colab_notebook, COLAB_OUTPUT_PATH)
+    print(f"Wrote {COLAB_OUTPUT_PATH}")
