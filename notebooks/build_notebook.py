@@ -1428,21 +1428,24 @@ cells = [
     ),
     markdown(
         r"""
-        ### Is the gain from covariance, or from Riemannian geometry?
+        ## 6. What the geometry buys you
 
-        The papers in the source library make an important distinction:
-        covariance matrices are useful features, but they still need a geometry.
+        The webpage can only claim that this geometry earns its keep — its widgets are
+        synthetic by necessity, and a synthetic demonstration proves nothing about EEG.
+        This section is where the claims get measured, on recorded brain data, with
+        whole recording runs held out.
 
-        To isolate that point, compare two nearest-mean classifiers that use the
-        same regularized covariance estimator:
+        Five experiments. Two of them the webpage cannot show you at all.
+        """
+    ),
+    markdown(
+        r"""
+        ### 6.1 Same features, different ruler
 
-        - **Euclidean covariance mean:** arithmetic class mean + flat Frobenius
-          distance between matrix entries.
-        - **Riemannian MDM:** geometric/Riemannian class mean + affine-invariant
-          Riemannian distance.
-
-        This is not a full model search. It is a controlled diagnostic: same
-        feature type, different geometry.
+        Every comparison so far changed two things at once — the features *and* the
+        geometry — so none of them can say which did the work. This one changes exactly
+        one thing: identical covariance matrices, identical validation, only the mean
+        and the distance swapped.
         """
     ),
     code(
@@ -1537,7 +1540,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 6. The low-calibration question
+        ### 6.3 How little calibration can you get away with?
 
         BCI users should not have to provide a large training set before a
         system becomes useful. We now deliberately restrict training to only
@@ -1740,6 +1743,59 @@ cells = [
     ),
     markdown(
         r"""
+        ### 6.5 The same distance, used as a quality gate
+
+        A trial whose covariance sits unusually far from the others is usually
+        not an unusual thought -- it is a blink, a jaw clench, or an electrode
+        that came loose. Because we already have a distance and a mean, an
+        artifact detector costs about five lines. This is the **Riemannian
+        potato**: score each trial by its distance to the overall mean, and flag
+        the ones far out in the tail.
+
+        Note the z-score is taken on the **logarithm** of the distance. Distances
+        are positive and skewed, so z-scoring them raw would flag the wrong
+        trials.
+        """
+    ),
+    code(
+        """
+        global_mean = mean_riemann(covariances)
+        potato_distance = np.array(
+            [distance_riemann(global_mean, c) for c in covariances]
+        )
+        log_distance = np.log(potato_distance)
+        z_score = (log_distance - log_distance.mean()) / log_distance.std()
+
+        THRESHOLD = 2.0
+        flagged = np.where(np.abs(z_score) > THRESHOLD)[0]
+
+        fig, axis = plt.subplots(figsize=(8, 3.6))
+        axis.scatter(np.arange(len(z_score)), z_score, s=26, label="trial")
+        if len(flagged):
+            axis.scatter(
+                flagged, z_score[flagged], s=90, facecolors="none",
+                edgecolors="crimson", linewidths=2, label="flagged",
+            )
+        axis.axhline(THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.axhline(-THRESHOLD, ls="--", lw=1, color="crimson")
+        axis.set(
+            xlabel="trial index", ylabel="z-score of log distance to the mean",
+            title=f"Riemannian potato: {len(flagged)} of {len(z_score)} trials flagged",
+        )
+        axis.legend(frameon=False)
+        fig.tight_layout()
+        plt.show()
+
+        display(Markdown(
+            "> **Quality takeaway:** one representation, two jobs. The same "
+            "covariance matrix that carries the decision also tells you when "
+            "not to trust it, so a real-time BCI can decline to act instead of "
+            "guessing on a blink."
+        ))
+        """
+    ),
+    markdown(
+        r"""
         ## 6b. Re-centering: the transfer result the theory promises
 
         Everything so far has been inside one recording session. The claim the
@@ -1869,59 +1925,6 @@ cells = [
         for run in np.unique(dataset.groups):
             centerd = _mean_riemann(recenterd[dataset.groups == run])
             assert np.allclose(centerd, np.eye(centerd.shape[0]), atol=1e-6)
-        """
-    ),
-    markdown(
-        r"""
-        ## 6c. The same distance, used as a signal-quality check
-
-        A trial whose covariance sits unusually far from the others is usually
-        not an unusual thought -- it is a blink, a jaw clench, or an electrode
-        that came loose. Because we already have a distance and a mean, an
-        artifact detector costs about five lines. This is the **Riemannian
-        potato**: score each trial by its distance to the overall mean, and flag
-        the ones far out in the tail.
-
-        Note the z-score is taken on the **logarithm** of the distance. Distances
-        are positive and skewed, so z-scoring them raw would flag the wrong
-        trials.
-        """
-    ),
-    code(
-        """
-        global_mean = _mean_riemann(covariances)
-        potato_distance = np.array(
-            [distance_riemann(global_mean, c) for c in covariances]
-        )
-        log_distance = np.log(potato_distance)
-        z_score = (log_distance - log_distance.mean()) / log_distance.std()
-
-        THRESHOLD = 2.0
-        flagged = np.where(np.abs(z_score) > THRESHOLD)[0]
-
-        fig, axis = plt.subplots(figsize=(8, 3.6))
-        axis.scatter(np.arange(len(z_score)), z_score, s=26, label="trial")
-        if len(flagged):
-            axis.scatter(
-                flagged, z_score[flagged], s=90, facecolors="none",
-                edgecolors="crimson", linewidths=2, label="flagged",
-            )
-        axis.axhline(THRESHOLD, ls="--", lw=1, color="crimson")
-        axis.axhline(-THRESHOLD, ls="--", lw=1, color="crimson")
-        axis.set(
-            xlabel="trial index", ylabel="z-score of log distance to the mean",
-            title=f"Riemannian potato: {len(flagged)} of {len(z_score)} trials flagged",
-        )
-        axis.legend(frameon=False)
-        fig.tight_layout()
-        plt.show()
-
-        display(Markdown(
-            "> **Quality takeaway:** one representation, two jobs. The same "
-            "covariance matrix that carries the decision also tells you when "
-            "not to trust it, so a real-time BCI can decline to act instead of "
-            "guessing on a blink."
-        ))
         """
     ),
     markdown(
@@ -2303,8 +2306,8 @@ CODE_PURPOSES = [
     "Repeat validation with deliberately limited calibration data.",
     "Plot how performance changes with available calibration trials.",
     "Repeat the geometry contrast in the low-calibration regime.",
-    "Re-center each run on its own mean and test whether transfer improves.",
     "Flag artifact trials by their distance to the mean (Riemannian potato).",
+    "Re-center each run on its own mean and test whether transfer improves.",
     "Exercises: define a shared metric-generic MDM evaluator.",
     "Exercise 1: rerun with only the three central-strip electrodes.",
     "Exercise 2: compare OAS shrinkage with the plain sample covariance.",
