@@ -586,6 +586,18 @@
         </p>
         <rg-predict key="invariance"></rg-predict>
         <rg-invariance-explorer></rg-invariance-explorer>
+        <p>
+          That widget is synthetic; the companion notebook runs the same test
+          on real EEG. It applies one fixed, non-diagonal rewiring to every
+          covariance matrix — training and test alike — and re-runs the whole
+          classification. Every decision this ruler made came back identical,
+          trial for trial, so the accuracy it scored over the held-out runs
+          changed by exactly zero: 97.9% before, 97.9% after. Score the same
+          matrices with the straight ruler instead and the answer does move,
+          82.4% to 84.5%. Do not read a direction into that second pair — a
+          different rewiring could as easily have pushed it down. The
+          guarantee is the zero.
+        </p>
         <rg-formula key="affine-invariant" folded summary="the ruler that would not move, in numbers"></rg-formula>
         <rg-case-file step="2"></rg-case-file>
       </section>
@@ -740,22 +752,40 @@
         <rg-predict key="transfer"></rg-predict>
         <rg-transfer-explorer></rg-transfer-explorer>
         <rg-formula key="recentering" folded summary="one line, and it needs no labels"></rg-formula>
-        <!-- PROVISIONAL: rewritten by 2026-07-27-notebook-realignment.md Task 6,
-             once E2/E3 have executed and produced real numbers. -->
         <aside class="transfer-caveat">
-          <strong>And when it doesn’t help</strong>
-          <p>
-            The demo above is synthetic, and its numbers were chosen to show
-            the mechanism. The companion notebook runs the same move on real
-            recordings and gets a <em>negative</em> result: the run centers
-            collapse together exactly as they should, and the accuracy does
-            not improve. The three runs there came from one sitting, so there
-            was no session shift to remove — and re-centering threw away the
-            small real differences along with the nuisance that wasn’t there.
-            Alignment is a hypothesis about your data, not a free upgrade. It
-            pays when what separates your recordings really is a change of
-            hardware. Measure it; don’t assume it.
-          </p>
+          <strong>What this is worth on real EEG</strong>
+          <div>
+            <p>
+              The demo above is synthetic, and its numbers were chosen to show
+              the mechanism. The companion notebook runs the same move on real
+              recordings twice and gets opposite answers — which is the useful
+              part.
+            </p>
+            <p>
+              First it injects a session shift of exactly the kind re-centring
+              exists to remove: one invertible rewiring applied to the held-out
+              run alone. Balanced accuracy falls from 97.9% to 54.2% —
+              near-perfect to a coin flip, with nothing about the brain
+              changed. Re-centring each run on its own mean, using no labels
+              from the held-out run, brings it back to 92.9%, recovering 88% of
+              the loss.
+            </p>
+            <p>
+              Then it runs the identical operation on the three real runs,
+              which came from one sitting. The mechanism still works exactly as
+              advertised — the mean distance between the run centres collapses
+              from 0.7702 to 0.0000 — and the accuracy does not improve. It
+              slips, 97.9% ± 2.9 to 95.5% ± 6.3, because there was no session
+              shift to remove, and re-centring discarded the small genuine
+              differences between runs along with the nuisance that was not
+              there.
+            </p>
+            <p>
+              Alignment is a hypothesis about your data, not a free upgrade. It
+              pays when what separates your recordings really is a change of
+              hardware. Measure it; do not assume it.
+            </p>
+          </div>
         </aside>
       </section>
 
@@ -863,7 +893,7 @@
           <div class="notebook-launch">
             <a
               class="notebook-colab"
-              href="https://colab.research.google.com/drive/1Wxnq27N_0s21FsK977YJyp1gjF_zshnC?usp=sharing"
+              href="https://colab.research.google.com/github/Itamar-Avitan/curved-spaces-brain-signals/blob/main/notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -39,6 +39,15 @@ export interface Formula {
    * Write checked values to two decimals so the assertion is exact.
    */
   worked?: { lines: string[] };
+  /**
+   * Where the companion notebook performs this same operation on real EEG.
+   *
+   * The other half of the two-way anchor: the notebook section named here
+   * names this page section back, in `notebooks/build_notebook.py`. Name a
+   * section that exists — the numbering is checked against the built
+   * `.ipynb`, not assumed.
+   */
+  notebook?: string;
 }
 
 export interface GlossaryEntry {
@@ -95,6 +104,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "and it would still be 2×2 for a trial ten times longer.",
         ],
       },
+      notebook: "In the notebook: §2 builds one of these from every real trial.",
     },
     why: "Motor imagery changes band power and how regions couple — both second-order effects. Covariance is exactly the summary that keeps those and throws away the rest.",
     href: "#eeg",
@@ -182,6 +192,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "The flat average invented 4.5× the strength that was in neither.",
         ],
       },
+      notebook:
+        "In the notebook: §3 walks this path between real class means, and measures where the flattened map is still exact.",
     },
     why: "Averaging two trials means finding the midpoint of this path. Take the straight-line midpoint instead and you invent variance neither trial had.",
     href: "#distance",
@@ -226,6 +238,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "The brain did not change. Only one ruler agrees.",
         ],
       },
+      notebook:
+        "In the notebook: §6.2 tries to move this number on real EEG — one fixed rewiring of every covariance matrix — and cannot.",
     },
     why: "The property in the name is the whole reason this works on EEG: volume conduction, electrode gain, and re-referencing all leave this number completely unchanged.",
     href: "#invariance",
@@ -247,6 +261,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         { part: "W C Wᵀ", says: "Every hardware effect looks like this: re-referencing, electrode gain, volume conduction, whitening, a spatial filter. One family, one shape." },
         { part: "W invertible", says: "No information is destroyed — the recording is scrambled, not lost. That is exactly the case a good ruler should shrug off." },
       ],
+      notebook:
+        "In the notebook: §6.2 applies one non-diagonal W to every real covariance matrix, training and test alike.",
     },
     why: "Volume conduction, the lead field, electrode gain, re-referencing, whitening, spatial filtering and session drift are all this one operation. That is why a single invariance property covers all of them at once.",
     href: "#invariance",
@@ -295,6 +311,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "It is worse at the job a centre exists to do.",
         ],
       },
+      notebook:
+        "In the notebook: §0 iterates it from scratch against pyRiemann, and §3 computes it on the real class means.",
     },
     why: "There is no formula for it; you iterate. It converges to a single answer because this space curves the helpful way — geodesics spread apart rather than reconverging, so there is exactly one minimum.",
     href: "#mean",
@@ -344,6 +362,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "Decision: left.",
         ],
       },
+      notebook:
+        "In the notebook: §4 is this decision on real EEG, one held-out recording run at a time.",
     },
     why: "This is the decision a Riemannian BCI actually ships. Two stored matrices per class pair, one distance each, no boundary to fit — which is why it needs so little calibration data.",
     href: "#classifier",
@@ -397,6 +417,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "                                    ordinary tools now measure correctly.",
         ],
       },
+      notebook:
+        "In the notebook: §5 turns every real trial into a vector this way, then plots the map it lands on.",
     },
     why: "Take the upper triangle and multiply the off-diagonal entries by √2, and the vector's ordinary length equals the true Riemannian distance. Without that √2 the channel-coupling features — where the signal lives — get quietly shrunk.",
     href: "#tangent",
@@ -437,6 +459,8 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
           "The sessions move. The structure inside them does not.",
         ],
       },
+      notebook:
+        "In the notebook: §6.4 runs it on real EEG after an injected session shift, and §6.4b runs it where there was no shift to remove.",
     },
     why: "This is itself a congruence, so it distorts nothing inside a session — and the shift between sessions is also a congruence, so it cancels. Both halves at once is what no Euclidean method can offer.",
     href: "#tangent",

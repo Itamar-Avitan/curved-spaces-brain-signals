@@ -236,6 +236,20 @@ export class RgFormula extends LitElement {
       color: #20283a;
     }
 
+    /* The other end of the two-way anchor: where the notebook does this same
+       operation on real EEG. Deliberately not a link — the notebook is one
+       artifact, reached from Part 5, and seven separate launch links would
+       compete with it. */
+    .notebook-ref {
+      margin: 0;
+      padding: 12px 24px 14px;
+      border-top: 1px solid rgba(46, 53, 74, 0.1);
+      background: #fdf8ef;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      color: #5a6478;
+    }
+
     @media (max-width: 640px) {
       .steps > div {
         grid-template-columns: 1fr;
@@ -244,6 +258,10 @@ export class RgFormula extends LitElement {
 
       pre.worked {
         padding: 14px 16px 16px;
+      }
+
+      .notebook-ref {
+        padding: 12px 16px 14px;
       }
     }
   `;
@@ -286,6 +304,9 @@ export class RgFormula extends LitElement {
                 )}
               </dl>
             `}
+        ${formula.notebook
+          ? html`<p class="notebook-ref">${formula.notebook}</p>`
+          : nothing}
       </div>
     `;
   }

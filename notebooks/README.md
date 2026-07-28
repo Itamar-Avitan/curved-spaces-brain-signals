@@ -104,9 +104,10 @@ conda run -n rnd_env python notebooks/build_notebook.py
 ```
 
 This command rebuilds both the adaptive canonical notebook and the clean Colab
-upload variant. The live website points to the maintainer-hosted Colab notebook
-in Drive; after notebook changes, replace that Drive file with
-`01_riemannian_eeg_motor_imagery_colab.ipynb`.
+upload variant. The live website opens the Colab variant straight from GitHub
+(`colab.research.google.com/github/Itamar-Avitan/curved-spaces-brain-signals/
+blob/main/notebooks/01_riemannian_eeg_motor_imagery_colab.ipynb`), so whatever
+is committed on `main` is what a reader runs — there is no copy to re-upload.
 
 To execute all cells and embed fresh outputs:
 

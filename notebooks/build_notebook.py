@@ -873,6 +873,10 @@ cells = [
         the matrix stops describing any real signal. That boundary is why the
         valid matrices form a cone rather than filling all of space — and why
         you cannot move a covariance matrix in an arbitrary direction.
+
+        *On the page: §2.1, "One trial becomes a table of which electrodes moved
+        together," and §2.2, "Not every table is possible, so they fill a curved
+        cone."*
         """
     ),
     code(
@@ -981,6 +985,10 @@ cells = [
         The **Riemannian mean** is the valid covariance matrix that minimizes
         the total squared Riemannian distance to the training matrices. It is
         the curved-space counterpart of an arithmetic average.
+
+        *On the page: §3.1, "The straight average invents strength that was in
+        neither trial," and — for the flat map measured at the end of this
+        section — §1.2, "A flat map is exact where you centre it."*
         """
     ),
     code(
@@ -1272,6 +1280,10 @@ cells = [
         class. A new covariance matrix receives the label of the nearest class
         mean. It has very few fitted quantities, which can be valuable when
         calibration data are scarce.
+
+        *On the page: §4.1a, "Route 1: a class centre is whatever sits at the
+        smallest total distance from its examples," and §4.1b, "To label a new
+        trial, measure it against each centre and take the nearest."*
         """
     ),
     markdown(
@@ -1318,6 +1330,9 @@ cells = [
         and without it the channel-coupling features, which is where the motor
         signal actually lives, are quietly shrunk by a factor of $1/\sqrt{2}$
         relative to the variances.
+
+        *On the page: §4.2, "Route 2: flatten a local map first, and any ordinary
+        classifier can read it."*
         """
     ),
     markdown(
@@ -1432,6 +1447,9 @@ cells = [
         **Common spatial patterns (CSP)** learns weighted channel combinations
         whose variance separates the two classes. **Linear discriminant
         analysis (LDA)** then draws a linear decision boundary.
+
+        *On the page: §4.3, "Which route? It depends on how much calibration you
+        can ask for."*
         """
     ),
     markdown(
@@ -1590,6 +1608,9 @@ cells = [
         geometry — so none of them can say which did the work. This one changes exactly
         one thing: identical covariance matrices, identical validation, only the mean
         and the distance swapped.
+
+        *On the page: §3.1, "The straight average invents strength that was in
+        neither trial" — this is that claim, scored.*
         """
     ),
     code(
@@ -1716,6 +1737,10 @@ cells = [
         CSP does not." It is narrower and more useful: **the naive Euclidean treatment
         of these matrices is not blind to the recording chain, and the Riemannian one
         is.** That difference is the entire reason for the machinery.
+
+        *On the page: §3.2, "Rewire the amplifier and the straight ruler changes
+        its mind. This one does not." The page's widget is synthetic; this is the
+        same test on real EEG, and the page quotes what it prints.*
         """
     ),
     code(
@@ -1828,6 +1853,9 @@ cells = [
         For each held-out run and each training size, the sampling is repeated
         ten times. The test run never changes and is never used to choose the
         training trials.
+
+        *On the page: §4.3, "Which route? It depends on how much calibration you
+        can ask for" — the panel in Part 5 quotes this section's two-trial row.*
         """
     ),
     markdown(
@@ -2041,6 +2069,10 @@ cells = [
         Re-centring uses **no labels from the held-out run**. It only needs the trials,
         which you have the moment the session starts.
 
+        *On the page: §4.4, "Tomorrow's session breaks both — until you redraw the
+        map around it." Its aside quotes this section's first three numbers, and
+        6.4b's beside them.*
+
         **Predict first.** Four numbers below. The first three are the story: no
         shift, shifted, shifted then re-centred. Where does the middle one land, and
         how much of it does the third recover?
@@ -2218,6 +2250,10 @@ cells = [
         should not. Alignment is a hypothesis about your data, not a free upgrade.
         It pays when what separates your recordings really is a change of
         hardware. Measure it; do not assume it.
+
+        *On the page: §4.4, "Tomorrow's session breaks both — until you redraw the
+        map around it." This null result sits in its aside next to 6.4's positive
+        one; either alone would be a misleading page.*
         """
     ),
     code(
@@ -2342,6 +2378,9 @@ cells = [
         Note the z-score is taken on the **logarithm** of the distance. Distances
         are positive and skewed, so z-scoring them raw would flag the wrong
         trials.
+
+        *On the page: §4.5, "A better ruler cannot repair a bad measurement," and
+        the potato aside that closes it.*
         """
     ),
     code(

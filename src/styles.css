@@ -2839,6 +2839,15 @@ footer a {
   line-height: 1.72;
 }
 
+/* The aside carries four paragraphs now — two measurements and their reading —
+   so the prose column is its own grid item. Without the wrapper the extra
+   paragraphs would auto-place under the heading instead of beside it. */
+.transfer-caveat > div {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
 @media (max-width: 900px) {
   .transfer-caveat {
     grid-template-columns: 1fr;
