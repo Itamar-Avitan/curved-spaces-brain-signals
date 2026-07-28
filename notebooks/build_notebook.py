@@ -1111,15 +1111,14 @@ cells = [
     ),
     markdown(
         r"""
-        ## 4. Three complete BCI pipelines
+        ## 4. Route 1 — measure on the surface
 
-        A **pipeline** is the full sequence from one trial to one prediction.
+        The page's Route 1. Nothing is flattened and no boundary is fitted: store one
+        covariance centre per class, and label a new trial by whichever centre is
+        nearest in Riemannian distance.
 
-        ### CSP + LDA
-
-        **Common spatial patterns (CSP)** learns weighted channel combinations
-        whose variance separates the two classes. **Linear discriminant
-        analysis (LDA)** then draws a linear decision boundary.
+        Because there is no boundary to fit, there is very little to overfit — which is
+        why this route is the one that works with almost no calibration data.
 
         ### Riemannian MDM
 
@@ -1127,6 +1126,20 @@ cells = [
         class. A new covariance matrix receives the label of the nearest class
         mean. It has very few fitted quantities, which can be valuable when
         calibration data are scarce.
+        """
+    ),
+    markdown(
+        r"""
+        ## 5. Route 2 — draw a local map first
+
+        The page's Route 2. Whiten every covariance matrix by a reference point, take
+        the matrix logarithm, and read off the independent entries. Each trial is now a
+        short vector, and any ordinary classifier can read it.
+
+        The reference point is chosen to be the Riemannian mean of the data, and that
+        choice is the whole trick: a flattened map is exact at the point you centre it
+        on, so centring on the mean puts every trial as close as possible to the part
+        of the map that is accurate.
 
         ### Tangent space + logistic regression
 
@@ -1138,7 +1151,7 @@ cells = [
         not the identity: `TangentSpace` uses the **Riemannian mean of the data
         it was fitted on**, which is why it must be fitted inside the training
         fold like everything else. That reference is also exactly the quantity
-        re-centering manipulates in Section 5b.
+        re-centering manipulates in Section 6b.
 
         **What the map is.** For a reference $\bar{C}$,
 
@@ -1159,7 +1172,54 @@ cells = [
         and without it the channel-coupling features, which is where the motor
         signal actually lives, are quietly shrunk by a factor of $1/\sqrt{2}$
         relative to the variances.
+        """
+    ),
+    markdown(
+        r"""
+        ### What the local map actually looks like
 
+        Two coordinates out of the full tangent vector, one point per trial. This is
+        the space the logistic regression sees — and the reason a straight line is a
+        sensible thing to draw in it.
+        """
+    ),
+    code(
+        """
+        tangent_features = TangentSpace(metric="riemann").fit_transform(covariances)
+        coordinates = PCA(n_components=2, random_state=42).fit_transform(tangent_features)
+        embedding = pd.DataFrame(
+            {
+                "PC 1": coordinates[:, 0],
+                "PC 2": coordinates[:, 1],
+                "class": CLASS_NAMES[dataset.y],
+                "run": dataset.metadata["run"].to_numpy(),
+            }
+        )
+
+        fig, axis = plt.subplots(figsize=(8, 6))
+        sns.scatterplot(
+            data=embedding,
+            x="PC 1",
+            y="PC 2",
+            hue="class",
+            style="run",
+            s=90,
+            alpha=0.85,
+            ax=axis,
+        )
+        axis.set_title("A 2D view of the covariance matrices in tangent space")
+        axis.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
+        fig.tight_layout()
+        plt.show()
+        display(Markdown(
+            "> **Figure takeaway:** the tangent map turns covariance matrices "
+            "into ordinary feature vectors; this 2D projection is only a view "
+            "of the full 153-feature representation."
+        ))
+        """
+    ),
+    markdown(
+        r"""
         The cell below builds the vectorisation by hand and checks it against
         pyRiemann, so none of this has to be taken on trust.
         """
@@ -1209,6 +1269,15 @@ cells = [
 
         assert np.allclose(by_hand, from_library, atol=1e-10)
         assert np.isclose(np.linalg.norm(by_hand), np.linalg.norm(symmetric, "fro"))
+        """
+    ),
+    markdown(
+        r"""
+        ### CSP + LDA
+
+        **Common spatial patterns (CSP)** learns weighted channel combinations
+        whose variance separates the two classes. **Linear discriminant
+        analysis (LDA)** then draws a linear decision boundary.
         """
     ),
     markdown(
@@ -1458,7 +1527,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 5. The low-calibration question
+        ## 6. The low-calibration question
 
         BCI users should not have to provide a large training set before a
         system becomes useful. We now deliberately restrict training to only
@@ -1661,7 +1730,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 5b. Re-centering: the transfer result the theory promises
+        ## 6b. Re-centering: the transfer result the theory promises
 
         Everything so far has been inside one recording session. The claim the
         Riemannian BCI literature makes loudest is about *across* sessions: a
@@ -1794,7 +1863,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 5c. The same distance, used as a signal-quality check
+        ## 6c. The same distance, used as a signal-quality check
 
         A trial whose covariance sits unusually far from the others is usually
         not an unusual thought -- it is a blink, a jaw clench, or an electrode
@@ -1847,7 +1916,7 @@ cells = [
     ),
     markdown(
         r"""
-        ## 6. What the source papers add beyond this demo
+        ## 7. What the source papers add beyond this demo
 
         The local source library shows a field that is broader than this one
         motor-imagery notebook:
@@ -1873,53 +1942,6 @@ cells = [
         > Riemannian geometry is not magic accuracy dust. It is a principled
         > way to compare, average, align, and classify covariance matrices while
         > respecting their positive-definite structure.
-        """
-    ),
-    markdown(
-        r"""
-        ## 7. Visualize the tangent-space coordinates
-
-        The tangent representation has one feature for each unique covariance
-        entry. With 17 channels that is \(17(17+1)/2 = 153\) features.
-
-        To draw it on a screen, **principal component analysis (PCA)** compresses
-        those features to two display axes. PCA is used only for this figure;
-        the classifier above uses the complete tangent representation.
-        """
-    ),
-    code(
-        """
-        tangent_features = TangentSpace(metric="riemann").fit_transform(covariances)
-        coordinates = PCA(n_components=2, random_state=42).fit_transform(tangent_features)
-        embedding = pd.DataFrame(
-            {
-                "PC 1": coordinates[:, 0],
-                "PC 2": coordinates[:, 1],
-                "class": CLASS_NAMES[dataset.y],
-                "run": dataset.metadata["run"].to_numpy(),
-            }
-        )
-
-        fig, axis = plt.subplots(figsize=(8, 6))
-        sns.scatterplot(
-            data=embedding,
-            x="PC 1",
-            y="PC 2",
-            hue="class",
-            style="run",
-            s=90,
-            alpha=0.85,
-            ax=axis,
-        )
-        axis.set_title("A 2D view of the covariance matrices in tangent space")
-        axis.legend(bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
-        fig.tight_layout()
-        plt.show()
-        display(Markdown(
-            "> **Figure takeaway:** the tangent map turns covariance matrices "
-            "into ordinary feature vectors; this 2D projection is only a view "
-            "of the full 153-feature representation."
-        ))
         """
     ),
     markdown(
@@ -2121,7 +2143,7 @@ cells = [
         around **0.96** here. On same-session data, where there is no large
         recording shift to be invariant to, the cheaper metric costs almost
         nothing. The gap tends to open up in exactly the transfer settings that
-        Section 5b was about, which is the honest way to choose between them:
+        Section 6b was about, which is the honest way to choose between them:
         match the metric to whether invariance is doing any work for your data.
 
         </details>
@@ -2152,7 +2174,7 @@ cells = [
           group. Cross-participant prediction is much harder than cross-run;
           the appendix immediately below sets it up.
         - **Recenter across participants**, not just runs, and see whether the
-          alignment from Section 5b earns its keep when the sessions really are
+          alignment from Section 6b earns its keep when the sessions really are
           different people.
         """
     ),
@@ -2261,6 +2283,7 @@ CODE_PURPOSES = [
     "Inspect two trial-level channel-relationship patterns.",
     "Build the two Riemannian class prototypes and compare them.",
     "Visualize MDM decisions as distances to the class means.",
+    "Map covariance matrices to tangent vectors and display a 2D projection.",
     "Build a tangent vector by hand and verify the sqrt(2) isometry.",
     "Print the real validation code instead of asking you to trust it.",
     "Fit and evaluate all three pipelines on held-out recording runs.",
@@ -2272,7 +2295,6 @@ CODE_PURPOSES = [
     "Repeat the geometry contrast in the low-calibration regime.",
     "Re-center each run on its own mean and test whether transfer improves.",
     "Flag artifact trials by their distance to the mean (Riemannian potato).",
-    "Map covariance matrices to tangent vectors and display a 2D projection.",
     "Exercises: define a shared metric-generic MDM evaluator.",
     "Exercise 1: rerun with only the three central-strip electrodes.",
     "Exercise 2: compare OAS shrinkage with the plain sample covariance.",
