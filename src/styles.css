@@ -1229,6 +1229,19 @@ footer a:focus-visible {
   margin: 0 0 10px;
 }
 
+/* `.limits-section` is the one dark-background home for a `.section-index`
+   (4.5) — the base rule's rgba(46, 53, 74, 0.42) is tuned for the paper
+   background everywhere else and composites to near-invisible (~1.07:1)
+   against `--night`. It also sits two levels inside `.limits-grid`, past
+   where the direct-child margin rule above reaches, so it was falling back
+   to the UA default `<p>` margin too. Fix both, reusing the lemon accent
+   `.eyebrow.lemon` and the `01`–`04` list numbers already use on this same
+   background (~10.25:1 against #24283b). */
+.limits-grid > div > p.section-index {
+  margin: 0 0 10px;
+  color: var(--lemon);
+}
+
 .lesson-section > h2 {
   max-width: 22ch;
   margin: 0 0 20px;
