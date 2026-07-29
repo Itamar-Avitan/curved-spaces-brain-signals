@@ -285,9 +285,10 @@
         </p>
         <rg-flat-map></rg-flat-map>
         <p class="section-takeaway">
-          Remember this one. It comes back twice: it is why one of the two BCI
-          decoders in Part 4 works at all, and why the fix for tomorrow’s
-          recording session in §4.4 is a one-line change.
+          Remember this one. It comes back three times: it is why averaging
+          covariance tables entry by entry goes wrong in §3.1, why one of the
+          two BCI decoders in Part 4 works at all, and why the fix for
+          tomorrow’s recording session in §4.4 is a one-line change.
         </p>
       </section>
 
@@ -372,7 +373,7 @@
             class="sign-compare-stage"
             viewBox="0 0 460 210"
             role="img"
-            aria-label="Two diagrams. On a globe or a gravity well, two nearby paths curve back together. In the space of covariance matrices, two nearby paths pull apart instead."
+            aria-label="Two diagrams. On a globe or a gravity well, two nearby paths curve back together. On the surface this page is heading for, two nearby paths pull apart instead."
           >
             <g class="sc-panel sc-converge">
               <text class="sc-label" x="105" y="16">Globe &amp; gravity well</text>
@@ -395,7 +396,7 @@
           </svg>
         </figure>
         <p>
-          To see why that sign matters, put two decoders on a globe. Stand at
+          To see why that sign matters, put two trials on a globe. Stand at
           the north pole and walk to the south pole: <em>every</em> line of
           longitude is a shortest path, so there is no such thing as
           <em>the</em> route between them, and no such thing as the midpoint.
@@ -738,11 +739,13 @@
         </p>
         <rg-method-compare></rg-method-compare>
         <p class="section-takeaway">
-          On the recording in Part 5 the two routes track each other closely at
-          every calibration size, and CSP + LDA overtakes both once there are
-          ten trials per class. So this is not a ranking to memorise. The choice
-          is set by how much calibration you can ask a user to sit through —
-          which is exactly what tomorrow’s session is about to make worse.
+          On the recording in Part 5 the two routes stay within a point of each
+          other at every calibration size, and by ten trials per class all three
+          methods — both routes and CSP + LDA — have converged to within a point
+          as well. Every one of those gaps is smaller than a single flipped
+          trial, so this is not a ranking to memorise. The choice is set by how
+          much calibration you can ask a user to sit through — which is exactly
+          what tomorrow’s session is about to make worse.
         </p>
       </section>
 
@@ -921,7 +924,7 @@
             >
               <span class="colab-kicker">Start here ↗</span>
               <strong>Open the guided notebook in Colab</strong>
-              <small>Runs in your browser · no setup · every cell mirrors a step from this page</small>
+              <small>Runs in your browser · no setup · every section names the part of this page it continues</small>
             </a>
             <a
               class="notebook-download"

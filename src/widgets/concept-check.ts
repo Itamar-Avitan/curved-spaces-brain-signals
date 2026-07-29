@@ -102,9 +102,9 @@ export class ConceptCheck extends LitElement {
       ],
       correct: "route1",
       correctFeedback:
-        "Right. MDM's whole decision is distance to the nearest stored centre — no boundary is fitted in between — so it starts working with very little calibration data. Route 2 hands the flattened vectors to a real classifier, which has more to fit and more room to improve once data arrives.",
+        "Right, by construction: MDM's whole decision is distance to the nearest stored centre, with no boundary fitted in between, while Route 2 hands the flattened vectors to a real classifier that has parameters to estimate. Worth knowing, though, that on the single recording in Part 5 the two routes stay within a point of each other at every calibration size — less to fit is a reason to expect an advantage, not a measurement of one.",
       incorrectFeedback:
-        "Not quite. Sharing the same covariance matrices does not make the two routes equally data-hungry: Route 2 fits a genuine classifier on the flattened vectors, while Route 1 only ever compares to stored centres — which is why it needs less to get going.",
+        "Closer than you might think, but not the answer here. Sharing the same covariance matrices does not make the two routes equally data-hungry: Route 2 fits a genuine classifier on the flattened vectors, while Route 1 only ever compares to stored centres, so it has less to estimate. On the one recording in Part 5 that difference stays inside the noise — but the mechanism is real, and it is what the literature reports.",
     },
     {
       prompt:
