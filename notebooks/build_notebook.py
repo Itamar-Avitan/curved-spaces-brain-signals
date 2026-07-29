@@ -41,6 +41,12 @@ cells = [
         read and run it. You can execute each section in order; every code cell
         starts with its purpose, and every figure ends with one takeaway.
 
+        **The page this accompanies:**
+        <https://itamar-avitan.github.io/curved-spaces-brain-signals/>
+
+        Sections below carry an *On the page: §x.y* line naming the section
+        each one continues, so you can read the two side by side.
+
         Every trial becomes one covariance matrix, compared with one
         curved-space ruler — the Riemannian distance. From that single
         representation, two routes follow:

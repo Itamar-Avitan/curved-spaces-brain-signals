@@ -28,13 +28,14 @@ if (html.includes("/src/main.ts")) {
   throw new Error("Pages build still references the development TypeScript entry.");
 }
 
+// Every entry here must be something the page actually references. This list
+// once demanded five per-section videos that the flow redesign had already
+// removed from the page — so the build was gating on 4.7 MB nobody could reach.
 const requiredFiles = [
   "index.html",
-  "media/curved-spaces-hook.mp4",
-  "media/covariance-path.mp4",
-  "media/riemannian-mean.mp4",
-  "media/tangent-space.mp4",
-  "media/mdm-classifier.mp4",
+  "media/capstone.mp4",
+  "media/capstone-poster.jpg",
+  "media/low-calibration-performance.png",
   "downloads/01_riemannian_eeg_motor_imagery.ipynb",
   "downloads/01_riemannian_eeg_motor_imagery_colab.ipynb",
 ];
