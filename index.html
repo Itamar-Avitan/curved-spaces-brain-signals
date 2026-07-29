@@ -65,8 +65,8 @@
             <p class="hero-lede">
               Which electrodes moved together, not what any one of them did.
               Shapes like that live on a curved surface, where flat arithmetic
-              gives wrong answers — and the geometry that measures them is the
-              one thing that survives a change of hardware.
+              gives wrong answers — and the geometry that measures them shrugs
+              off a change of hardware by construction.
             </p>
             <div class="hero-cta">
               <a class="primary-button" href="#story">
@@ -360,12 +360,12 @@
           A globe has positive curvature: two nearby straightest paths —
           geodesics — curve back together as you follow them. A gravity
           well bends paths the same way, which is what gravity pulling
-          things together looks like in this picture. The space of
-          covariance matrices, with the ruler that Part 3 chooses, bends the
-          other way instead: non-positive curvature guarantees nearby paths
-          never curve back together, though how much they spread apart
-          varies from place to place, and in one direction they simply run
-          side by side.
+          things together looks like in this picture. The surface EEG trials
+          actually live on — you will build it in Part 2 and choose its ruler
+          in Part 3 — bends the <em>other</em> way: nearby paths never curve
+          back together. How fast they spread varies from place to place, and
+          along one direction, plain rescaling of the whole trial, they stay
+          exactly parallel.
         </p>
         <figure class="sign-compare">
           <svg
@@ -395,30 +395,39 @@
           </svg>
         </figure>
         <p>
-          That sign is not trivia. It buys:
+          To see why that sign matters, put two decoders on a globe. Stand at
+          the north pole and walk to the south pole: <em>every</em> line of
+          longitude is a shortest path, so there is no such thing as
+          <em>the</em> route between them, and no such thing as the midpoint.
+          Ask a globe for the average of two opposite trials and it has
+          infinitely many equally good answers.
+        </p>
+        <p>
+          Bending the other way removes that failure entirely. It buys:
         </p>
         <ul>
-          <li>Exactly one shortest path between any two points.</li>
+          <li>Exactly one shortest path between any two points — no ties, ever.</li>
           <li>
-            No cut locus — no point where two equally short paths from the
-            same start arrive together and “nearest” stops being well
-            defined.
+            A class centre that always exists and is always unique — which is
+            the whole of Route 1 in Part 4.
           </li>
-          <li>A class centre that always exists and is always unique.</li>
-          <li>An algorithm that finds that centre and always converges.</li>
+          <li>
+            An algorithm that finds that centre and always converges, so
+            “compute the average” is a thing you can actually run.
+          </li>
         </ul>
         <p>
-          On a sphere, none of this holds.
-        </p>
-        <p>
-          The causal order runs one way, and it is worth saying plainly:
+          The causal order runs one way, and it is worth seeing in one place
+          even though one link in it — <em>invariance</em> — is not defined
+          until §3.2:
           <em
             >we need invariance → that forces this metric → that metric
             makes the space curved → the curvature is non-positive →
             therefore means and geodesics are unique → therefore the
             algorithms are simple.</em
           >
-          Curvature is a cost that turns out to be a benefit.
+          Come back to this once you have met §3.2. Curvature is a cost that
+          turns out to be a benefit.
           <strong>It is not what makes the decoder accurate.</strong>
         </p>
       </section>
@@ -716,13 +725,25 @@
         <h2>Which route? It depends on how much calibration you can ask for.</h2>
         <p>
           Route 1 stores a centre and compares. Route 2 fits a boundary in
-          flattened coordinates. The first needs less from the user before it
-          starts working; the second has more room to grow once data arrives.
-          A credible study reports both against a strong task-specific
-          baseline, which for motor imagery means
-          <rg-term key="csp">CSP + LDA</rg-term>.
+          flattened coordinates, so it can separate classes a single centre
+          cannot describe — but it has a reference point to fit, and that has
+          to happen inside each training fold or you leak. A credible study
+          reports both against a strong task-specific baseline, which for
+          motor imagery means <rg-term key="csp">CSP + LDA</rg-term>.
+        </p>
+        <p>
+          The table below sets the three side by side on what each one needs,
+          learns, decides, wins at, and can go wrong with. Read the “what it
+          needs” row first — it is the row that usually decides for you.
         </p>
         <rg-method-compare></rg-method-compare>
+        <p class="section-takeaway">
+          On the recording in Part 5 the two routes track each other closely at
+          every calibration size, and CSP + LDA overtakes both once there are
+          ten trials per class. So this is not a ranking to memorise. The choice
+          is set by how much calibration you can ask a user to sit through —
+          which is exactly what tomorrow’s session is about to make worse.
+        </p>
       </section>
 
       <section id="transfer" class="lesson-section section-shell">
@@ -873,10 +894,11 @@
             <p class="eyebrow violet">Part 5 of 5 · do it yourself</p>
             <h2>You have the whole pipeline. Now run it on real brains.</h2>
             <p class="notebook-lead">
-              Each trial becomes a covariance matrix, the right distance gives it
-              a class centre, and the nearest centre makes the call. The guided
-              notebook is that exact pipeline, end to end, on a real motor-imagery
-              recording — runnable in your browser with nothing to install.
+              Each trial becomes a covariance matrix; then Route 1 measures it
+              against a class centre, or Route 2 flattens it into a vector and
+              lets an ordinary classifier decide. The guided notebook builds
+              both, on a real motor-imagery recording, and scores them against
+              CSP + LDA — runnable in your browser with nothing to install.
             </p>
           </div>
 
@@ -1000,10 +1022,9 @@
           <div class="notebook-stages" aria-label="What the notebook does, stage by stage" data-collapse-mobile="the three notebook stages">
             <p class="notebook-stages-lead">
               The three stages below turn the argument above into an actual
-              BCI operation: a trial becomes a covariance matrix, a class
-              mean summarizes its training examples, the distance to that
-              mean produces a decision, and grouped validation asks whether
-              that decision survives a new recording run.
+              BCI operation: a trial becomes a covariance matrix, both routes
+              are built on top of it, and grouped validation asks whether
+              either decision survives a new recording run.
             </p>
             <article>
               <span>01</span>
@@ -1016,20 +1037,21 @@
             </article>
             <article>
               <span>02</span>
-              <h3>Build the space</h3>
+              <h3>Build both routes</h3>
               <p>
                 Continues Parts 2–4: turn every trial into a regularized
-                covariance matrix, verify that it is valid, then compute the
-                class means and distances both routes depend on.
+                covariance matrix, verify that it is valid, then build Route 1’s
+                class centres and Route 2’s flattened map from the same
+                matrices.
               </p>
             </article>
             <article>
               <span>03</span>
               <h3>Test the BCI</h3>
               <p>
-                Continues Part 4’s decision rule: hold out complete recording
-                runs, compare credible baselines, and repeat the test with
-                deliberately limited calibration.
+                Continues Part 4’s two decision rules: hold out complete
+                recording runs, score both routes against CSP + LDA, and repeat
+                the test with deliberately limited calibration.
               </p>
             </article>
           </div>
