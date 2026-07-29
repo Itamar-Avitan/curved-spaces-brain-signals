@@ -2210,7 +2210,7 @@ cells = [
         each*. §6.3 already set the rule for this notebook — differences smaller
         than the error bars, and certainly smaller than one trial, are not
         resolvable with this design — and 6.4b's own table puts a standard
-        deviation of 0.063 on the re-centred condition, larger than either
+        deviation of 0.077 on the re-centred condition, larger than either
         component. **So read the direction of this decomposition, not the sizes.**
         What is solid is that the residual has two distinct sources and that the
         control separates them at all; what is not solid is that they are
@@ -2330,7 +2330,10 @@ cells = [
                 {
                     "alignment": label,
                     "mean balanced accuracy": scores.mean(),
-                    "std": scores.std(),
+                    # ddof=1 to match the sample std pandas reports in 6.1 and
+                    # 6.3. Same three fold scores were otherwise printed two
+                    # ways, and the page quotes both.
+                    "std": scores.std(ddof=1),
                 }
             )
 

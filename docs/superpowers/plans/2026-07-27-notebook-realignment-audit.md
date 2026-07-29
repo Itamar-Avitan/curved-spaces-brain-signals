@@ -115,13 +115,13 @@ historical dates, every substantive number resolves:
 | §3.1 | relative area climbs past 1.00, holds at 1.00 | `rg-distance-explorer` computes it live; `det = 1.00` also pinned in `glossary.worked.test.ts` |
 | §3.2 | 97.9% before, 97.9% after; 82.4% → 84.5% | executed cell 55 (0.9792/0.9792, 0.8244→0.8452) |
 | §4.4 | 97.9% → 54.2% → 92.9%, 88% recovered | executed cell 64 |
-| §4.4 | 0.7702 → 0.0000; 97.9 ± 2.9 → 95.5 ± 6.3 | executed cell 67 |
+| §4.4 | 0.7702 → 0.0000; 97.9 ± 3.6 → 95.5 ± 7.7 | executed cell 67 |
 | Part 5 | 84.2 / 94.5 / 94.9 | executed cell 59, `trials_per_class = 2` |
 | Part 5 | 82.4 ± 10.4 → 97.9 ± 3.6, +15.5 | executed cell 52 |
 
 **Absent, correctly:** `0.0238` and `0.0268`, §6.4's residual decomposition.
 Each is one flipped trial, below the resolution of a 3-fold design whose
-re-centred condition has std 0.063. The notebook prints them with an explicit
+re-centred condition has std 0.077. The notebook prints them with an explicit
 "read the direction, not the sizes" caveat; the page does not quote them at
 all. That is the right split — the notebook can show its working, the page
 cannot afford to.
