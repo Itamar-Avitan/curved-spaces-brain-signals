@@ -1420,7 +1420,7 @@ cells = [
         # than the matrix it represents, with the coupling terms under-weighted.
         naive = symmetric[rows, cols]
         display(Markdown(
-            f"> **Math takeaway:** with the $\\sqrt{{2}}$ the vector length "
+            rf"> **Math takeaway:** with the $\\sqrt{{2}}$ the vector length "
             f"({np.linalg.norm(by_hand):.4f}) matches the matrix norm "
             f"({np.linalg.norm(symmetric, 'fro'):.4f}) exactly. Without it the "
             f"vector measures only {np.linalg.norm(naive):.4f} -- the "
